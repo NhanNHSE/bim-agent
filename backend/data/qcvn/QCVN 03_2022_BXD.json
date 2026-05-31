@@ -1,0 +1,63 @@
+{
+  "standard_code": "QCVN 03:2022/BXD",
+  "standard_name": "Quy chuẩn kỹ thuật quốc gia về Phân cấp công trình phục vụ thiết kế xây dựng",
+  "year": 2022,
+  "issuing_body": "Bộ Xây dựng",
+  "status": "active",
+  "scope": "Phân cấp công trình xây dựng theo quy mô, tầm quan trọng để xác định yêu cầu thiết kế",
+  "supersedes": "QCVN 03:2012/BXD",
+  "related_standards": [
+    "TCVN 2737:2023",
+    "QCVN 06:2022/BXD"
+  ],
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Quy định chung",
+      "sections": [
+        {
+          "number": "1.1",
+          "title": "Phạm vi và đối tượng áp dụng",
+          "articles": [
+            {
+              "number": "1.1.1",
+              "title": "Phạm vi điều chỉnh",
+              "content": "Quy chuẩn này quy định về phân cấp công trình xây dựng dân dụng, công nghiệp và hạ tầng kỹ thuật theo quy mô, mức độ quan trọng nhằm xác định các yêu cầu kỹ thuật trong thiết kế, thi công, nghiệm thu và bảo trì.",
+              "requirements": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Phân cấp công trình",
+      "sections": [
+        {
+          "number": "2.1",
+          "title": "Cấp công trình dân dụng",
+          "articles": [
+            {
+              "number": "2.1.1",
+              "title": "Phân cấp nhà ở và nhà công cộng",
+              "content": "Nhà ở và công trình công cộng được phân thành 5 cấp (Đặc biệt, I, II, III, IV) dựa trên quy mô, chiều cao, tổng diện tích sàn và tầm quan trọng.",
+              "requirements": [
+                {
+                  "type": "classification",
+                  "description": "Phân cấp nhà ở theo chiều cao",
+                  "values": {
+                    "Cấp đặc biệt": "Chiều cao > 200m hoặc nhịp > 100m",
+                    "Cấp I": "Chiều cao > 75m hoặc tổng diện tích sàn > 10.000m²",
+                    "Cấp II": "Chiều cao > 28m hoặc tổng diện tích sàn > 5.000m²",
+                    "Cấp III": "Chiều cao > 15m hoặc tổng diện tích sàn > 1.000m²",
+                    "Cấp IV": "Chiều cao ≤ 15m và tổng diện tích sàn ≤ 1.000m²"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

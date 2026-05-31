@@ -1,0 +1,234 @@
+{
+  "standard_code": "QCVN 06:2022/BXD",
+  "standard_name": "Quy chuẩn kỹ thuật quốc gia về An toàn cháy cho nhà và công trình",
+  "year": 2022,
+  "issuing_body": "Bộ Xây dựng",
+  "status": "active",
+  "scope": "Áp dụng cho thiết kế mới, cải tạo nhà và công trình trên lãnh thổ Việt Nam",
+  "supersedes": "QCVN 06:2021/BXD",
+  "related_standards": [
+    "TCVN 2622:1995",
+    "TCVN 3890:2023",
+    "TCVN 5738:2021"
+  ],
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Quy định chung",
+      "sections": [
+        {
+          "number": "1.1",
+          "title": "Phạm vi điều chỉnh",
+          "articles": [
+            {
+              "number": "1.1.1",
+              "title": "Phạm vi áp dụng",
+              "content": "Quy chuẩn này quy định các yêu cầu chung về an toàn cháy cho nhà và công trình xây dựng mới, cải tạo, thay đổi công năng sử dụng. Áp dụng cho tất cả các loại nhà và công trình trên lãnh thổ Việt Nam, trừ nhà ở riêng lẻ có chiều cao không quá 6 tầng.",
+              "requirements": []
+            },
+            {
+              "number": "1.1.2",
+              "title": "Phân loại nguy hiểm cháy",
+              "content": "Nhà và công trình được phân loại theo mức độ nguy hiểm cháy dựa trên công năng sử dụng, bao gồm các nhóm: F1 (nhà ở, khách sạn), F2 (nhà văn hóa, giải trí), F3 (cơ sở dịch vụ), F4 (cơ sở giáo dục, khoa học), F5 (nhà sản xuất, kho).",
+              "requirements": [
+                {
+                  "type": "classification",
+                  "description": "Phân loại nhà theo nhóm nguy hiểm cháy",
+                  "values": {
+                    "F1": "Nhà ở, ký túc xá, khách sạn, bệnh viện",
+                    "F2": "Rạp chiếu phim, nhà hát, bảo tàng, thư viện",
+                    "F3": "Cửa hàng, trung tâm thương mại, nhà hàng",
+                    "F4": "Trường học, viện nghiên cứu, cơ quan hành chính",
+                    "F5": "Nhà máy sản xuất, nhà kho, bãi đỗ xe"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Bậc chịu lửa của nhà và công trình",
+      "sections": [
+        {
+          "number": "2.1",
+          "title": "Phân loại bậc chịu lửa",
+          "articles": [
+            {
+              "number": "2.1.1",
+              "title": "Các bậc chịu lửa",
+              "content": "Nhà và công trình được phân thành 5 bậc chịu lửa (I, II, III, IV, V) dựa trên giới hạn chịu lửa tối thiểu của các kết cấu xây dựng chính.",
+              "requirements": [
+                {
+                  "type": "fire_resistance",
+                  "description": "Giới hạn chịu lửa tối thiểu của cột chịu lực",
+                  "building_element": "Cột chịu lực",
+                  "values": {
+                    "Bậc I": {
+                      "min_value": 150,
+                      "unit": "phút"
+                    },
+                    "Bậc II": {
+                      "min_value": 120,
+                      "unit": "phút"
+                    },
+                    "Bậc III": {
+                      "min_value": 120,
+                      "unit": "phút"
+                    },
+                    "Bậc IV": {
+                      "min_value": 30,
+                      "unit": "phút"
+                    },
+                    "Bậc V": {
+                      "min_value": 0,
+                      "unit": "phút",
+                      "note": "Không quy định"
+                    }
+                  }
+                },
+                {
+                  "type": "fire_resistance",
+                  "description": "Giới hạn chịu lửa tối thiểu của sàn",
+                  "building_element": "Sàn",
+                  "values": {
+                    "Bậc I": {
+                      "min_value": 60,
+                      "unit": "phút"
+                    },
+                    "Bậc II": {
+                      "min_value": 45,
+                      "unit": "phút"
+                    },
+                    "Bậc III": {
+                      "min_value": 45,
+                      "unit": "phút"
+                    },
+                    "Bậc IV": {
+                      "min_value": 15,
+                      "unit": "phút"
+                    },
+                    "Bậc V": {
+                      "min_value": 0,
+                      "unit": "phút"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Lối thoát nạn",
+      "sections": [
+        {
+          "number": "3.1",
+          "title": "Yêu cầu chung về thoát nạn",
+          "articles": [
+            {
+              "number": "3.1.1",
+              "title": "Số lối thoát nạn tối thiểu",
+              "content": "Mỗi tầng nhà phải có ít nhất 2 lối thoát nạn. Cho phép bố trí 1 lối thoát nạn duy nhất cho tầng nhà khi số người trên tầng đó không quá 20 người và khoảng cách từ vị trí xa nhất đến lối ra thoát nạn không quá 25m.",
+              "requirements": [
+                {
+                  "type": "minimum_count",
+                  "description": "Số lối thoát nạn tối thiểu mỗi tầng",
+                  "min_value": 2,
+                  "unit": "lối",
+                  "exception": "Cho phép 1 lối khi số người ≤ 20 và khoảng cách ≤ 25m"
+                }
+              ]
+            },
+            {
+              "number": "3.1.2",
+              "title": "Chiều rộng lối thoát nạn",
+              "content": "Chiều rộng thông thủy tối thiểu của lối ra thoát nạn phải đảm bảo không nhỏ hơn 1,2m đối với hành lang; 0,9m đối với cửa đi; 1,05m đối với cầu thang bộ khi số người thoát nạn lớn hơn 15 người.",
+              "requirements": [
+                {
+                  "type": "minimum_dimension",
+                  "description": "Chiều rộng tối thiểu hành lang thoát nạn",
+                  "min_value": 1.2,
+                  "unit": "m",
+                  "applies_to": "Hành lang thoát nạn"
+                },
+                {
+                  "type": "minimum_dimension",
+                  "description": "Chiều rộng tối thiểu cửa thoát nạn",
+                  "min_value": 0.9,
+                  "unit": "m",
+                  "applies_to": "Cửa đi thoát nạn"
+                },
+                {
+                  "type": "minimum_dimension",
+                  "description": "Chiều rộng tối thiểu cầu thang thoát nạn",
+                  "min_value": 1.05,
+                  "unit": "m",
+                  "applies_to": "Cầu thang bộ thoát nạn",
+                  "condition": "Khi số người > 15"
+                }
+              ]
+            },
+            {
+              "number": "3.1.3",
+              "title": "Khoảng cách tối đa đến lối thoát nạn",
+              "content": "Khoảng cách giới hạn tối đa từ vị trí xa nhất trong phòng đến lối ra thoát nạn gần nhất phụ thuộc vào bậc chịu lửa của nhà, nhóm nguy hiểm cháy và mật độ người sử dụng.",
+              "requirements": [
+                {
+                  "type": "maximum_distance",
+                  "description": "Khoảng cách tối đa đến lối thoát nạn — nhà nhóm F1",
+                  "applies_to": "F1",
+                  "values": {
+                    "Bậc I, II": {
+                      "max_value": 40,
+                      "unit": "m"
+                    },
+                    "Bậc III": {
+                      "max_value": 30,
+                      "unit": "m"
+                    },
+                    "Bậc IV": {
+                      "max_value": 25,
+                      "unit": "m"
+                    },
+                    "Bậc V": {
+                      "max_value": 20,
+                      "unit": "m"
+                    }
+                  }
+                },
+                {
+                  "type": "maximum_distance",
+                  "description": "Khoảng cách tối đa đến lối thoát nạn — nhà nhóm F4",
+                  "applies_to": "F4",
+                  "values": {
+                    "Bậc I, II": {
+                      "max_value": 50,
+                      "unit": "m"
+                    },
+                    "Bậc III": {
+                      "max_value": 40,
+                      "unit": "m"
+                    },
+                    "Bậc IV": {
+                      "max_value": 30,
+                      "unit": "m"
+                    },
+                    "Bậc V": {
+                      "max_value": 25,
+                      "unit": "m"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

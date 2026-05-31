@@ -1,0 +1,161 @@
+{
+  "standard_code": "TCVN 2737:2023",
+  "standard_name": "Tải trọng và tác động — Tiêu chuẩn thiết kế",
+  "year": 2023,
+  "issuing_body": "Bộ Khoa học và Công nghệ",
+  "status": "active",
+  "scope": "Quy định tải trọng và tác động dùng trong thiết kế kết cấu nhà và công trình xây dựng",
+  "supersedes": "TCVN 2737:1995",
+  "related_standards": [
+    "TCVN 5574:2018",
+    "QCVN 02:2022/BXD"
+  ],
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Phạm vi áp dụng",
+      "sections": [
+        {
+          "number": "1.1",
+          "title": "Quy định chung",
+          "articles": [
+            {
+              "number": "1.1.1",
+              "title": "Phạm vi",
+              "content": "Tiêu chuẩn này quy định tải trọng và tác động, giá trị tiêu chuẩn, hệ số tin cậy về tải trọng dùng khi thiết kế kết cấu và nền móng nhà và công trình xây dựng.",
+              "requirements": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Tải trọng thường xuyên",
+      "sections": [
+        {
+          "number": "3.1",
+          "title": "Trọng lượng bản thân kết cấu",
+          "articles": [
+            {
+              "number": "3.1.1",
+              "title": "Trọng lượng riêng vật liệu",
+              "content": "Trọng lượng riêng tiêu chuẩn của các vật liệu xây dựng thông dụng dùng để tính toán tải trọng thường xuyên.",
+              "requirements": [
+                {
+                  "type": "material_property",
+                  "description": "Trọng lượng riêng tiêu chuẩn",
+                  "values": {
+                    "Bê tông cốt thép": {
+                      "value": 25,
+                      "unit": "kN/m³"
+                    },
+                    "Bê tông thường": {
+                      "value": 24,
+                      "unit": "kN/m³"
+                    },
+                    "Thép": {
+                      "value": 78.5,
+                      "unit": "kN/m³"
+                    },
+                    "Gạch đặc": {
+                      "value": 18,
+                      "unit": "kN/m³"
+                    },
+                    "Gạch rỗng": {
+                      "value": 14,
+                      "unit": "kN/m³"
+                    },
+                    "Gỗ nhóm II-IV": {
+                      "value": 7,
+                      "unit": "kN/m³"
+                    },
+                    "Kính": {
+                      "value": 25,
+                      "unit": "kN/m³"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Tải trọng tạm thời",
+      "sections": [
+        {
+          "number": "4.1",
+          "title": "Hoạt tải sàn",
+          "articles": [
+            {
+              "number": "4.1.1",
+              "title": "Hoạt tải tiêu chuẩn trên sàn",
+              "content": "Hoạt tải tiêu chuẩn trên sàn phụ thuộc vào công năng sử dụng của phòng. Giá trị hoạt tải bao gồm thành phần dài hạn và thành phần ngắn hạn.",
+              "requirements": [
+                {
+                  "type": "live_load",
+                  "description": "Hoạt tải tiêu chuẩn trên sàn theo công năng",
+                  "values": {
+                    "Phòng ở, phòng ngủ": {
+                      "value": 1.5,
+                      "unit": "kN/m²",
+                      "long_term": 0.35
+                    },
+                    "Văn phòng": {
+                      "value": 2.0,
+                      "unit": "kN/m²",
+                      "long_term": 0.7
+                    },
+                    "Phòng họp, hội trường": {
+                      "value": 4.0,
+                      "unit": "kN/m²",
+                      "long_term": 1.4
+                    },
+                    "Sàn cửa hàng, siêu thị": {
+                      "value": 4.0,
+                      "unit": "kN/m²",
+                      "long_term": 1.4
+                    },
+                    "Phòng đọc thư viện": {
+                      "value": 4.0,
+                      "unit": "kN/m²",
+                      "long_term": 2.0
+                    },
+                    "Kho sách thư viện": {
+                      "value": 5.0,
+                      "unit": "kN/m²",
+                      "long_term": 4.0
+                    },
+                    "Sảnh, hành lang tầng 1": {
+                      "value": 3.0,
+                      "unit": "kN/m²",
+                      "long_term": 1.0
+                    },
+                    "Ban công, lô gia": {
+                      "value": 2.0,
+                      "unit": "kN/m²",
+                      "long_term": 0.7
+                    },
+                    "Sân thượng": {
+                      "value": 0.75,
+                      "unit": "kN/m²",
+                      "long_term": 0.35
+                    },
+                    "Gara ô tô con": {
+                      "value": 5.0,
+                      "unit": "kN/m²",
+                      "long_term": 1.5
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

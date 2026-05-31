@@ -1,0 +1,791 @@
+{
+  "filename": "sample_building.ifc",
+  "schema": "IFC2X3",
+  "project_name": "Van Phong ABC",
+  "site_name": "Khu dat A",
+  "building_name": "Toa nha VP-ABC",
+  "storeys": [
+    {
+      "name": "Tang 1",
+      "elevation": 0.0,
+      "elements": []
+    },
+    {
+      "name": "Tang 2",
+      "elevation": 3500.0,
+      "elements": []
+    },
+    {
+      "name": "Tang 3",
+      "elevation": 7000.0,
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "global_id": "f42122fc310f66ef0ff081",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Bac Tang 1",
+      "storey": "Tang 1",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "553b5eab498c3f03b6612d",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Nam Tang 1",
+      "storey": "Tang 1",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "18bc1226e0f8b357b6aed2",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Dong Tang 1",
+      "storey": "Tang 1",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "fb325271cbea51e6650774",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Tay Tang 1",
+      "storey": "Tang 1",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "30c2e8c46f83e90bf15a95",
+      "ifc_type": "IfcWall",
+      "name": "Tuong ngan Tang 1",
+      "storey": "Tang 1",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "e27a2cdd36ef91f91ad7ec",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Bac Tang 2",
+      "storey": "Tang 2",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "cb9900cff21c6d2b89a658",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Nam Tang 2",
+      "storey": "Tang 2",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "feec978dfa4526a9cc280b",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Dong Tang 2",
+      "storey": "Tang 2",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "71261c1cfef4326b986793",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Tay Tang 2",
+      "storey": "Tang 2",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "21d6e5939cb7ef9b499b99",
+      "ifc_type": "IfcWall",
+      "name": "Tuong ngan Tang 2",
+      "storey": "Tang 2",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "264a3dc6a3efe08bb4804d",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Bac Tang 3",
+      "storey": "Tang 3",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "b7a147a266fe4707fbb585",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Nam Tang 3",
+      "storey": "Tang 3",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "4ad21ae83594ac90bc14e3",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Dong Tang 3",
+      "storey": "Tang 3",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "1118ba59c8e086b9c8068f",
+      "ifc_type": "IfcWall",
+      "name": "Tuong Tay Tang 3",
+      "storey": "Tang 3",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "c3fb10ba54951dbdb62bc4",
+      "ifc_type": "IfcWall",
+      "name": "Tuong ngan Tang 3",
+      "storey": "Tang 3",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "f42122fc310f66ef0ff081",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Bac Tang 1",
+      "storey": "Tang 1",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "553b5eab498c3f03b6612d",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Nam Tang 1",
+      "storey": "Tang 1",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "18bc1226e0f8b357b6aed2",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Dong Tang 1",
+      "storey": "Tang 1",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "fb325271cbea51e6650774",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Tay Tang 1",
+      "storey": "Tang 1",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "30c2e8c46f83e90bf15a95",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong ngan Tang 1",
+      "storey": "Tang 1",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "e27a2cdd36ef91f91ad7ec",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Bac Tang 2",
+      "storey": "Tang 2",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "cb9900cff21c6d2b89a658",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Nam Tang 2",
+      "storey": "Tang 2",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "feec978dfa4526a9cc280b",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Dong Tang 2",
+      "storey": "Tang 2",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "71261c1cfef4326b986793",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Tay Tang 2",
+      "storey": "Tang 2",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "21d6e5939cb7ef9b499b99",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong ngan Tang 2",
+      "storey": "Tang 2",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "264a3dc6a3efe08bb4804d",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Bac Tang 3",
+      "storey": "Tang 3",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "b7a147a266fe4707fbb585",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Nam Tang 3",
+      "storey": "Tang 3",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "4ad21ae83594ac90bc14e3",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Dong Tang 3",
+      "storey": "Tang 3",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "1118ba59c8e086b9c8068f",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong Tay Tang 3",
+      "storey": "Tang 3",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "c3fb10ba54951dbdb62bc4",
+      "ifc_type": "IfcWallStandardCase",
+      "name": "Tuong ngan Tang 3",
+      "storey": "Tang 3",
+      "material": "Gach ong 200mm",
+      "properties": {
+        "FireRating": "REI 120",
+        "IsExternal": true
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "a233d6d9e48a30ce53e55b",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C1 Tang 1",
+      "storey": "Tang 1",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "3467827caec394052a4f9e",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C2 Tang 1",
+      "storey": "Tang 1",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "6e64dac39f5ffbfd5e8a10",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C3 Tang 1",
+      "storey": "Tang 1",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "d36a0757074fc706595c9d",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C4 Tang 1",
+      "storey": "Tang 1",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "445fe3e81260e8f3891790",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C5 Tang 1",
+      "storey": "Tang 1",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "f442b5829c81c571ed67d1",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C6 Tang 1",
+      "storey": "Tang 1",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "8bc27e7e85a22a7006c7df",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C1 Tang 2",
+      "storey": "Tang 2",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "033c7f43a219e093c42af9",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C2 Tang 2",
+      "storey": "Tang 2",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "643c2aca2d77055c857cb8",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C3 Tang 2",
+      "storey": "Tang 2",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "521af7d9cc2fe33372ec36",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C4 Tang 2",
+      "storey": "Tang 2",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "7ed6a28ab8c649b8f77025",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C5 Tang 2",
+      "storey": "Tang 2",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "cf6ef87c66410d0eb5e75a",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C6 Tang 2",
+      "storey": "Tang 2",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "21cd4e086630f583cafd8e",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C1 Tang 3",
+      "storey": "Tang 3",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "4b68e5a11d56a80b2cd94e",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C2 Tang 3",
+      "storey": "Tang 3",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "8d71b159429be8f4911afc",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C3 Tang 3",
+      "storey": "Tang 3",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "96bb8141161d615d436a2d",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C4 Tang 3",
+      "storey": "Tang 3",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "29b75c2ec32d862d5dfe4f",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C5 Tang 3",
+      "storey": "Tang 3",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "4d2899aa39cd8f1c91d653",
+      "ifc_type": "IfcColumn",
+      "name": "Cot C6 Tang 3",
+      "storey": "Tang 3",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "a38db96a17231065536e89",
+      "ifc_type": "IfcSlab",
+      "name": "San Tang 1",
+      "storey": "Tang 1",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "513d3c7c612d04b3d88136",
+      "ifc_type": "IfcSlab",
+      "name": "San Tang 2",
+      "storey": "Tang 2",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "dca9716cc7a4057a0e3628",
+      "ifc_type": "IfcSlab",
+      "name": "San Tang 3",
+      "storey": "Tang 3",
+      "material": "Be tong cot thep B25",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "1120e5e39fa2941bb37486",
+      "ifc_type": "IfcDoor",
+      "name": "Cua di D1 Tang 1",
+      "storey": "Tang 1",
+      "material": "",
+      "properties": {
+        "FireRating": "EI 60",
+        "IsExternal": false
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "abdd64e1017d13a6161765",
+      "ifc_type": "IfcDoor",
+      "name": "Cua di D2 Tang 1",
+      "storey": "Tang 1",
+      "material": "",
+      "properties": {
+        "FireRating": "EI 60",
+        "IsExternal": false
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "a9ef89855afac15582d8a5",
+      "ifc_type": "IfcDoor",
+      "name": "Cua di D1 Tang 2",
+      "storey": "Tang 2",
+      "material": "",
+      "properties": {
+        "FireRating": "EI 60",
+        "IsExternal": false
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "3f72f5a2d1b9edf421b29b",
+      "ifc_type": "IfcDoor",
+      "name": "Cua di D2 Tang 2",
+      "storey": "Tang 2",
+      "material": "",
+      "properties": {
+        "FireRating": "EI 60",
+        "IsExternal": false
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "c9acc1de56e4eef7cb27f8",
+      "ifc_type": "IfcDoor",
+      "name": "Cua di D1 Tang 3",
+      "storey": "Tang 3",
+      "material": "",
+      "properties": {
+        "FireRating": "EI 60",
+        "IsExternal": false
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "fa31d7035143d5a3ebf38f",
+      "ifc_type": "IfcDoor",
+      "name": "Cua di D2 Tang 3",
+      "storey": "Tang 3",
+      "material": "",
+      "properties": {
+        "FireRating": "EI 60",
+        "IsExternal": false
+      },
+      "geometry": null
+    },
+    {
+      "global_id": "05cd675f0256424ff1ead7",
+      "ifc_type": "IfcWindow",
+      "name": "Cua so W1 Tang 1",
+      "storey": "Tang 1",
+      "material": "Kinh cuong luc 10mm",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "ff563bd7586737a92b4525",
+      "ifc_type": "IfcWindow",
+      "name": "Cua so W2 Tang 1",
+      "storey": "Tang 1",
+      "material": "Kinh cuong luc 10mm",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "671ea1e37dba983bd82641",
+      "ifc_type": "IfcWindow",
+      "name": "Cua so W3 Tang 1",
+      "storey": "Tang 1",
+      "material": "Kinh cuong luc 10mm",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "fcb6769fc749fbaf3e9490",
+      "ifc_type": "IfcWindow",
+      "name": "Cua so W1 Tang 2",
+      "storey": "Tang 2",
+      "material": "Kinh cuong luc 10mm",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "14a5c322d2dc64e0ccbf40",
+      "ifc_type": "IfcWindow",
+      "name": "Cua so W2 Tang 2",
+      "storey": "Tang 2",
+      "material": "Kinh cuong luc 10mm",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "897f65becc8c45b8e98921",
+      "ifc_type": "IfcWindow",
+      "name": "Cua so W3 Tang 2",
+      "storey": "Tang 2",
+      "material": "Kinh cuong luc 10mm",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "c7c69b17a477eaca569d70",
+      "ifc_type": "IfcWindow",
+      "name": "Cua so W1 Tang 3",
+      "storey": "Tang 3",
+      "material": "Kinh cuong luc 10mm",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "a528189020d9a7c4bb6641",
+      "ifc_type": "IfcWindow",
+      "name": "Cua so W2 Tang 3",
+      "storey": "Tang 3",
+      "material": "Kinh cuong luc 10mm",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "global_id": "be410dbae17c0240d877c8",
+      "ifc_type": "IfcWindow",
+      "name": "Cua so W3 Tang 3",
+      "storey": "Tang 3",
+      "material": "Kinh cuong luc 10mm",
+      "properties": {},
+      "geometry": null
+    }
+  ],
+  "spaces": [
+    {
+      "global_id": "a3b3055e896d11cf5dac1d",
+      "name": "Phong lam viec Tang 1",
+      "long_name": "",
+      "storey": "",
+      "area": 48.0,
+      "bounded_by": []
+    },
+    {
+      "global_id": "2f32f0771889d1f7b37484",
+      "name": "Phong hop Tang 1",
+      "long_name": "",
+      "storey": "",
+      "area": 46.4,
+      "bounded_by": []
+    },
+    {
+      "global_id": "d4a6789a119c3b5fe805ec",
+      "name": "Phong lam viec Tang 2",
+      "long_name": "",
+      "storey": "",
+      "area": 48.0,
+      "bounded_by": []
+    },
+    {
+      "global_id": "57f7cc2574abbea1a6a1a8",
+      "name": "Phong hop Tang 2",
+      "long_name": "",
+      "storey": "",
+      "area": 46.4,
+      "bounded_by": []
+    },
+    {
+      "global_id": "11fc1a25afefe0254ff935",
+      "name": "Phong lam viec Tang 3",
+      "long_name": "",
+      "storey": "",
+      "area": 48.0,
+      "bounded_by": []
+    },
+    {
+      "global_id": "a6ab6ad58a161891ec6e39",
+      "name": "Phong hop Tang 3",
+      "long_name": "",
+      "storey": "",
+      "area": 46.4,
+      "bounded_by": []
+    }
+  ],
+  "materials": [
+    "Be tong cot thep B25",
+    "Gach ong 200mm",
+    "Kinh cuong luc 10mm"
+  ],
+  "element_count": {
+    "IfcWall": 15,
+    "IfcWallStandardCase": 15,
+    "IfcColumn": 18,
+    "IfcSlab": 3,
+    "IfcDoor": 6,
+    "IfcWindow": 9
+  }
+}

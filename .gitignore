@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+docker-volumes/
+
+# Data files (large)
+data/qcvn/*.pdf
+data/tcvn/*.pdf
+data/samples/*.ifc
+
+# Cache
+.cache/
+*.cache
+
+# Logs
+logs/
+*.log
+
+# Test
+.pytest_cache/
+htmlcov/
+.coverage

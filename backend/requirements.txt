@@ -1,0 +1,67 @@
+# FastAPI
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+
+# Database
+sqlalchemy==2.0.35
+psycopg2-binary==2.9.9
+alembic==1.13.2
+
+# Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.0
+
+# AI / LLM
+google-genai==1.14.0
+
+# Embeddings (local)
+fastembed==0.4.1
+
+# Vector DB
+qdrant-client==1.12.1
+
+# Graph DB
+neo4j==5.27.0
+
+# Data Pipeline
+PyMuPDF==1.24.10
+python-docx==1.1.2
+beautifulsoup4==4.12.3
+Pillow==10.4.0
+pandas==2.2.3
+
+# IFC Processing
+ifcopenshell==0.8.1
+
+# LangGraph Agent
+langgraph==0.4.1
+langchain-google-genai==2.1.4
+langchain-core==0.3.52
+
+# 3D Geometry
+trimesh==4.5.3
+numpy==1.26.4
+
+# Cache
+redis==5.2.1
+cachetools==5.5.0
+
+# Rate Limiting
+slowapi==0.1.9
+
+# Logging
+structlog==24.4.0
+
+# Utilities
+python-dotenv==1.0.1
+pydantic==2.9.2
+pydantic-settings==2.5.2
+email-validator==2.2.0
+httpx==0.28.1
+
+# Testing
+pytest==8.3.3
+pytest-asyncio==0.24.0
+

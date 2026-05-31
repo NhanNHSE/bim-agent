@@ -1,0 +1,148 @@
+name: BIM AI Agent CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # ── Unit Tests (no Docker, fast) ──────────────────────────
+  unit-tests:
+    name: Unit & Security Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pytest pytest-asyncio structlog pydantic pydantic-settings \
+                      python-dotenv email-validator cachetools redis
+
+      - name: Run security tests
+        env:
+          DEBUG: "true"
+          POSTGRES_PASSWORD: "ci_test_password"
+          NEO4J_PASSWORD: "ci_test_password"
+        run: python -m pytest tests/test_security.py -v --tb=short
+
+      - name: Run IFC pipeline unit tests
+        env:
+          DEBUG: "true"
+          POSTGRES_PASSWORD: "ci_test_password"
+          NEO4J_PASSWORD: "ci_test_password"
+        run: python -m pytest tests/test_ifc_pipeline.py -v --tb=short -k "not requires_ifcopenshell"
+
+  # ── Docker Build Smoke Test ───────────────────────────────
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: unit-tests
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t bim-backend:ci ./backend
+
+      - name: Build frontend image
+        run: docker build -t bim-frontend:ci ./frontend
+
+      - name: Verify backend image
+        run: docker run --rm bim-backend:ci python -c "from src.core.config import Settings; print('Config OK')"
+
+  # ── Integration Tests (full Docker stack) ─────────────────
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env for CI
+        run: |
+          cat > .env << 'EOF'
+          GEMINI_API_KEY=ci_dummy_key
+          NEO4J_PASSWORD=ci_test_neo4j_2026
+          POSTGRES_PASSWORD=ci_test_postgres_2026
+          JWT_SECRET_KEY=ci_test_jwt_secret_key_at_least_32_characters_long
+          DEBUG=true
+          EOF
+
+      - name: Start services
+        run: docker compose up -d --build --wait --wait-timeout 120
+
+      - name: Wait for backend health
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8001/api/v1/health > /dev/null 2>&1; then
+              echo "Backend healthy"
+              exit 0
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 5
+          done
+          echo "Backend failed to start"
+          docker compose logs backend
+          exit 1
+
+      - name: Run IFC integration tests in container
+        run: |
+          docker exec bim-backend python -m pytest tests/test_ifc_pipeline.py -v --tb=short
+
+      - name: Collect logs on failure
+        if: failure()
+        run: docker compose logs --tail=100
+
+      - name: Teardown
+        if: always()
+        run: docker compose down -v
+
+  # ── Lint (optional, fast) ─────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install minimal deps
+        run: |
+          pip install --upgrade pip
+          pip install structlog pydantic pydantic-settings python-dotenv cachetools
+
+      - name: Check core module syntax
+        env:
+          DEBUG: "true"
+          POSTGRES_PASSWORD: "lint"
+          NEO4J_PASSWORD: "lint"
+        run: |
+          python -m py_compile backend/src/core/config.py
+          python -m py_compile backend/src/core/errors.py
+          python -m py_compile backend/src/core/llm.py
+          python -m py_compile backend/src/core/logging.py
+          python -m py_compile backend/src/core/exceptions.py
+          python -m py_compile backend/src/database/models.py
+          echo "All core modules compiled OK"

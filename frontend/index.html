@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIM AI Agent — Trợ lý BIM & Quy chuẩn Xây dựng</title>
+    <meta name="description" content="AI Agent tra cứu QCVN/TCVN xây dựng với Knowledge Graph và GraphRAG">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Mobile sidebar overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ===== Auth Screen ===== -->
+    <div id="auth-screen" class="auth-screen">
+        <div class="auth-container">
+            <div class="auth-brand">
+                <div class="auth-logo">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <rect width="48" height="48" rx="12" fill="url(#logo-grad)"/>
+                        <path d="M14 34V18L24 12L34 18V34" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 26H34" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                        <path d="M20 34V28H28V34" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs><linearGradient id="logo-grad" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
+                    </svg>
+                </div>
+                <h1>BIM AI Agent</h1>
+                <p class="auth-subtitle">Trợ lý Quy chuẩn Xây dựng Việt Nam</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="email@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Mật khẩu</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary" id="login-btn">Đăng nhập</button>
+                <p class="auth-switch">Chưa có tài khoản? <a href="#" id="show-register">Đăng ký</a></p>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="reg-name">Họ và tên</label>
+                    <input type="text" id="reg-name" placeholder="Nguyễn Văn A" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" placeholder="email@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Mật khẩu</label>
+                    <input type="password" id="reg-password" placeholder="Tối thiểu 6 ký tự" required minlength="6">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reg-role">Vai trò</label>
+                        <select id="reg-role">
+                            <option value="engineer">Kỹ sư</option>
+                            <option value="architect">Kiến trúc sư</option>
+                            <option value="project_manager">Quản lý dự án</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-company">Công ty</label>
+                        <input type="text" id="reg-company" placeholder="Tên công ty">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" id="register-btn">Đăng ký</button>
+                <p class="auth-switch">Đã có tài khoản? <a href="#" id="show-login">Đăng nhập</a></p>
+            </form>
+
+            <div id="auth-error" class="auth-error"></div>
+        </div>
+    </div>
+
+    <!-- ===== Main App ===== -->
+    <div id="app" class="app hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+                        <rect width="48" height="48" rx="12" fill="url(#logo-grad2)"/>
+                        <path d="M14 34V18L24 12L34 18V34" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20 34V28H28V34" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs><linearGradient id="logo-grad2" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
+                    </svg>
+                    <span>BIM AI</span>
+                </div>
+                <button id="new-chat-btn" class="btn-new-chat" title="Cuộc hội thoại mới">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+            </div>
+            <button id="ifc-upload-btn" class="btn-ifc-upload" title="Upload file IFC">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>Upload IFC Model</span>
+            </button>
+            <div class="sidebar-conversations" id="conversations-list">
+                <!-- Populated by JS -->
+            </div>
+            <div class="sidebar-footer">
+                <div class="user-info" id="user-info">
+                    <div class="user-avatar" id="user-avatar">K</div>
+                    <div class="user-details">
+                        <span class="user-name" id="user-name">User</span>
+                        <span class="user-role" id="user-role">engineer</span>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn-logout" title="Đăng xuất">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <button id="toggle-sidebar" class="btn-icon" title="Toggle sidebar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <h2 id="current-title" class="topbar-title">Cuộc hội thoại mới</h2>
+                <button id="toggle-graph" class="btn-icon btn-graph" title="Đồ thị kiến thức">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><line x1="8.5" y1="7.5" x2="15.5" y2="16.5"/><line x1="15.5" y1="7.5" x2="8.5" y2="16.5"/></svg>
+                </button>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Chat Panel -->
+                <div class="chat-panel" id="chat-panel">
+                    <!-- Welcome screen -->
+                    <div class="welcome-screen" id="welcome-screen">
+                        <div class="welcome-icon">
+                            <svg width="64" height="64" viewBox="0 0 48 48" fill="none">
+                                <rect width="48" height="48" rx="16" fill="url(#wg)"/>
+                                <path d="M14 34V18L24 12L34 18V34" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M14 26H34" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+                                <path d="M20 34V28H28V34" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <defs><linearGradient id="wg" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
+                            </svg>
+                        </div>
+                        <h2>Trợ lý BIM & Quy chuẩn Xây dựng</h2>
+                        <p>Hỏi về QCVN/TCVN, truy vấn mô hình IFC, kiểm tra vật liệu</p>
+                        <div class="suggestions">
+                            <button class="suggestion-chip" data-query="Yêu cầu PCCC cho nhà cao tầng nhóm F1 theo QCVN 06?">
+                                🔥 Yêu cầu PCCC nhà cao tầng
+                            </button>
+                            <button class="suggestion-chip" data-query="Hoạt tải tiêu chuẩn trên sàn văn phòng là bao nhiêu?">
+                                📐 Hoạt tải sàn văn phòng
+                            </button>
+                            <button class="suggestion-chip" data-query="Chiều rộng tối thiểu lối thoát nạn và cầu thang bộ?">
+                                🚪 Chiều rộng lối thoát nạn
+                            </button>
+                            <button class="suggestion-chip" data-query="Trọng lượng riêng của bê tông cốt thép theo TCVN 2737?">
+                                🧱 Trọng lượng riêng vật liệu
+                            </button>
+                            <button class="suggestion-chip" data-query="Tầng 1 có bao nhiêu cột và tường?">
+                                🏗️ Truy vấn mô hình BIM
+                            </button>
+                            <button class="suggestion-chip" data-query="Bê tông B25 được sử dụng ở đâu trong mô hình?">
+                                🔍 Vật liệu trong mô hình
+                            </button>
+                            <button class="suggestion-chip" data-query="Thiết kế tòa nhà văn phòng 5 tầng, diện tích 200m², kết cấu BTCT, 2 cầu thang bộ">
+                                ✨ Thiết kế tòa nhà mới
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Messages -->
+                    <div class="messages" id="messages"></div>
+                </div>
+
+                <!-- Graph Panel -->
+                <div class="graph-panel hidden" id="graph-panel">
+                    <div class="graph-header">
+                        <h3>🕸️ Đồ thị Kiến thức</h3>
+                        <div class="graph-stats" id="graph-stats"></div>
+                    </div>
+                    <div class="graph-canvas" id="graph-canvas">
+                        <p class="graph-placeholder">Gửi câu hỏi để xem các mối quan hệ trong đồ thị kiến thức</p>
+                    </div>
+                    <div class="graph-legend">
+                        <span class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span>Quy chuẩn</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#06b6d4"></span>Điều khoản</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>Yêu cầu</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#10b981"></span>Vật liệu</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#ef4444"></span>Loại công trình</span>
+                    </div>
+                </div>
+
+                <!-- IFC 3D Viewer Panel -->
+                <div class="ifc-viewer-panel hidden" id="ifc-viewer-panel">
+                    <div class="viewer-header">
+                        <h3>🏗️ Mô hình BIM 3D</h3>
+                        <button class="btn-icon btn-close-viewer" id="close-viewer-btn" title="Đóng">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                    </div>
+                    <div class="viewer-toolbar" id="viewer-toolbar">
+                        <button class="toolbar-btn" id="viewer-download" title="Tải file IFC">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span>Tải IFC</span>
+                        </button>
+                        <button class="toolbar-btn" id="viewer-screenshot" title="Chụp ảnh mô hình">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            <span>Chụp ảnh</span>
+                        </button>
+                        <button class="toolbar-btn" id="viewer-wireframe" title="Chế độ khung dây">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+                            <span>Wireframe</span>
+                        </button>
+                        <button class="toolbar-btn" id="viewer-reset" title="Reset góc nhìn">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                            <span>Reset</span>
+                        </button>
+                        <button class="toolbar-btn" id="viewer-fullscreen" title="Toàn màn hình">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                            <span>Phóng to</span>
+                        </button>
+                    </div>
+                    <div class="viewer-body">
+                        <div id="ifc-3d-container" class="ifc-3d-container">
+                            <p class="graph-placeholder">Upload file IFC để xem mô hình 3D</p>
+                        </div>
+                        <!-- Element Properties Panel -->
+                        <div id="element-props-panel" class="element-props-panel hidden">
+                            <div class="props-header">
+                                <h4 id="props-title">📋 Chi tiết cấu kiện</h4>
+                                <button class="btn-icon" id="props-close" title="Đóng">✕</button>
+                            </div>
+                            <div class="props-body" id="props-body">
+                                <p class="props-hint">Click vào cấu kiện trên mô hình 3D để xem chi tiết</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Model Statistics Dashboard -->
+                    <div id="model-stats-dashboard" class="model-stats-dashboard hidden">
+                        <div class="stats-grid" id="stats-grid"></div>
+                    </div>
+                </div>
+            </div>
+
+    <!-- IFC Upload Modal -->
+    <div id="ifc-upload-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📐 Upload Mô hình IFC</h3>
+                <button class="modal-close" id="ifc-modal-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="ifc-dropzone" class="dropzone">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <p>Kéo thả file <strong>.ifc</strong> vào đây</p>
+                    <p class="dropzone-hint">hoặc click để chọn file</p>
+                    <input type="file" id="ifc-file-input" accept=".ifc" hidden>
+                </div>
+                <div id="ifc-upload-progress" class="upload-progress hidden">
+                    <div class="progress-info">
+                        <span id="ifc-filename">file.ifc</span>
+                        <span id="ifc-progress-text">Đang xử lý...</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="ifc-progress-fill"></div>
+                    </div>
+                </div>
+                <div id="ifc-upload-result" class="upload-result hidden"></div>
+                <button id="ifc-generate-sample" class="btn-secondary" style="margin-top:12px;width:100%">
+                    🏢 Tạo mô hình mẫu (3 tầng văn phòng)
+                </button>
+            </div>
+        </div>
+    </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea
+                        id="message-input"
+                        placeholder="Hỏi về quy chuẩn xây dựng..."
+                        rows="1"
+                        maxlength="2000"
+                    ></textarea>
+                    <button id="send-btn" class="btn-send" disabled title="Gửi (Enter)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </div>
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="consult" id="mode-consult">
+                        <span class="mode-icon">💬</span> Giải đáp
+                    </button>
+                    <button class="mode-btn" data-mode="design" id="mode-design">
+                        <span class="mode-icon">🏗️</span> Thiết kế
+                    </button>
+                    <button class="mode-btn" data-mode="analyze" id="mode-analyze">
+                        <span class="mode-icon">📊</span> Phân tích BIM
+                    </button>
+                    <span class="mode-hint" id="mode-hint">Tra cứu QCVN/TCVN, tư vấn kỹ thuật</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/ifc-upload.js"></script>
+    <script src="js/ui-polish.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

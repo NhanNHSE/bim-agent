@@ -1,0 +1,183 @@
+# ==========================================================
+# BIM AI Agent — Production Docker Compose (Ubuntu)
+# ==========================================================
+# Usage:
+#   Production:  docker compose up -d --build
+#   Development: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+#   Stop:        docker compose down
+#   Reset:       docker compose down -v
+# ==========================================================
+
+services:
+  # --- Backend API ---
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bim-backend
+    ports:
+      - "${BACKEND_PORT:-8001}:8000"
+    env_file:
+      - .env
+    volumes:
+      - ifc_data:/app/data/ifc
+      - hf_cache:/home/appuser/.cache/huggingface
+      - fastembed_cache:/home/appuser/.cache/fastembed
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - bim-network
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    restart: unless-stopped
+    command: ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1", "--timeout-keep-alive", "65", "--access-log"]
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+        reservations:
+          memory: 1G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # --- Frontend (Nginx) ---
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bim-frontend
+    ports:
+      - "${FRONTEND_PORT:-3001}:80"
+    depends_on:
+      - backend
+    networks:
+      - bim-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # --- Qdrant Vector Database ---
+  qdrant:
+    image: qdrant/qdrant:v1.13.2
+    container_name: bim-qdrant
+    # No external ports in production — access via internal network only
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ': > /dev/tcp/localhost/6333' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bim-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  # --- Neo4j Graph Database ---
+  neo4j:
+    image: neo4j:5.26-community
+    container_name: bim-neo4j
+    # No external ports in production
+    environment:
+      NEO4J_AUTH: "${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD}"
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*"
+      NEO4J_server_memory_heap_initial__size: "512m"
+      NEO4J_server_memory_heap_max__size: "1G"
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
+    networks:
+      - bim-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  # --- PostgreSQL Database ---
+  postgres:
+    image: postgres:16-alpine
+    container_name: bim-postgres
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-bim_agent}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB:-bim_agent_db}"
+    # No external ports in production
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bim_agent} -d ${POSTGRES_DB:-bim_agent_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bim-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  # --- Redis Cache ---
+  redis:
+    image: redis:7-alpine
+    container_name: bim-redis
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    # No external ports in production
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bim-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+volumes:
+  postgres_data:
+  qdrant_data:
+  neo4j_data:
+  neo4j_logs:
+  redis_data:
+  ifc_data:
+  hf_cache:
+  fastembed_cache:
+
+networks:
+  bim-network:
+    driver: bridge
