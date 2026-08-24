@@ -22,7 +22,10 @@ services:
       - ./backend/src:/app/src
       - ./backend/scripts:/app/scripts
       - ./backend/data:/app/data
-      - ./backend/tests:/app/tests
+      - ./tests/unit:/app/tests
+      - ./tests/scripts:/app/tests_scripts
+      - ./tests/outputs:/app/tests_outputs
+
     deploy:
       resources:
         limits:

@@ -9,7 +9,9 @@ import pytest
 from unittest.mock import MagicMock, patch
 
 # Add backend source to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend"))
+sys.path.insert(0, backend_path)
+
 
 # Override env vars BEFORE importing any app modules
 os.environ["DATABASE_URL"] = "sqlite:///./test.db"
