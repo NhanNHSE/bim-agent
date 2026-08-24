@@ -72,8 +72,7 @@ const Auth = {
 
     _checkExistingSession() {
         const token = localStorage.getItem('token');
-        const user = localStorage.getItem('user');
-        if (token && user) {
+        if (token) {
             this._showApp();
         }
     },

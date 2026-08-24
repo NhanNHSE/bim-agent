@@ -109,4 +109,13 @@ const Skeleton = {
 document.addEventListener('DOMContentLoaded', () => {
     Theme.init();
     ConnectionStatus.init();
+
+    // Attach UI Polish micro-interactions
+    document.body.addEventListener('click', (e) => {
+        const target = e.target.closest('.btn-primary, .btn-secondary, .suggestion-chip, .quick-action-card');
+        if (!target) return;
+        target.classList.add('pulse-effect');
+        setTimeout(() => target.classList.remove('pulse-effect'), 400);
+    });
 });
+

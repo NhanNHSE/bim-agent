@@ -45,3 +45,8 @@ logs/
 .pytest_cache/
 htmlcov/
 .coverage
+
+# Tooling / Local agent files
+.agent/
+.understand-anything/
+
