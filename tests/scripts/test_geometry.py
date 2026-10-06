@@ -1,6 +1,3 @@
-import sys, os
-backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend"))
-sys.path.insert(0, backend_dir)
 from src.data_pipeline.ifc_geometry import extract_geometry
 
 result = extract_geometry('/app/data/ifc/Toa_nha_VP_5_tang.ifc')

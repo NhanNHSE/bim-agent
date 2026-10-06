@@ -16,7 +16,7 @@ env:
 
 jobs:
   # ── Lint (fast) ───────────────────────────────────────────
-  # Only fatal errors for now (syntax errors, undefined names) — widen rule set later.
+  # Rule set lives in backend/pyproject.toml ([tool.ruff.lint]); applied to tests/ too.
   lint:
     name: Lint
     runs-on: ubuntu-24.04
@@ -30,8 +30,8 @@ jobs:
       - name: Install ruff
         run: pip install ruff==0.6.9
 
-      - name: Ruff (fatal errors only)
-        run: ruff check --select E9,F63,F7,F82 --output-format=github backend tests
+      - name: Ruff
+        run: ruff check --config backend/pyproject.toml --output-format=github backend tests
 
   # ── Secret scan (full history) ────────────────────────────
   secrets:
@@ -72,23 +72,24 @@ jobs:
         run: |
           pip install --upgrade pip "setuptools>=83"
           pip install -r requirements.txt
+          pip install -e . --no-deps  # makes `src` importable; also validates pyproject.toml
           # CI-only: PR annotations for failed tests, coverage, dependency audit
           pip install pytest-github-actions-annotate-failures==0.4.2 pytest-cov==7.1.0 pip-audit==2.10.1
 
       - name: Run unit tests
         run: >
-          python -m pytest -c pytest.ini --rootdir=. ../tests/unit
+          python -m pytest -c pyproject.toml --rootdir=. ../tests/unit
           -v --tb=short --junitxml=../test-results/unit.xml
           --cov=src --cov-report=term-missing:skip-covered --cov-report=xml:../test-results/coverage.xml
 
-      # Coverage gate lives here: pytest --cov-fail-under printed FAIL but exited 0 (pytest 9 + pytest-cov 7).
-      # Floor = baseline 51.54% measured 2026-10-06; raise it as tests are added, never lower it
+      # Coverage gate lives here (pytest --cov-fail-under printed FAIL but exited 0 with pytest 9 + pytest-cov 7).
+      # Threshold and report options: [tool.coverage.report] in backend/pyproject.toml
       - name: Coverage summary
         if: always()
         run: |
           echo '## Coverage' >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          python -m coverage report --skip-covered --sort=cover --fail-under=51 >> "$GITHUB_STEP_SUMMARY"
+          python -m coverage report >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
       # Blocking: any vulnerability not listed (with a reason) in backend/.pip-audit-ignore fails CI

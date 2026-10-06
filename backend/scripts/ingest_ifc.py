@@ -12,8 +12,6 @@ import json
 import os
 import sys
 
-# Add parent to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.data_pipeline.ifc_parser import parse_ifc, get_ifc_summary
 from src.knowledge_graph.ifc_to_graph import build_ifc_graph

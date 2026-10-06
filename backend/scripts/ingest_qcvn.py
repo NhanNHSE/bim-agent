@@ -17,9 +17,7 @@ Usage:
 
 import argparse
 import os
-import sys
 
-sys.path.insert(0, "/app")
 
 from src.data_pipeline.sample_data_generator import generate_sample_data
 from src.data_pipeline.qcvn_parser import parse_pdf_to_json, parse_directory

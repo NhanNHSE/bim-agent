@@ -4,13 +4,8 @@ Uses SQLite in-memory database for isolation — no PostgreSQL, Neo4j, or Qdrant
 """
 
 import os
-import sys
 import pytest
 from unittest.mock import MagicMock, patch
-
-# Add backend source to path
-backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend"))
-sys.path.insert(0, backend_path)
 
 
 # Override env vars BEFORE importing any app modules

@@ -45,7 +45,7 @@ COPY backend/src/ /app/src/
 COPY backend/scripts/ /app/scripts/
 COPY backend/alembic/ /app/alembic/
 COPY backend/alembic.ini /app/alembic.ini
-COPY backend/pytest.ini /app/pytest.ini
+COPY backend/pyproject.toml /app/pyproject.toml
 COPY tests/unit/ /app/tests/
 
 
@@ -59,6 +59,9 @@ RUN mkdir -p /app/data/ifc /app/data/pdf /app/data/cache \
 USER appuser
 
 # Cache directories for embedding models
+# Make the `src` package importable from scripts/ and tests/ without sys.path hacks
+ENV PYTHONPATH=/app
+
 ENV HF_HOME=/home/appuser/.cache/huggingface
 ENV FASTEMBED_CACHE_PATH=/home/appuser/.cache/fastembed
 

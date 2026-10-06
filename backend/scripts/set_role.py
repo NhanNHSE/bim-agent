@@ -6,8 +6,6 @@ Privileged roles cannot be chosen at /register, so operators assign them here:
 
 import argparse
 import sys
-import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from src.core.security import Role
 from src.database.models import User
