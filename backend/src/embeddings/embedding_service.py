@@ -1,7 +1,7 @@
 """Local embedding service using FastEmbed (no API limits)."""
 
 import os
-os.environ["HF_HUB_OFFLINE"] = "1"
+os.environ.setdefault("HF_HUB_OFFLINE", "1")  # override with HF_HUB_OFFLINE=0 to download the model (CI, first run)
 if not os.environ.get("FASTEMBED_CACHE_PATH"):
     os.environ["FASTEMBED_CACHE_PATH"] = "/home/appuser/.cache/fastembed"
 

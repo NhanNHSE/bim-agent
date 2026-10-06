@@ -86,6 +86,12 @@ docker exec bim-backend python scripts/ingest_qcvn.py
 docker exec bim-backend python scripts/build_graph.py
 ```
 
+### 5. Cấp quyền quản trị
+Người dùng chỉ tự đăng ký được vai trò `engineer`, `architect` hoặc `viewer`. Vai trò `admin` / `project_manager` do người vận hành cấp cho tài khoản đã đăng ký:
+```bash
+docker exec bim-backend python scripts/set_role.py --email user@example.com --role admin
+```
+
 ---
 
 ## Truy cập Dịch vụ

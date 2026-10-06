@@ -31,6 +31,9 @@ class Role:
     ALL = [ADMIN, PM, ENGINEER, ARCHITECT, VIEWER]
     CAN_UPLOAD = [ADMIN, PM, ENGINEER, ARCHITECT]
     CAN_MANAGE = [ADMIN, PM]
+    # Roles a user may pick at /register — privileged roles are granted
+    # by an operator via scripts/set_role.py
+    SELF_REGISTER = [ENGINEER, ARCHITECT, VIEWER]
 
 
 # --- Password utilities ---
