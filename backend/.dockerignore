@@ -1,0 +1,10 @@
+# Keep the build context small and free of local state
+**/__pycache__
+**/*.py[cod]
+*.egg-info
+.pytest_cache
+.coverage
+.venv
+.env
+tests/outputs
+data/cache

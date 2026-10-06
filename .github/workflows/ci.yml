@@ -16,7 +16,7 @@ env:
 
 jobs:
   # ── Lint (fast) ───────────────────────────────────────────
-  # Rule set lives in backend/pyproject.toml ([tool.ruff.lint]); applied to tests/ too.
+  # Rule set lives in backend/pyproject.toml ([tool.ruff.lint]).
   lint:
     name: Lint
     runs-on: ubuntu-24.04
@@ -31,7 +31,7 @@ jobs:
         run: pip install ruff==0.6.9
 
       - name: Ruff
-        run: ruff check --config backend/pyproject.toml --output-format=github backend tests
+        run: ruff check --config backend/pyproject.toml --output-format=github backend
 
   # ── Secret scan (full history) ────────────────────────────
   secrets:
@@ -78,7 +78,7 @@ jobs:
 
       - name: Run unit tests
         run: >
-          python -m pytest -c pyproject.toml --rootdir=. ../tests/unit
+          python -m pytest tests/unit
           -v --tb=short --junitxml=../test-results/unit.xml
           --cov=src --cov-report=term-missing:skip-covered --cov-report=xml:../test-results/coverage.xml
 
@@ -119,12 +119,11 @@ jobs:
 
       - uses: docker/setup-buildx-action@v4
 
-      # Context must be the repo root: the Dockerfile copies backend/ and tests/unit/
+      # Build context is backend/ (src, scripts, tests all live there)
       - name: Build backend image
         uses: docker/build-push-action@v7
         with:
-          context: .
-          file: backend/Dockerfile
+          context: ./backend
           tags: bim-backend:ci
           load: true
           cache-from: type=gha,scope=backend
@@ -139,9 +138,9 @@ jobs:
           cache-from: type=gha,scope=frontend
           cache-to: type=gha,scope=frontend,mode=max
 
-      # Same command as the documented `docker exec bim-backend pytest tests`
+      # Unit tests against the built image (integration tests skip without the running stack)
       - name: Run unit tests inside backend image
-        run: docker run --rm -e DEBUG=true bim-backend:ci pytest tests -q --tb=short
+        run: docker run --rm -e DEBUG=true bim-backend:ci pytest tests/unit -q --tb=short
 
   # ── Integration Tests (full Docker stack) ─────────────────
   # Runs on PRs too: when it ran on main only, a broken frontend healthcheck was found after merge.
@@ -180,8 +179,8 @@ jobs:
           docker compose logs backend
           exit 1
 
-      - name: Run tests inside running stack
-        run: docker exec bim-backend pytest tests -q --tb=short
+      - name: Integration tests against the running stack
+        run: docker exec -e BIM_INTEGRATION=1 bim-backend pytest tests/integration -v --tb=short
 
       - name: Collect logs on failure
         if: failure()

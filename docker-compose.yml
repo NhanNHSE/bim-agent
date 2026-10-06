@@ -12,8 +12,8 @@ services:
   # --- Backend API ---
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: bim-backend
 
     ports:

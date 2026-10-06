@@ -109,20 +109,20 @@ docker exec bim-backend python scripts/set_role.py --email user@example.com --ro
 
 Dự án tích hợp đầy đủ hệ thống kiểm thử tự động từ Unit/Integration Tests cho tới kiểm thử giao diện người dùng E2E.
 
-Mọi push/PR đều chạy CI (`.github/workflows/ci.yml`): lint, quét secret, unit test + coverage, pip-audit, build Docker và chạy test trong image. Cấu hình pytest/coverage/ruff nằm trong `backend/pyproject.toml`.
+Mọi push/PR đều chạy CI (`.github/workflows/ci.yml`): lint, quét secret, unit test + coverage, pip-audit, build Docker, và integration test trên stack Docker thật. Cấu hình pytest/coverage/ruff nằm trong `backend/pyproject.toml`; chi tiết cách chạy ở [backend/tests/README.md](backend/tests/README.md).
 
 Chạy toàn bộ unit test trên máy (không cần Docker):
 ```bash
 cd backend
 pip install -r requirements.txt
 pip install -e . --no-deps          # để import được package `src`
-python -m pytest -c pyproject.toml --rootdir=. ../tests/unit
+python -m pytest tests/unit
 ```
 
 ### 1. Chạy Backend Pipeline & Thiết kế Cầu (38 Test Cases)
 Hệ thống kiểm thử này phủ toàn bộ luồng thiết kế cầu dầm BTCT, tính tuân thủ quy chuẩn, sinh hình học IFC4, trích xuất lưới và định tuyến câu lệnh thiết kế:
 ```bash
-docker exec bim-backend python -m pytest tests/test_ifc_pipeline.py -v --tb=short
+docker exec bim-backend pytest tests/unit/test_ifc_pipeline.py -v --tb=short
 ```
 
 * **`TestBridgeSpec`**: Kiểm tra giá trị mặc định, tự động tính số trụ cầu (`num_piers = num_spans - 1`), kiểm tra ràng buộc kích thước (`ValueError` cho giá trị $\le 0$).
