@@ -36,8 +36,11 @@ def _safe_filename(filename: str) -> str:
     # Strip any directory components
     name = os.path.basename(filename)
 
-    # Reject empty, hidden files, or names that changed after basename
-    if not name or name != filename or name.startswith("."):
+    # Reject empty, hidden files, or names that changed after basename.
+    # Backslash and ':' are rejected explicitly: basename() on Linux does not
+    # treat Windows separators or drive letters as path components.
+    if (not name or name != filename or name.startswith(".")
+            or "\\" in name or ":" in name):
         raise HTTPException(400, "Tên file không hợp lệ")
 
     # Only allow .ifc extension

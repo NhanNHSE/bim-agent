@@ -19,11 +19,11 @@ jobs:
   # Only fatal errors for now (syntax errors, undefined names) — widen rule set later.
   lint:
     name: Lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
@@ -36,7 +36,7 @@ jobs:
   # ── Unit Tests (no Docker, full dependencies) ─────────────
   unit-tests:
     name: Unit Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: ./backend
@@ -44,10 +44,10 @@ jobs:
       DEBUG: "true"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
@@ -57,6 +57,8 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
+          # CI-only: failed tests show up as annotations on the PR
+          pip install pytest-github-actions-annotate-failures==0.4.2
 
       - name: Run unit tests
         run: >
@@ -65,7 +67,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: unit-test-results
           path: test-results/
@@ -73,17 +75,17 @@ jobs:
   # ── Docker Build + tests inside the image ─────────────────
   docker-build:
     name: Docker Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: unit-tests
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       # Context must be the repo root: the Dockerfile copies backend/ and tests/unit/
       - name: Build backend image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: backend/Dockerfile
@@ -93,7 +95,7 @@ jobs:
           cache-to: type=gha,scope=backend,mode=max
 
       - name: Build frontend image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: ./frontend
           tags: bim-frontend:ci
@@ -108,12 +110,12 @@ jobs:
   # ── Integration Tests (full Docker stack) ─────────────────
   integration-tests:
     name: Integration Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: docker-build
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Create .env for CI
         run: |
