@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.get("/")
-async def list_documents(current_user: dict = Depends(get_current_user)):
+def list_documents(current_user: dict = Depends(get_current_user)):
     """List indexed documents/collections."""
     info = get_collection_info()
     return {

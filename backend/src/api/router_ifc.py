@@ -5,6 +5,7 @@ import json
 from typing import Optional
 
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Query
+from fastapi.concurrency import run_in_threadpool
 
 from src.core.config import get_settings
 from src.core.security import get_current_user, require_roles, Role
@@ -75,8 +76,14 @@ async def upload_ifc(
     """
     filename = _safe_filename(file.filename or "")
     content = await _read_limited(file)
+    user_id = int(current_user.get("sub", 0))
 
-    # Save uploaded file
+    # Writing, parsing, embedding and graph building all block — keep them off the event loop
+    return await run_in_threadpool(_store_and_index, filename, content, user_id)
+
+
+def _store_and_index(filename: str, content: bytes, user_id: int) -> dict:
+    """Save an uploaded IFC, then parse, embed and add it to the graph (blocking)."""
     upload_dir = settings.ifc_upload_dir
     os.makedirs(upload_dir, exist_ok=True)
     filepath = os.path.join(upload_dir, filename)
@@ -106,7 +113,6 @@ async def upload_ifc(
         with open(json_path, "w", encoding="utf-8") as f:
             f.write(parsed.to_json())
 
-        user_id = int(current_user.get("sub", 0))
         log_action("upload_ifc", user_id=user_id, detail={
             "filename": filename,
             "size_bytes": len(content),
@@ -134,7 +140,7 @@ async def upload_ifc(
 
 
 @router.get("/stats")
-async def get_ifc_stats(
+def get_ifc_stats(
     current_user: dict = Depends(get_current_user),
 ):
     """Get summary statistics of imported IFC data."""
@@ -147,7 +153,7 @@ async def get_ifc_stats(
 
 
 @router.get("/elements")
-async def get_elements(
+def get_elements(
     storey: Optional[str] = Query(None, description="Tên tầng"),
     material: Optional[str] = Query(None, description="Tên vật liệu"),
     current_user: dict = Depends(get_current_user),
@@ -169,7 +175,7 @@ async def get_elements(
 
 
 @router.get("/geometry/{filename}")
-async def get_geometry(
+def get_geometry(
     filename: str,
     current_user: dict = Depends(get_current_user),
 ):
@@ -188,7 +194,7 @@ async def get_geometry(
 
 
 @router.post("/generate-sample")
-async def generate_sample(
+def generate_sample(
     current_user: dict = Depends(get_current_user),
 ):
     """Generate a sample IFC file for testing."""
@@ -201,7 +207,7 @@ async def generate_sample(
 
 
 @router.post("/design")
-async def design_building(
+def design_building(
     req: dict,
     current_user: dict = Depends(get_current_user),
 ):
@@ -237,7 +243,7 @@ async def design_building(
 
 
 @router.get("/download/{filename}")
-async def download_ifc(
+def download_ifc(
     filename: str,
     current_user: dict = Depends(get_current_user),
 ):

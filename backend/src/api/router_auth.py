@@ -142,7 +142,7 @@ class LoginRequest(BaseModel):
 # --- Endpoints ---
 
 @router.post("/register")
-async def register(req: RegisterRequest, request: Request, db: Session = Depends(get_db)):
+def register(req: RegisterRequest, request: Request, db: Session = Depends(get_db)):
     """Register a new user account."""
     _check_rate_limit(request, "register", _REGISTER_MAX)
 
@@ -188,7 +188,7 @@ async def register(req: RegisterRequest, request: Request, db: Session = Depends
 
 
 @router.post("/login")
-async def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)):
+def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)):
     """Login and get access token."""
     _check_rate_limit(request, "login", _LOGIN_MAX)
 
