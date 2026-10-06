@@ -143,11 +143,11 @@ jobs:
         run: docker run --rm -e DEBUG=true bim-backend:ci pytest tests -q --tb=short
 
   # ── Integration Tests (full Docker stack) ─────────────────
+  # Runs on PRs too: when it ran on main only, a broken frontend healthcheck was found after merge.
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-24.04
     needs: docker-build
-    if: github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v7
