@@ -281,6 +281,53 @@ class TestIFCUploadEndpoint:
         assert res.status_code == 403
 
 
+# ===== JWT Tests =====
+
+def _b64url(data: dict) -> str:
+    import base64
+    import json
+    raw = json.dumps(data, separators=(",", ":")).encode()
+    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+
+class TestJWT:
+    """Token issuance and rejection of expired, forged or tampered tokens."""
+
+    def test_roundtrip(self):
+        from src.core.security import create_access_token, decode_token
+        token = create_access_token({"sub": "42", "role": "engineer"})
+        payload = decode_token(token)
+        assert payload["sub"] == "42"
+        assert payload["role"] == "engineer"
+        assert "exp" in payload
+
+    def test_expired_token_rejected(self, client):
+        from datetime import timedelta
+        from src.core.security import create_access_token
+        token = create_access_token({"sub": "1", "role": "engineer"}, expires_delta=timedelta(seconds=-1))
+        res = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
+        assert res.status_code == 401
+
+    def test_wrong_signing_key_rejected(self, client):
+        import jwt
+        token = jwt.encode({"sub": "1", "role": "admin"}, "attacker-chosen-secret-key-0123456789", algorithm="HS256")
+        res = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
+        assert res.status_code == 401
+
+    def test_alg_none_rejected(self, client):
+        token = f"{_b64url({'alg': 'none', 'typ': 'JWT'})}.{_b64url({'sub': '1', 'role': 'admin'})}."
+        res = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
+        assert res.status_code == 401
+
+    def test_tampered_role_rejected(self, client):
+        """Swapping the payload (engineer → admin) while keeping the signature must fail."""
+        from src.core.security import create_access_token
+        header, _, signature = create_access_token({"sub": "1", "role": "engineer"}).split(".")
+        forged = f"{header}.{_b64url({'sub': '1', 'role': 'admin', 'exp': 9999999999})}.{signature}"
+        res = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {forged}"})
+        assert res.status_code == 401
+
+
 # ===== Config Validation Tests =====
 
 class TestConfigValidation:
