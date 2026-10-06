@@ -1,10 +1,7 @@
 """Tests for Self-Reflection module."""
 
 import pytest
-import sys
-import os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from src.rag.reflection import format_confidence_label
 

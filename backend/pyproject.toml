@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=83"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bim-agent-backend"
+version = "0.2.0"
+description = "BIM AI Agent backend — FastAPI + GraphRAG"
+requires-python = ">=3.11"
+# Pinned runtime and test dependencies live in requirements.txt (used by Docker and CI).
+# Local setup: pip install -r requirements.txt && pip install -e . --no-deps
+
+[tool.setuptools.packages.find]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["src"]
+
+[tool.coverage.report]
+# Baseline 51.54% measured 2026-10-06; raise as tests are added, never lower
+fail_under = 51
+skip_covered = true
+sort = "Cover"
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint]
+# Fatal errors only for now (syntax errors, undefined names); widen gradually
+select = ["E9", "F63", "F7", "F82"]

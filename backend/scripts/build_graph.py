@@ -4,9 +4,6 @@ Usage:
     docker exec bim-backend python scripts/build_graph.py
 """
 
-import sys
-
-sys.path.insert(0, "/app")
 
 from src.data_pipeline.sample_data_generator import generate_sample_data
 from src.knowledge_graph.graph_builder import build_graph_from_directory

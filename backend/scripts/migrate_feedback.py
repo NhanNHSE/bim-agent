@@ -4,9 +4,6 @@ Run this script once after updating the code:
     docker exec bim-backend python scripts/migrate_feedback.py
 """
 
-import sys
-import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from sqlalchemy import text
 from src.database.session import engine

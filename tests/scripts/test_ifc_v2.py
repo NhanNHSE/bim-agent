@@ -1,8 +1,5 @@
 """Quick smoke test for IFC Generator v2."""
-import sys
 import os
-backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "backend"))
-sys.path.insert(0, backend_dir)
 
 from src.data_pipeline.ifc_generator_v2 import generate_from_spec, BuildingSpec
 
