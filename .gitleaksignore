@@ -1,0 +1,11 @@
+# Findings reviewed and accepted. One gitleaks fingerprint per line.
+
+# Dummy credentials for the throwaway CI stack (.github/workflows/ci.yml, "Create .env for CI")
+1e88d1ae7f0ce50e3a441dc0bb15a2be88b7f014:.github/workflows/ci.yml:generic-api-key:83
+1e88d1ae7f0ce50e3a441dc0bb15a2be88b7f014:.github/workflows/ci.yml:generic-api-key:85
+4c49fc485a867d974f14915508a1e524e43de234:.github/workflows/ci.yml:generic-api-key:83
+4c49fc485a867d974f14915508a1e524e43de234:.github/workflows/ci.yml:generic-api-key:85
+
+# Session token of the local Understand Anything dashboard (127.0.0.1 only) pasted into the guide;
+# replaced with a placeholder, kept in history because it only authorizes a localhost session
+3b1a089e06a3a84fa3a62f167f53d80f9af3e7e4:understand_anything_guide.md:generic-api-key:37
