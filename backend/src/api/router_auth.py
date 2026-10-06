@@ -147,7 +147,9 @@ async def register(req: RegisterRequest, request: Request, db: Session = Depends
     _check_rate_limit(request, "register", _REGISTER_MAX)
 
     if req.role not in Role.ALL:
-        raise HTTPException(400, f"Vai trò không hợp lệ. Chọn: {', '.join(Role.ALL)}")
+        raise HTTPException(400, f"Vai trò không hợp lệ. Chọn: {', '.join(Role.SELF_REGISTER)}")
+    if req.role not in Role.SELF_REGISTER:
+        raise HTTPException(403, "Vai trò này phải do quản trị viên cấp, không thể tự đăng ký")
 
     existing = db.query(User).filter(User.email == req.email).first()
     if existing:

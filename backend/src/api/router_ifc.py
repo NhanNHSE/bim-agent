@@ -36,8 +36,11 @@ def _safe_filename(filename: str) -> str:
     # Strip any directory components
     name = os.path.basename(filename)
 
-    # Reject empty, hidden files, or names that changed after basename
-    if not name or name != filename or name.startswith("."):
+    # Reject empty, hidden files, or names that changed after basename.
+    # Backslash and ':' are rejected explicitly: basename() on Linux does not
+    # treat Windows separators or drive letters as path components.
+    if (not name or name != filename or name.startswith(".")
+            or "\\" in name or ":" in name):
         raise HTTPException(400, "Tên file không hợp lệ")
 
     # Only allow .ifc extension
@@ -45,6 +48,20 @@ def _safe_filename(filename: str) -> str:
         raise HTTPException(400, "Chỉ hỗ trợ file .ifc")
 
     return name
+
+
+MAX_UPLOAD_BYTES = settings.ifc_max_upload_mb * 1024 * 1024
+_UPLOAD_CHUNK_BYTES = 1024 * 1024
+
+
+async def _read_limited(file: UploadFile) -> bytes:
+    """Read an upload in chunks, rejecting it once it exceeds MAX_UPLOAD_BYTES."""
+    buf = bytearray()
+    while chunk := await file.read(_UPLOAD_CHUNK_BYTES):
+        buf.extend(chunk)
+        if len(buf) > MAX_UPLOAD_BYTES:
+            raise HTTPException(413, f"File vượt quá giới hạn {MAX_UPLOAD_BYTES // (1024 * 1024)} MB")
+    return bytes(buf)
 
 
 @router.post("/upload")
@@ -56,19 +73,18 @@ async def upload_ifc(
 
     Parses the file, embeds elements into Qdrant, and builds Neo4j graph.
     """
-    if not file.filename.lower().endswith(".ifc"):
-        raise HTTPException(400, "Chỉ chấp nhận file .ifc")
+    filename = _safe_filename(file.filename or "")
+    content = await _read_limited(file)
 
     # Save uploaded file
     upload_dir = settings.ifc_upload_dir
     os.makedirs(upload_dir, exist_ok=True)
-    filepath = os.path.join(upload_dir, file.filename)
+    filepath = os.path.join(upload_dir, filename)
 
-    content = await file.read()
     with open(filepath, "wb") as f:
         f.write(content)
 
-    logger.info("ifc_uploaded", filename=file.filename, size=len(content))
+    logger.info("ifc_uploaded", filename=filename, size=len(content))
 
     try:
         # Parse IFC
@@ -92,7 +108,7 @@ async def upload_ifc(
 
         user_id = int(current_user.get("sub", 0))
         log_action("upload_ifc", user_id=user_id, detail={
-            "filename": file.filename,
+            "filename": filename,
             "size_bytes": len(content),
             "elements": len(parsed.elements),
             "storeys": len(parsed.storeys),
@@ -100,7 +116,7 @@ async def upload_ifc(
 
         return {
             "status": "success",
-            "filename": file.filename,
+            "filename": filename,
             "project": parsed.project_name,
             "building": parsed.building_name,
             "storeys": len(parsed.storeys),

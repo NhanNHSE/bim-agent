@@ -45,6 +45,33 @@ class TestRegister:
         })
         assert res.status_code == 400
 
+    @pytest.mark.parametrize("role", ["admin", "project_manager"])
+    def test_register_privileged_role_forbidden(self, client, role):
+        """Privilege escalation regression: privileged roles cannot be self-assigned."""
+        res = client.post("/api/v1/auth/register", json={
+            "email": f"{role}@bim.vn",
+            "full_name": "Escalation Attempt",
+            "password": "Pass@1234",
+            "role": role,
+        })
+        assert res.status_code == 403
+
+        login = client.post("/api/v1/auth/login", json={
+            "email": f"{role}@bim.vn",
+            "password": "Pass@1234",
+        })
+        assert login.status_code == 401  # no account was created
+
+    def test_register_viewer_allowed(self, client):
+        res = client.post("/api/v1/auth/register", json={
+            "email": "viewer@bim.vn",
+            "full_name": "Viewer User",
+            "password": "Pass@1234",
+            "role": "viewer",
+        })
+        assert res.status_code == 200
+        assert res.json()["user"]["role"] == "viewer"
+
     def test_register_invalid_email(self, client):
         res = client.post("/api/v1/auth/register", json={
             "email": "not-an-email",

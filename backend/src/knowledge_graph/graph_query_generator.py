@@ -118,14 +118,15 @@ def _validate_cypher(query: str) -> tuple[bool, str]:
     if not any(upper.startswith(s) for s in safe_starts):
         return False, f"Query must start with MATCH/WITH/OPTIONAL, got: {upper[:30]}"
 
-    # Must have RETURN clause
-    if "RETURN" not in upper:
-        return False, "Query must have a RETURN clause"
-
-    # Block dangerous keywords using word-boundary regex (case-insensitive)
+    # Block dangerous keywords using word-boundary regex (case-insensitive).
+    # Checked before RETURN so write attempts are reported (and logged) as such.
     for blocked in _BLOCKED_KEYWORDS:
         if re.search(rf"\b{blocked}\b", upper):
             return False, f"Blocked keyword detected: {blocked}"
+
+    # Must have RETURN clause
+    if "RETURN" not in upper:
+        return False, "Query must have a RETURN clause"
 
     return True, "OK"
 

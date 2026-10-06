@@ -22,6 +22,7 @@ os.environ["NEO4J_USER"] = "neo4j"
 os.environ["NEO4J_PASSWORD"] = "test"
 os.environ["QDRANT_HOST"] = "localhost"
 os.environ["AGENT_MODE"] = "simple"  # Use simple mode for tests (no LLM calls)
+os.environ["DEBUG"] = "true"  # Test secrets above are deliberately weak; non-debug startup would reject them
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
@@ -132,15 +133,20 @@ def auth_headers(client):
 
 
 @pytest.fixture
-def auth_headers_admin(client):
-    """Register + login an admin user, return Authorization headers."""
-    reg_res = client.post("/api/v1/auth/register", json={
-        "email": "admin@bim.vn",
-        "full_name": "Admin User",
-        "password": "Admin@12345",
-        "role": "admin",
-    })
-    assert reg_res.status_code == 200, f"Admin register failed: {reg_res.json()}"
+def auth_headers_admin(client, db_session):
+    """Create an admin directly in DB (admin cannot self-register), return Authorization headers."""
+    from src.database.models import User
+    from src.core.security import hash_password, create_access_token
 
-    token = reg_res.json()["access_token"]
+    admin = User(
+        email="admin@bim.vn",
+        full_name="Admin User",
+        hashed_password=hash_password("Admin@12345"),
+        role="admin",
+    )
+    db_session.add(admin)
+    db_session.commit()
+    db_session.refresh(admin)
+
+    token = create_access_token({"sub": str(admin.id), "email": admin.email, "role": admin.role})
     return {"Authorization": f"Bearer {token}"}

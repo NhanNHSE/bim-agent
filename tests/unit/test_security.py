@@ -240,6 +240,47 @@ class TestPathTraversal:
             self._safe("")
 
 
+class TestIFCUploadEndpoint:
+    """Regression tests for /api/v1/ifc/upload — filename and size are enforced before writing to disk."""
+
+    @pytest.fixture
+    def upload_dir(self, client, tmp_path, monkeypatch):
+        from src.api import router_ifc
+        target = tmp_path / "ifc"
+        monkeypatch.setattr(router_ifc.settings, "ifc_upload_dir", str(target))
+        return target
+
+    def _upload(self, client, headers, filename, content=b"ISO-10303-21;"):
+        return client.post(
+            "/api/v1/ifc/upload",
+            files={"file": (filename, content, "application/octet-stream")},
+            headers=headers,
+        )
+
+    def test_traversal_filename_rejected(self, client, auth_headers, upload_dir):
+        res = self._upload(client, auth_headers, "../evil.ifc")
+        assert res.status_code == 400
+        assert not (upload_dir.parent / "evil.ifc").exists()
+
+    def test_oversized_upload_rejected(self, client, auth_headers, upload_dir, monkeypatch):
+        from src.api import router_ifc
+        monkeypatch.setattr(router_ifc, "MAX_UPLOAD_BYTES", 10)
+        res = self._upload(client, auth_headers, "big.ifc", content=b"x" * 100)
+        assert res.status_code == 413
+        assert not (upload_dir / "big.ifc").exists()
+
+    def test_viewer_cannot_upload(self, client, upload_dir):
+        reg = client.post("/api/v1/auth/register", json={
+            "email": "viewer-upload@bim.vn",
+            "full_name": "Viewer",
+            "password": "Pass@1234",
+            "role": "viewer",
+        })
+        headers = {"Authorization": f"Bearer {reg.json()['access_token']}"}
+        res = self._upload(client, headers, "model.ifc")
+        assert res.status_code == 403
+
+
 # ===== Config Validation Tests =====
 
 class TestConfigValidation:

@@ -68,6 +68,7 @@ class Settings(BaseSettings):
 
     # --- IFC ---
     ifc_upload_dir: str = "data/ifc"
+    ifc_max_upload_mb: int = 200
 
     @property
     def database_url(self) -> str:
