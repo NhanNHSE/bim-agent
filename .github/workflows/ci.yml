@@ -33,6 +33,21 @@ jobs:
       - name: Ruff (fatal errors only)
         run: ruff check --select E9,F63,F7,F82 --output-format=github backend tests
 
+  # ── Secret scan (full history) ────────────────────────────
+  secrets:
+    name: Secret Scan
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz \
+            | tar -xz gitleaks
+          ./gitleaks git --redact --verbose --exit-code 1 .
+
   # ── Unit Tests (no Docker, full dependencies) ─────────────
   unit-tests:
     name: Unit Tests
@@ -57,13 +72,32 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-          # CI-only: failed tests show up as annotations on the PR
-          pip install pytest-github-actions-annotate-failures==0.4.2
+          # CI-only: PR annotations for failed tests, coverage, dependency audit
+          pip install pytest-github-actions-annotate-failures==0.4.2 pytest-cov==7.1.0 pip-audit==2.10.1
 
       - name: Run unit tests
         run: >
           python -m pytest -c pytest.ini --rootdir=. ../tests/unit
           -v --tb=short --junitxml=../test-results/unit.xml
+          --cov=src --cov-report=term-missing:skip-covered --cov-report=xml:../test-results/coverage.xml
+
+      # No threshold yet: record the baseline first, then enforce fail_under and raise it over time
+      - name: Coverage summary
+        if: always()
+        run: |
+          echo '## Coverage' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          python -m coverage report --skip-covered --sort=cover >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      # Report-only until the current findings are triaged; then drop continue-on-error
+      - name: Audit dependencies (pip-audit)
+        continue-on-error: true
+        run: |
+          status=0
+          pip-audit --progress-spinner off --desc on -f markdown -o ../test-results/pip-audit.md || status=$?
+          cat ../test-results/pip-audit.md >> "$GITHUB_STEP_SUMMARY" || true
+          exit $status
 
       - name: Upload test results
         if: always()
