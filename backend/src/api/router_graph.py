@@ -15,13 +15,13 @@ router = APIRouter()
 
 
 @router.get("/stats")
-async def graph_stats(current_user: dict = Depends(get_current_user)):
+def graph_stats(current_user: dict = Depends(get_current_user)):
     """Get knowledge graph statistics."""
     return get_graph_stats()
 
 
 @router.get("/search")
-async def search_graph(
+def search_graph(
     keyword: str = Query(..., description="Từ khóa tìm kiếm"),
     limit: int = Query(10, ge=1, le=50),
     current_user: dict = Depends(get_current_user),
@@ -31,7 +31,7 @@ async def search_graph(
 
 
 @router.get("/standards/{standard_code}/related")
-async def related_standards(
+def related_standards(
     standard_code: str,
     current_user: dict = Depends(get_current_user),
 ):
@@ -40,7 +40,7 @@ async def related_standards(
 
 
 @router.get("/building-types/{code}/requirements")
-async def building_type_requirements(
+def building_type_requirements(
     code: str,
     current_user: dict = Depends(get_current_user),
 ):
@@ -49,7 +49,7 @@ async def building_type_requirements(
 
 
 @router.get("/materials/{name}")
-async def material_info(
+def material_info(
     name: str,
     current_user: dict = Depends(get_current_user),
 ):

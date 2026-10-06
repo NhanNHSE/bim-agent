@@ -11,7 +11,7 @@ settings = get_settings()
 
 
 @router.get("/health")
-async def health_check():
+def health_check():
     """Check health of all services."""
     neo4j_ok = False
     try:

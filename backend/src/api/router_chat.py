@@ -28,7 +28,7 @@ class ChatRequest(BaseModel):
 
 
 @router.post("/chat")
-async def chat(
+def chat(
     req: ChatRequest,
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -129,7 +129,7 @@ async def chat(
             "structure_type": dr.get("structure_type", "building"),
         }
 
-    async def event_generator():
+    def event_generator():
         full_response = ""
 
         # Send metadata first
@@ -217,7 +217,7 @@ async def chat(
 
 
 @router.get("/conversations")
-async def list_conversations(
+def list_conversations(
     limit: int = 50,
     offset: int = 0,
     current_user: dict = Depends(get_current_user),
@@ -245,7 +245,7 @@ async def list_conversations(
 
 
 @router.get("/conversations/{conversation_id}/messages")
-async def get_messages(
+def get_messages(
     conversation_id: int,
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -274,7 +274,7 @@ async def get_messages(
 
 
 @router.delete("/conversations/{conversation_id}")
-async def delete_conversation(
+def delete_conversation(
     conversation_id: int,
     current_user: dict = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -302,7 +302,7 @@ class FeedbackRequest(BaseModel):
 
 
 @router.put("/messages/{message_id}/feedback")
-async def set_message_feedback(
+def set_message_feedback(
     message_id: int,
     req: FeedbackRequest,
     current_user: dict = Depends(get_current_user),
