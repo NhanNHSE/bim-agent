@@ -10,7 +10,7 @@ import structlog
 
 from src.core.config import get_settings
 from src.core.logging import setup_logging
-from src.core.exceptions import BIMAgentException, bim_agent_exception_handler
+from src.core.errors import register_error_handlers
 from src.database.session import init_db
 from src.api.router_health import router as health_router
 from src.api.router_chat import router as chat_router
@@ -74,11 +74,8 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 
-# Exception handlers
-app.add_exception_handler(BIMAgentException, bim_agent_exception_handler)
-
-from src.core.errors import APIError, api_error_handler
-app.add_exception_handler(APIError, api_error_handler)
+# Exception handlers (APIError subclasses -> {"error": {"code", "message"}}; HTTPException left to FastAPI)
+register_error_handlers(app)
 
 # GZip compression for large geometry responses
 app.add_middleware(GZipMiddleware, minimum_size=1000)
