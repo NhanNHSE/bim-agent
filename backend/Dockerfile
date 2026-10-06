@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxslt-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY backend/requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 
@@ -41,12 +41,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=builder /install /usr/local
 
 # Copy application code
-COPY backend/src/ /app/src/
-COPY backend/scripts/ /app/scripts/
-COPY backend/alembic/ /app/alembic/
-COPY backend/alembic.ini /app/alembic.ini
-COPY backend/pyproject.toml /app/pyproject.toml
-COPY tests/unit/ /app/tests/
+COPY src/ /app/src/
+COPY scripts/ /app/scripts/
+COPY alembic/ /app/alembic/
+COPY alembic.ini /app/alembic.ini
+COPY pyproject.toml /app/pyproject.toml
+COPY tests/ /app/tests/
 
 
 # Create data + cache directories with correct ownership
