@@ -18,7 +18,7 @@ bcrypt==4.2.0
 google-genai==1.14.0
 
 # Embeddings (local)
-fastembed==0.4.1
+fastembed==0.4.1  # >=0.6 changes pooling for our model: upgrade only with a Qdrant re-ingest (see .pip-audit-ignore)
 
 # Vector DB
 qdrant-client==1.12.1
@@ -29,7 +29,6 @@ neo4j==5.27.0
 # Data Pipeline
 PyMuPDF==1.24.10
 beautifulsoup4==4.12.3
-Pillow==10.4.0
 
 # IFC Processing
 ifcopenshell==0.8.1
@@ -44,13 +43,13 @@ redis==5.2.1
 structlog==24.4.0
 
 # Utilities
-python-dotenv==1.0.1
+python-dotenv==1.2.4
 pydantic==2.9.2
 pydantic-settings==2.5.2
 email-validator==2.2.0
 httpx==0.28.1
 
 # Testing
-pytest==8.3.3
-pytest-asyncio==0.24.0
+pytest==9.1.1
+pytest-asyncio==1.4.0
 
