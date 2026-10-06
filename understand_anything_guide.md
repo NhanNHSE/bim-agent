@@ -34,7 +34,7 @@ npx vite --host 127.0.0.1
 ### Bước 2: Lấy link truy cập kèm Token
 Khi chạy thành công, màn hình terminal sẽ hiển thị dòng chữ tương tự như sau:
 ```text
-  🔑  Dashboard URL: http://127.0.0.1:5173?token=64a4a71c7123c91189ce091b968b6a32
+  🔑  Dashboard URL: http://127.0.0.1:5173?token=<token-hiển-thị-trên-terminal>
 ```
 *   **Quan trọng:** Bạn **bắt buộc** phải sao chép toàn bộ đường dẫn bao gồm cả phần `?token=...` dán vào trình duyệt web để vượt qua cổng xác thực bảo mật của Dashboard.
 
