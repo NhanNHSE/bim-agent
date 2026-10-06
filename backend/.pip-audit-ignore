@@ -1,0 +1,25 @@
+# Vulnerabilities accepted after review; one ID per line, read by the CI pip-audit step.
+# Every entry needs a reason and an exit condition.
+
+# pillow 10.4.0 — transitive dependency of fastembed 0.4.1 (pins pillow<11).
+# Reachable only through fastembed's image-embedding models; this app embeds text only
+# and never imports PIL. Exit: upgrade fastembed. 0.5.x still caps pillow<11, and >=0.6
+# switches this model from CLS to mean pooling, so the upgrade must ship together with a
+# Qdrant re-ingest and a retrieval eval.
+PYSEC-2026-165
+PYSEC-2026-2249
+PYSEC-2026-2250
+PYSEC-2026-2252
+PYSEC-2026-2253
+PYSEC-2026-2254
+PYSEC-2026-2255
+PYSEC-2026-2256
+PYSEC-2026-2257
+PYSEC-2026-2874
+PYSEC-2026-3451
+PYSEC-2026-3453
+PYSEC-2026-3454
+PYSEC-2026-3493
+PYSEC-2026-3494
+PYSEC-2026-3495
+PYSEC-2026-3496

@@ -70,7 +70,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
+          pip install --upgrade pip "setuptools>=83"
           pip install -r requirements.txt
           # CI-only: PR annotations for failed tests, coverage, dependency audit
           pip install pytest-github-actions-annotate-failures==0.4.2 pytest-cov==7.1.0 pip-audit==2.10.1
@@ -81,21 +81,22 @@ jobs:
           -v --tb=short --junitxml=../test-results/unit.xml
           --cov=src --cov-report=term-missing:skip-covered --cov-report=xml:../test-results/coverage.xml
 
-      # No threshold yet: record the baseline first, then enforce fail_under and raise it over time
+      # Coverage gate lives here: pytest --cov-fail-under printed FAIL but exited 0 (pytest 9 + pytest-cov 7).
+      # Floor = baseline 51.54% measured 2026-10-06; raise it as tests are added, never lower it
       - name: Coverage summary
         if: always()
         run: |
           echo '## Coverage' >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          python -m coverage report --skip-covered --sort=cover >> "$GITHUB_STEP_SUMMARY"
+          python -m coverage report --skip-covered --sort=cover --fail-under=51 >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
-      # Report-only until the current findings are triaged; then drop continue-on-error
+      # Blocking: any vulnerability not listed (with a reason) in backend/.pip-audit-ignore fails CI
       - name: Audit dependencies (pip-audit)
-        continue-on-error: true
         run: |
+          ignores=$(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' -e 's/^[[:space:]]*/--ignore-vuln /' .pip-audit-ignore)
           status=0
-          pip-audit --progress-spinner off --desc on -f markdown -o ../test-results/pip-audit.md || status=$?
+          pip-audit --progress-spinner off --desc on -f markdown -o ../test-results/pip-audit.md $ignores || status=$?
           cat ../test-results/pip-audit.md >> "$GITHUB_STEP_SUMMARY" || true
           exit $status
 

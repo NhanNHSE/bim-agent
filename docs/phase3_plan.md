@@ -97,7 +97,7 @@ Functions:
 
 ### Component 2: Agent Tool — `design_building`
 
-Thêm tool mới vào LangGraph agent.
+Thêm tool mới vào agent (`src/rag/agent.py`, `src/agents/`).
 
 #### [MODIFY] [agent.py](file:///D:/Project/LLM/BIM/backend/src/rag/agent.py)
 

@@ -5,7 +5,7 @@ from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
+import jwt
 from passlib.context import CryptContext
 
 from src.core.config import get_settings
@@ -74,7 +74,7 @@ def decode_token(token: str) -> dict:
             algorithms=[settings.jwt_algorithm],
         )
         return payload
-    except JWTError:
+    except jwt.InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token không hợp lệ hoặc đã hết hạn",
