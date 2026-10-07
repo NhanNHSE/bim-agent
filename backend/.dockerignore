@@ -8,3 +8,5 @@
 .env
 tests/outputs
 data/cache
+data/vbpl_bxd/text
+data/vbpl_bxd/files

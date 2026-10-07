@@ -1,0 +1,5 @@
+# Chỉ commit danh mục (catalog.json: nguồn, sha256, tình trạng hiệu lực).
+# Văn bản tải về (text/, files/) tái tạo bằng: python backend/scripts/crawl_vbpl_bxd.py
+*
+!.gitignore
+!catalog.json

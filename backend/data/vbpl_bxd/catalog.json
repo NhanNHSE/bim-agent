@@ -1,0 +1,2173 @@
+{
+  "metadata": {
+    "source": "https://vbpl.vn/van-ban/trung-uong",
+    "agency": "Bộ Xây dựng",
+    "updatedAt": "2026-10-07 22:24:07",
+    "selection": "Tiêu đề chứa QCVN / QCXDVN / 'Quy chuẩn kỹ thuật quốc gia' / 'Quy chuẩn xây dựng'; mọi lĩnh vực, mọi tình trạng hiệu lực; bỏ bản dịch",
+    "agencyDocuments": 1248,
+    "qcvnDocuments": 51,
+    "byContentStatus": {
+      "circular_only": 9,
+      "doc_only": 6,
+      "full_text": 29,
+      "none": 3,
+      "scan_only": 4
+    }
+  },
+  "documents": [
+    {
+      "id": "1486db50-be41-11f1-a165-d7b6676125f5",
+      "docNum": "81/2026/VBHN-TT-BXD",
+      "title": "Văn bản hợp nhất Ban hành QCVN 07:2023/BXD Quy chuẩn kỹ thuật quốc gia về Hệ thống công trình hạ tầng kỹ thuật số 81/2026/VBHN-TT-BXD",
+      "qcvnCodes": [
+        "QCVN 07:2023/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Văn bản hợp nhất",
+      "issueDate": "2026-09-16",
+      "effFrom": "",
+      "effTo": "",
+      "effStatus": "",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/1486db50-be41-11f1-a165-d7b6676125f5",
+      "html": {
+        "fileName": "VBHN Thông tư QCVN 07.html",
+        "chars": 4022,
+        "path": "text/81_2026_VBHN-TT-BXD_id1486db50-be41-11f1-a165-d7b6676125f5.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VBHN QCVN 07 kèm theo.docx",
+          "kind": "docx",
+          "size": 732249,
+          "sha256": "9e3798bb873ff334d4e63bf02919a37f366a2a195bc35ddb036bd3cc91cf5db2",
+          "pages": null,
+          "text_chars": 230243,
+          "scanned": false,
+          "path": "files/81_2026_VBHN-TT-BXD_id1486db50-be41-11f1-a165-d7b6676125f5/VBHN_QCVN_07_kèm_theo.docx"
+        },
+        {
+          "fileName": "VBHN Thông tư QCVN 07.docx",
+          "kind": "docx",
+          "size": 51766,
+          "sha256": "5f6c4c621102f7bc23c746d0eb49b2cd01020ca4c620f8ebe7e4d30c26aa8edc",
+          "pages": null,
+          "text_chars": 2306,
+          "scanned": false,
+          "path": "files/81_2026_VBHN-TT-BXD_id1486db50-be41-11f1-a165-d7b6676125f5/VBHN_Thông_tư_QCVN_07.docx"
+        },
+        {
+          "fileName": "VBHN Thông tư QCVN 07.pdf",
+          "kind": "pdf",
+          "size": 586165,
+          "sha256": "d5fa80ab980c7a8f22df8821c06af2384d09f3a980abda10c1edaeae17dbb60a",
+          "pages": 2,
+          "text_chars": 4076,
+          "scanned": false,
+          "path": "files/81_2026_VBHN-TT-BXD_id1486db50-be41-11f1-a165-d7b6676125f5/VBHN_Thông_tư_QCVN_07.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "ada723f0-b23c-11f1-9a88-bd5f9223a491",
+      "docNum": "62/2026/TT-BXD",
+      "title": "Thông tư số 62/2026/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về Đường sắt đô thị - Loại hình metro",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2026-07-30",
+      "effFrom": "2027-02-01",
+      "effTo": "",
+      "effStatus": "Chưa có hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/ada723f0-b23c-11f1-9a88-bd5f9223a491",
+      "html": {
+        "fileName": "1. Thong tu ban hanh Quy chuan (28.7.26) (1).html",
+        "chars": 2545,
+        "path": "text/62_2026_TT-BXD_idada723f0-b23c-11f1-9a88-bd5f9223a491.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "1. Thong tu ban hanh Quy chuan (28.7.26) (1).doc",
+          "kind": "doc",
+          "size": 70144,
+          "sha256": "573c0ec0d89f72c591b03e773acddaf7cdf988146d18f21214a530b10bad3898",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/62_2026_TT-BXD_idada723f0-b23c-11f1-9a88-bd5f9223a491/1._Thong_tu_ban_hanh_Quy_chuan_(28.7.26)_(1).doc"
+        },
+        {
+          "fileName": "Thông tư 62.2026.TT-BXD.pdf",
+          "kind": "pdf",
+          "size": 487380,
+          "sha256": "a9afa8b6ebf2d8a8d1b719f73f3eaf6a02f57c4f3164b7bf023ab3a75ffb3ff8",
+          "pages": 2,
+          "text_chars": 2554,
+          "scanned": false,
+          "path": "files/62_2026_TT-BXD_idada723f0-b23c-11f1-9a88-bd5f9223a491/Thông_tư_62.2026.TT-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "doc_only"
+    },
+    {
+      "id": "11812e50-b1bd-11f1-a70d-ef2d89b031b0",
+      "docNum": "61/2026/TT-BXD",
+      "title": "Thông tư số 61/2026/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về Công trình dân dụng - Phần 3: Công trình xây dựng sử dụng năng lượng hiệu quả",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2026-07-30",
+      "effFrom": "2027-02-01",
+      "effTo": "",
+      "effStatus": "Chưa có hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/11812e50-b1bd-11f1-a70d-ef2d89b031b0",
+      "html": {
+        "fileName": "1. Thong_tu_ban hanh QCVN_04-3_ve_CT SDNL_TKHQ_7.2026.html",
+        "chars": 2601,
+        "path": "text/61_2026_TT-BXD_id11812e50-b1bd-11f1-a70d-ef2d89b031b0.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "1. Thong_tu_ban hanh QCVN_04-3_ve_CT SDNL_TKHQ_7.2026 (1).pdf",
+          "kind": "pdf",
+          "size": 450881,
+          "sha256": "0a67d8018a6e5ed371d327e3bb43b77bac4225e0863b55fa83e527ba3a06c5d9",
+          "pages": 2,
+          "text_chars": 2632,
+          "scanned": false,
+          "path": "files/61_2026_TT-BXD_id11812e50-b1bd-11f1-a70d-ef2d89b031b0/1._Thong_tu_ban_hanh_QCVN_04-3_ve_CT_SDNL_TKHQ_7.2026_(1).pdf"
+        },
+        {
+          "fileName": "1. Thong_tu_ban hanh QCVN_04-3_ve_CT SDNL_TKHQ_7.2026.docx",
+          "kind": "docx",
+          "size": 28505,
+          "sha256": "f467f998890392448d2a42d1df15151cca116040b8c7724859d417a8c895230f",
+          "pages": null,
+          "text_chars": 2661,
+          "scanned": false,
+          "path": "files/61_2026_TT-BXD_id11812e50-b1bd-11f1-a70d-ef2d89b031b0/1._Thong_tu_ban_hanh_QCVN_04-3_ve_CT_SDNL_TKHQ_7.2026.docx"
+        },
+        {
+          "fileName": "2. QCVN_04-3_ve_CT SDNL_TKHQ_29.7.2026.docx",
+          "kind": "docx",
+          "size": 269205,
+          "sha256": "ee00066fce48b493cf83d4d684c5ba8da9556ffaa8051614154166d142f53f78",
+          "pages": null,
+          "text_chars": 47361,
+          "scanned": false,
+          "path": "files/61_2026_TT-BXD_id11812e50-b1bd-11f1-a70d-ef2d89b031b0/2._QCVN_04-3_ve_CT_SDNL_TKHQ_29.7.2026.docx"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "1cb47f80-838b-11f1-9986-dd95257dc579",
+      "docNum": "55/2026/TT-BXD",
+      "title": "Thông tư số 55/2026/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về cơ sở vật chất, trang thiết bị đào tạo của cơ sở đào tạo, huấn luyện thuyền viên hàng hải",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2026-07-02",
+      "effFrom": "2027-01-15",
+      "effTo": "",
+      "effStatus": "Chưa có hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/1cb47f80-838b-11f1-9986-dd95257dc579",
+      "html": {
+        "fileName": "1cb47f80-838b-11f1-9986-dd95257dc579_content.html",
+        "chars": 2839,
+        "path": "text/55_2026_TT-BXD_id1cb47f80-838b-11f1-9986-dd95257dc579.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "Thông tư 55.2026.TT-BXD. Quy chuẩn.pdf",
+          "kind": "pdf",
+          "size": 2399302,
+          "sha256": "b9ddf3b09941e6a6e74c78461568b66c8ca344b8cd5638caa25a8a54fc09f8ff",
+          "pages": 59,
+          "text_chars": 107541,
+          "scanned": false,
+          "path": "files/55_2026_TT-BXD_id1cb47f80-838b-11f1-9986-dd95257dc579/Thông_tư_55.2026.TT-BXD._Quy_chuẩn.pdf"
+        },
+        {
+          "fileName": "Thông tư 55.2026.TT-BXD.docx",
+          "kind": "docx",
+          "size": 16828,
+          "sha256": "b0ec35c0c558856131942f661288a4555c27ab5cb0c31679b88ff6dd5f3efdbd",
+          "pages": null,
+          "text_chars": 2824,
+          "scanned": false,
+          "path": "files/55_2026_TT-BXD_id1cb47f80-838b-11f1-9986-dd95257dc579/Thông_tư_55.2026.TT-BXD.docx"
+        },
+        {
+          "fileName": "Thông tư 55.2026.TT-BXD.pdf",
+          "kind": "pdf",
+          "size": 784557,
+          "sha256": "906b83286ec4a03fc19dca1dba0811946230ee92f0fd848f8498d071356907dc",
+          "pages": 2,
+          "text_chars": 3016,
+          "scanned": false,
+          "path": "files/55_2026_TT-BXD_id1cb47f80-838b-11f1-9986-dd95257dc579/Thông_tư_55.2026.TT-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "c076a5f0-8bc7-11f1-a2ec-6fe9bc082e5f",
+      "docNum": "46/2026/TT-BXD",
+      "title": "Thông tư số 46/2026/TT-BXD Ban hành QCVN 01:2026/BXD Quy chuẩn kỹ thuật quốc gia về quy hoạch đô thị và nông thôn",
+      "qcvnCodes": [
+        "QCVN 01:2026/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Thông tư",
+      "issueDate": "2026-06-30",
+      "effFrom": "2027-01-01",
+      "effTo": "",
+      "effStatus": "Chưa có hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/c076a5f0-8bc7-11f1-a2ec-6fe9bc082e5f",
+      "html": {
+        "fileName": "c076a5f0-8bc7-11f1-a2ec-6fe9bc082e5f_content.html",
+        "chars": 145510,
+        "path": "text/46_2026_TT-BXD_idc076a5f0-8bc7-11f1-a2ec-6fe9bc082e5f.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "QCVN 01-2026-BXD (21h 01072026).docx",
+          "kind": "docx",
+          "size": 215178,
+          "sha256": "8285a6f355248b9474c5ee4c6693e560f8f61a09b1a9dad3b508afddd6e0ba9f",
+          "pages": null,
+          "text_chars": 147063,
+          "scanned": false,
+          "path": "files/46_2026_TT-BXD_idc076a5f0-8bc7-11f1-a2ec-6fe9bc082e5f/QCVN_01-2026-BXD_(21h_01072026).docx"
+        },
+        {
+          "fileName": "Thông tư 46.2026.TT-BXD.pdf",
+          "kind": "pdf",
+          "size": 837534,
+          "sha256": "691d3655629c9187b91c66ce030827eaa8da977153cdf15eedaefeeceae903ee",
+          "pages": 65,
+          "text_chars": 152813,
+          "scanned": false,
+          "path": "files/46_2026_TT-BXD_idc076a5f0-8bc7-11f1-a2ec-6fe9bc082e5f/Thông_tư_46.2026.TT-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "4d17c600-8e44-11f1-af47-31841491cbce",
+      "docNum": "13/2026/TT-BXD",
+      "title": "Thông tư số 13/2026/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về ắc quy sử dụng cho xe mô tô điện, xe gắn máy điện",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2026-04-09",
+      "effFrom": "2026-10-09",
+      "effTo": "",
+      "effStatus": "Chưa có hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/4d17c600-8e44-11f1-af47-31841491cbce",
+      "html": {
+        "fileName": "4d17c600-8e44-11f1-af47-31841491cbce_content_origin.html",
+        "chars": 22058,
+        "path": "text/13_2026_TT-BXD_id4d17c600-8e44-11f1-af47-31841491cbce.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "1.1.QCVN 31 2026 DT lần 08 070426.docx",
+          "kind": "docx",
+          "size": 275401,
+          "sha256": "65a451371faf8e4c4c745ded4ce3de0807188edc3642bcfce20ae83439a16658",
+          "pages": null,
+          "text_chars": 22077,
+          "scanned": false,
+          "path": "files/13_2026_TT-BXD_id4d17c600-8e44-11f1-af47-31841491cbce/1.1.QCVN_31_2026_DT_lần_08_070426.docx"
+        },
+        {
+          "fileName": "1.1.QCVN_31_2026_DT_lan_08_070426_1776248417187.docx.pdf",
+          "kind": "pdf",
+          "size": 340050,
+          "sha256": "197ad57d7fe0d7f853e626874b2602104a440ad2d639ea3375c652f73f0331a1",
+          "pages": 17,
+          "text_chars": 18994,
+          "scanned": false,
+          "path": "files/13_2026_TT-BXD_id4d17c600-8e44-11f1-af47-31841491cbce/1.1.QCVN_31_2026_DT_lan_08_070426_1776248417187.docx.pdf"
+        },
+        {
+          "fileName": "1.Thong tu ban hanh QCVN ac quy xe may dien.pdf",
+          "kind": "pdf",
+          "size": 454264,
+          "sha256": "38eb92ee63f8250c4f4605bb1d9f8bf86fa73840da847acc5157a47c9bedb9c4",
+          "pages": 2,
+          "text_chars": 3628,
+          "scanned": false,
+          "path": "files/13_2026_TT-BXD_id4d17c600-8e44-11f1-af47-31841491cbce/1.Thong_tu_ban_hanh_QCVN_ac_quy_xe_may_dien.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "b2607e50-8e42-11f1-b2eb-4b15c9887149",
+      "docNum": "12/2026/TT-BXD",
+      "title": "Thông tư số 12/2026/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về động cơ sử dụng cho xe mô tô điện, xe gắn máy điện",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2026-04-09",
+      "effFrom": "2026-10-09",
+      "effTo": "",
+      "effStatus": "Chưa có hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/b2607e50-8e42-11f1-b2eb-4b15c9887149",
+      "html": {
+        "fileName": "b2607e50-8e42-11f1-b2eb-4b15c9887149_content_origin.html",
+        "chars": 18306,
+        "path": "text/12_2026_TT-BXD_idb2607e50-8e42-11f1-b2eb-4b15c9887149.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "1.1 DU THAO QCVN 30 2026 DONG CO XE MO TO, XE GAN MAY DIEN 7.04.26.docx",
+          "kind": "docx",
+          "size": 109578,
+          "sha256": "b41bdd3589a3b67dacc6dc7c707da4c95caa52d24bfb9c090e4bfc90f7a49fc7",
+          "pages": null,
+          "text_chars": 18768,
+          "scanned": false,
+          "path": "files/12_2026_TT-BXD_idb2607e50-8e42-11f1-b2eb-4b15c9887149/1.1_DU_THAO_QCVN_30_2026_DONG_CO_XE_MO_TO,_XE_GAN_MAY_DIEN_7.04.26.docx"
+        },
+        {
+          "fileName": "1.1_DU_THAO_QCVN_30_2026_DONG_CO_XE_MO_TO,_XE_GAN_MAY_DIEN_7.04.26_1776247271432.docx.pdf",
+          "kind": "pdf",
+          "size": 197765,
+          "sha256": "b95d87399a5467799a6f204b88c0afcb37804798af72249661601018149c93d5",
+          "pages": 14,
+          "text_chars": 15294,
+          "scanned": false,
+          "path": "files/12_2026_TT-BXD_idb2607e50-8e42-11f1-b2eb-4b15c9887149/1.1_DU_THAO_QCVN_30_2026_DONG_CO_XE_MO_TO,_XE_GAN_MAY_DIEN_7.04.26_1776247271432.docx.pdf"
+        },
+        {
+          "fileName": "1.Thong tu ban hanh QCVN dong co xe may dien.pdf",
+          "kind": "pdf",
+          "size": 454612,
+          "sha256": "2b36877af6a946424c4bdbe85b5ab14211289f1b22e8c7f7e2e2c44b09f012e3",
+          "pages": 2,
+          "text_chars": 3633,
+          "scanned": false,
+          "path": "files/12_2026_TT-BXD_idb2607e50-8e42-11f1-b2eb-4b15c9887149/1.Thong_tu_ban_hanh_QCVN_dong_co_xe_may_dien.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "186422",
+      "docNum": "70/2025/TT-BXD",
+      "title": "Thông tư số 70/2025/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về Khí thải Mức 4 đối với xe mô tô hai bánh, xe gắn máy hai bánh sản xuất, lắp ráp và nhập khẩu mới",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2025-12-31",
+      "effFrom": "2026-07-01",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/186422",
+      "html": {
+        "fileName": "186422_content_origin.html",
+        "chars": 3194,
+        "path": "text/70_2025_TT-BXD_id186422.txt"
+      },
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "circular_only"
+    },
+    {
+      "id": "185689",
+      "docNum": "44/2025/TT-BXD",
+      "title": "Thông tư số 44/2025/TT-BXD Ban hành các Quy chuẩn kỹ thuật quốc gia về đường sắt",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2025-12-09",
+      "effFrom": "2026-01-01",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/185689",
+      "html": {
+        "fileName": "185689_content_origin.html",
+        "chars": 3392,
+        "path": "text/44_2025_TT-BXD_id185689.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_Thông tư số 44.2025.TT-BXD. QC21.pdf",
+          "kind": "pdf",
+          "size": 3130281,
+          "sha256": "f45835049d1e3940a427d81826db4bafc213fa22961a9449ec4ceef477b27140",
+          "pages": 74,
+          "text_chars": 85633,
+          "scanned": false,
+          "path": "files/44_2025_TT-BXD_id185689/VanBanGoc_Thông_tư_số_44.2025.TT-BXD._QC21.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thông tư số 44.2025.TT-BXD. QC22.pdf",
+          "kind": "pdf",
+          "size": 2405642,
+          "sha256": "b716d744c0b737850216a311adcfd2b3abc3c2ed26ced6f14c2d95fdd56e787b",
+          "pages": 84,
+          "text_chars": 153142,
+          "scanned": false,
+          "path": "files/44_2025_TT-BXD_id185689/VanBanGoc_Thông_tư_số_44.2025.TT-BXD._QC22.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thông tư số 44.2025.TT-BXD. QC23.pdf",
+          "kind": "pdf",
+          "size": 1276441,
+          "sha256": "50cec0c61febbf9e79149c0056820cf00adcc447e0579f777f438e9cacfb9f1e",
+          "pages": 50,
+          "text_chars": 85980,
+          "scanned": false,
+          "path": "files/44_2025_TT-BXD_id185689/VanBanGoc_Thông_tư_số_44.2025.TT-BXD._QC23.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thông tư số 44.2025.TT-BXD. QC24.pdf",
+          "kind": "pdf",
+          "size": 1278325,
+          "sha256": "c5ec9c7c215e767c1f9976aafed5a26ae64f8cc428fc0941acc74a2796d7d060",
+          "pages": 54,
+          "text_chars": 85933,
+          "scanned": false,
+          "path": "files/44_2025_TT-BXD_id185689/VanBanGoc_Thông_tư_số_44.2025.TT-BXD._QC24.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thông tư số 44.2025.TT-BXD. QC25.pdf",
+          "kind": "pdf",
+          "size": 2353677,
+          "sha256": "962d943831341bd3e3c99a6b90fecfbf5f36f23845c66589c75f14c6acb47cac",
+          "pages": 64,
+          "text_chars": 115287,
+          "scanned": false,
+          "path": "files/44_2025_TT-BXD_id185689/VanBanGoc_Thông_tư_số_44.2025.TT-BXD._QC25.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thông tư số 44.2025.TT-BXD. QC26.pdf",
+          "kind": "pdf",
+          "size": 1088632,
+          "sha256": "59d6d383f1f86b2b93925e94c6dd27b66db8b88e162165aad25131dc08163e08",
+          "pages": 32,
+          "text_chars": 52095,
+          "scanned": false,
+          "path": "files/44_2025_TT-BXD_id185689/VanBanGoc_Thông_tư_số_44.2025.TT-BXD._QC26.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thông tư số 44.2025.TT-BXD. QC27.pdf",
+          "kind": "pdf",
+          "size": 591926,
+          "sha256": "f7d069b73d7fd933fed157d6bdebd60c4173dd385ff571f583cddde973f391f5",
+          "pages": 10,
+          "text_chars": 11587,
+          "scanned": false,
+          "path": "files/44_2025_TT-BXD_id185689/VanBanGoc_Thông_tư_số_44.2025.TT-BXD._QC27.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thông tư số 44.2025.TT-BXD. QC28.pdf",
+          "kind": "pdf",
+          "size": 1198602,
+          "sha256": "159aed1cd68a1a79c151c4264cbbca50bf05ae746eb26a3b74b51d2891649132",
+          "pages": 34,
+          "text_chars": 35071,
+          "scanned": false,
+          "path": "files/44_2025_TT-BXD_id185689/VanBanGoc_Thông_tư_số_44.2025.TT-BXD._QC28.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thông tư số 44.2025.TT-BXD.pdf",
+          "kind": "pdf",
+          "size": 531356,
+          "sha256": "ea4173470ddd013754a94969c442cba95b759d1b59dfd8e1f509b7fe541ebb79",
+          "pages": 2,
+          "text_chars": 3408,
+          "scanned": false,
+          "path": "files/44_2025_TT-BXD_id185689/VanBanGoc_Thông_tư_số_44.2025.TT-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "185687",
+      "docNum": "42/2025/TT-BXD",
+      "title": "Thông tư số 42/2025/TT-BXD Ban hành Sửa đổi 1:2025 QCVN 07:2023/BXD Quy chuẩn kỹ thuật quốc gia về Hệ thống công trình hạ tầng kỹ thuật",
+      "qcvnCodes": [
+        "QCVN 07:2023/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Thông tư",
+      "issueDate": "2025-12-09",
+      "effFrom": "2026-01-23",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/185687",
+      "html": {
+        "fileName": "185687_content.html",
+        "chars": 5392,
+        "path": "text/42_2025_TT-BXD_id185687.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_Thông tư số 42.2025.TT-BXD.pdf",
+          "kind": "pdf",
+          "size": 635871,
+          "sha256": "83ccae9aca5ce80000b3972376a20be4fc9f4a5790578a82dece850be826eb6a",
+          "pages": 6,
+          "text_chars": 5503,
+          "scanned": false,
+          "path": "files/42_2025_TT-BXD_id185687/VanBanGoc_Thông_tư_số_42.2025.TT-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "circular_only"
+    },
+    {
+      "id": "184176",
+      "docNum": "11/2025/TT-BXD",
+      "title": "Thông tư số 11/2025/TT-BXD Ban hành quy chuẩn kỹ thuật quốc gia về hệ thống thiết bị phòng vệ đường ngang cảnh báo tự động",
+      "qcvnCodes": [],
+      "matchedBy": "quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2025-06-20",
+      "effFrom": "2026-01-01",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/184176",
+      "html": {
+        "fileName": "184176_content.html",
+        "chars": 2651,
+        "path": "text/11_2025_TT-BXD_id184176.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "Thông tư số 11.2025.TT-BXD. Quy chuẩn.pdf",
+          "kind": "pdf",
+          "size": 336130,
+          "sha256": "452384b5d8950f5914be9af649f94dc260beec89ed9c9039411f815b3e96773d",
+          "pages": 22,
+          "text_chars": 34211,
+          "scanned": false,
+          "path": "files/11_2025_TT-BXD_id184176/Thông_tư_số_11.2025.TT-BXD._Quy_chuẩn.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thông tư số 11.2025.TT-BXD. Quy chuẩn.pdf",
+          "kind": "pdf",
+          "size": 336130,
+          "sha256": "452384b5d8950f5914be9af649f94dc260beec89ed9c9039411f815b3e96773d",
+          "pages": 22,
+          "text_chars": 34211,
+          "scanned": false,
+          "path": "files/11_2025_TT-BXD_id184176/VanBanGoc_Thông_tư_số_11.2025.TT-BXD._Quy_chuẩn.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thông tư số 11.2025.TT-BXD.pdf",
+          "kind": "pdf",
+          "size": 477816,
+          "sha256": "2f1ef81c3be2ad4bffef7d4b423f29ed5dfc2de8ebe2f017b9ef1e385cedc190",
+          "pages": 2,
+          "text_chars": 2995,
+          "scanned": false,
+          "path": "files/11_2025_TT-BXD_id184176/VanBanGoc_Thông_tư_số_11.2025.TT-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "169517",
+      "docNum": "06/2024/TT-BXD",
+      "title": "Thông tư số 06/2024/TT-BXD Ban hành QCVN 10:2024/BXD Quy chuẩn kỹ thuật quốc gia về Xây dựng công trình đảm bảo tiếp cận sử dụng",
+      "qcvnCodes": [
+        "QCVN 10:2024/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Thông tư",
+      "issueDate": "2024-08-01",
+      "effFrom": "2025-02-01",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/169517",
+      "html": {
+        "fileName": "169517_content_origin.html",
+        "chars": 30206,
+        "path": "text/06_2024_TT-BXD_id169517.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_06thongtu_2024_BXD_BXD_20240805055239812810_signed20240805055314.pdf",
+          "kind": "pdf",
+          "size": 10803335,
+          "sha256": "c42350a6cddc9a5b392a777a8cc02fe57963fb4ce2c25400ad3c7d6106351085",
+          "pages": 29,
+          "text_chars": 32763,
+          "scanned": false,
+          "path": "files/06_2024_TT-BXD_id169517/VanBanGoc_06thongtu_2024_BXD_BXD_20240805055239812810_signed20240805055314.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "165674",
+      "docNum": "15/2023/TT-BXD",
+      "title": "Thông tư số 15/2023/TT-BXD Ban hành QCVN 07:2023/BXD Quy chuẩn kỹ thuật quốc gia về Hệ thống công trình hạ tầng kỹ thuật",
+      "qcvnCodes": [
+        "QCVN 07:2023/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Thông tư",
+      "issueDate": "2023-12-29",
+      "effFrom": "2024-07-01",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/165674",
+      "html": {
+        "fileName": "165674_content.html",
+        "chars": 1498,
+        "path": "text/15_2023_TT-BXD_id165674.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "Phan_chung.docx",
+          "kind": "docx",
+          "size": 173189,
+          "sha256": "0bec040fb86d41aae8f10e0d90968f02e70d67cd2ef07e8d65de1dc1307ce30a",
+          "pages": null,
+          "text_chars": 2655,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/Phan_chung.docx"
+        },
+        {
+          "fileName": "QCVN_07-1.docx",
+          "kind": "docx",
+          "size": 148361,
+          "sha256": "74ecce59c1dbe934737f3c9f000c3a08facc7c4a64ed8cfb88856c28e42f9050",
+          "pages": null,
+          "text_chars": 29005,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/QCVN_07-1.docx"
+        },
+        {
+          "fileName": "QCVN_07-10.docx",
+          "kind": "docx",
+          "size": 135309,
+          "sha256": "2ecf1b87e6bf2fdd30edb1561be6a3a6be7ff3b0014e29daa9a597902e3cb6f8",
+          "pages": null,
+          "text_chars": 15916,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/QCVN_07-10.docx"
+        },
+        {
+          "fileName": "QCVN_07-2.docx",
+          "kind": "docx",
+          "size": 143126,
+          "sha256": "4d8ef0705a930def5414cc31fd0bdb80a80d5f1105ed57ddbd13f0e5baa270a5",
+          "pages": null,
+          "text_chars": 23753,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/QCVN_07-2.docx"
+        },
+        {
+          "fileName": "QCVN_07-3.docx",
+          "kind": "docx",
+          "size": 47567,
+          "sha256": "7b41647092575c16238292bdc94fa949cc08accb0e3bb7a749b8391716281ea4",
+          "pages": null,
+          "text_chars": 23064,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/QCVN_07-3.docx"
+        },
+        {
+          "fileName": "QCVN_07-4.docx",
+          "kind": "docx",
+          "size": 186038,
+          "sha256": "a5620370552c8932f1481101322259ba0509b7e0664808be93e8c540801498b9",
+          "pages": null,
+          "text_chars": 49461,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/QCVN_07-4.docx"
+        },
+        {
+          "fileName": "QCVN_07-5.docx",
+          "kind": "docx",
+          "size": 132174,
+          "sha256": "827b211dca448456736880a37b856116a3ccea9930ae452727d5b55ce36a04b9",
+          "pages": null,
+          "text_chars": 14275,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/QCVN_07-5.docx"
+        },
+        {
+          "fileName": "QCVN_07-6.docx",
+          "kind": "docx",
+          "size": 142983,
+          "sha256": "339104a97512059ccf0193ce389d7cc94b5981af9bc57a00f274eeae5d0fd5ac",
+          "pages": null,
+          "text_chars": 22160,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/QCVN_07-6.docx"
+        },
+        {
+          "fileName": "QCVN_07-7.docx",
+          "kind": "docx",
+          "size": 547621,
+          "sha256": "7808ba451737856df05fd10f916155fe1fc8e7f15d30e12c2e0521cf15d7aaf1",
+          "pages": null,
+          "text_chars": 22163,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/QCVN_07-7.docx"
+        },
+        {
+          "fileName": "QCVN_07-8.docx",
+          "kind": "docx",
+          "size": 128467,
+          "sha256": "53e687ec6aa32422aecb72b19f2cf2a25bae7fa923bb6acb82e9a2428833eb5f",
+          "pages": null,
+          "text_chars": 8272,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/QCVN_07-8.docx"
+        },
+        {
+          "fileName": "QCVN_07-9.docx",
+          "kind": "docx",
+          "size": 147907,
+          "sha256": "fe14f1877b241bd6337553105cc4a195811a07f48b87f8e1d65783e802484e6d",
+          "pages": null,
+          "text_chars": 18999,
+          "scanned": false,
+          "path": "files/15_2023_TT-BXD_id165674/QCVN_07-9.docx"
+        },
+        {
+          "fileName": "Thong_tu_ban_hanh_QC_07,_29-12-2023.doc",
+          "kind": "doc",
+          "size": 61440,
+          "sha256": "6b629c3d834fe770df2f3f00a3d317120b501321d0538ddf37a1607c1bf4b0d9",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/15_2023_TT-BXD_id165674/Thong_tu_ban_hanh_QC_07,_29-12-2023.doc"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "162885",
+      "docNum": "09/2023/TT- BXD",
+      "title": "Thông tư số 09/2023/TT- BXD Ban hành Sửa đổi 1:2023 QCVN 06:2022/BXD Quy chuẩn kỹ thuật quốc gia về an toàn cháy cho nhà và công trình",
+      "qcvnCodes": [
+        "QCVN 06:2022/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Thông tư",
+      "issueDate": "2023-10-16",
+      "effFrom": "2023-12-01",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/162885",
+      "html": {
+        "fileName": "162885_content.html",
+        "chars": 76704,
+        "path": "text/09_2023_TT-_BXD_id162885.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "SĐ 1-QCVN-06-2022-BXD (2023.10.16X) B&W.docx",
+          "skipped": "không phải PDF/DOCX/DOC hợp lệ (vbpl trả về trang lỗi)"
+        },
+        {
+          "fileName": "TT ban hanh QC sưa đổi 062022 BT (8-30) TT VĂn.doc",
+          "kind": "doc",
+          "size": 64000,
+          "sha256": "9707c5cb84bce64f4caf06a48740653baa47436d2926a61838004e6c5eb4b9f5",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/09_2023_TT-_BXD_id162885/TT_ban_hanh_QC_sưa_đổi_062022_BT_(8-30)_TT_VĂn.doc"
+        },
+        {
+          "fileName": "VanBanGoc_BXD_09_2023_TT_16-10_2023_20231024043613813810_signed20231024043706.pdf",
+          "kind": "pdf",
+          "size": 15404401,
+          "sha256": "4f71860f405476b10788aea500149e0350fd265296a3e4086e9396808785a128",
+          "pages": 32,
+          "text_chars": 337,
+          "scanned": true,
+          "path": "files/09_2023_TT-_BXD_id162885/VanBanGoc_BXD_09_2023_TT_16-10_2023_20231024043613813810_signed20231024043706.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "161540",
+      "docNum": "04/2023/TT-BXD",
+      "title": "Thông tư số 04/2023/TT-BXD ban hành Quy chuẩn kỹ thuật quốc gia về sản phẩm, hàng hóa vật liệu xây dựng",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2023-06-30",
+      "effFrom": "2024-01-01",
+      "effTo": "",
+      "effStatus": "Hết hiệu lực một phần",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/161540",
+      "html": {
+        "fileName": "161540_content.html",
+        "chars": 2547,
+        "path": "text/04_2023_TT-BXD_id161540.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "QCVN 16.2023. In.doc",
+          "kind": "doc",
+          "size": 886272,
+          "sha256": "58b17f082a09261f6e66a052b3439083c95dea6d4ddba653589e9f4efa6e02de",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/04_2023_TT-BXD_id161540/QCVN_16.2023._In.doc"
+        },
+        {
+          "fileName": "Thông tư ban hành quy chuẩn kỹ thuật quốc gia về sản phẩm, hàng hóa vật liệu xây dựng.docx",
+          "kind": "docx",
+          "size": 35001,
+          "sha256": "18ccf264df8c9673cdbb23736c53951f95a2af5f1fae7d621a0bdc46650e60be",
+          "pages": null,
+          "text_chars": 3792,
+          "scanned": false,
+          "path": "files/04_2023_TT-BXD_id161540/Thông_tư_ban_hành_quy_chuẩn_kỹ_thuật_quốc_gia_về_sản_phẩm,_hàng_hóa_vật_liệu_xây_dựng.docx"
+        },
+        {
+          "fileName": "VanBanGoc_04THONGTU_2023_BXD_20230714110633135130_signed20230714110902.pdf",
+          "kind": "pdf",
+          "size": 19535562,
+          "sha256": "7aff40fe0c5b4d0466a482deea7954c906592a9126a8499ec96aab4b590e992e",
+          "pages": 50,
+          "text_chars": 38,
+          "scanned": true,
+          "path": "files/04_2023_TT-BXD_id161540/VanBanGoc_04THONGTU_2023_BXD_20230714110633135130_signed20230714110902.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "doc_only"
+    },
+    {
+      "id": "159422",
+      "docNum": "06/2022/TT-BXD",
+      "title": "Thông tư số 06/2022/TT-BXD Quy chuẩn kỹ thuật quốc gia QCVN 06:2022/BXD về an toàn cháy cho nhà và công trình",
+      "qcvnCodes": [
+        "QCVN 06:2022/BXD"
+      ],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2022-11-30",
+      "effFrom": "2023-01-16",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/159422",
+      "html": {
+        "fileName": "159422_content.html",
+        "chars": 1468,
+        "path": "text/06_2022_TT-BXD_id159422.txt"
+      },
+      "attachments": [],
+      "supplements": [
+        {
+          "fileName": "CongBao_QCVN_06-2022_phan1.pdf",
+          "kind": "pdf",
+          "size": 1452184,
+          "sha256": "9ad902448f5eac6efb7a3e2c81c3be289aa47a6c191f5a1c7e99535f94eb2c2d",
+          "pages": 103,
+          "text_chars": 211353,
+          "scanned": false,
+          "path": "files/06_2022_TT-BXD_id159422/CongBao_QCVN_06-2022_phan1.pdf",
+          "sourceUrl": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2022/11/38322/42582-1-2022921-92206-2022-tt-bxd.pdf",
+          "note": "Công báo Chính phủ — toàn văn QCVN 06:2022/BXD, phần 1/3 (thông tư + Chương 1–6)"
+        },
+        {
+          "fileName": "CongBao_QCVN_06-2022_phan2.pdf",
+          "kind": "pdf",
+          "size": 1280682,
+          "sha256": "eced5368a5abd73e0bde9000c655dc78d8fb4ed20e1d1cdf4d6390303cd3dfc2",
+          "pages": 95,
+          "text_chars": 156210,
+          "scanned": false,
+          "path": "files/06_2022_TT-BXD_id159422/CongBao_QCVN_06-2022_phan2.pdf",
+          "sourceUrl": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2022/11/38322/42585-1-2022923-92406-2022-tt-bxd.pdf",
+          "note": "Công báo Chính phủ — QCVN 06:2022/BXD, phần 2/3 (Phụ lục A–G)"
+        },
+        {
+          "fileName": "CongBao_QCVN_06-2022_phan3.pdf",
+          "kind": "pdf",
+          "size": 1211148,
+          "sha256": "24e6c52d8c372f1c2d6904b05131999252ddf9feef30f9b910f29addd5b4e5ba",
+          "pages": 36,
+          "text_chars": 48805,
+          "scanned": false,
+          "path": "files/06_2022_TT-BXD_id159422/CongBao_QCVN_06-2022_phan3.pdf",
+          "sourceUrl": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2022/11/38322/42588-1-2022925-92606-2022-tt-bxd.pdf",
+          "note": "Công báo Chính phủ — QCVN 06:2022/BXD, phần 3/3 (Phụ lục H)"
+        }
+      ],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "159421",
+      "docNum": "05/2022/TT-BXD",
+      "title": "Thông tư số 05/2022/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về phân cấp công trình phục vụ thiết kế xây dựng",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2022-11-30",
+      "effFrom": "2023-06-01",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/159421",
+      "html": {
+        "fileName": "159421_content.html",
+        "chars": 1662,
+        "path": "text/05_2022_TT-BXD_id159421.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_TT 05.2022.pdf",
+          "kind": "pdf",
+          "size": 5266361,
+          "sha256": "c68ed2e83eac86b70d6fc03387918d752229fbef304536e040e8b4ccb282904e",
+          "pages": 12,
+          "text_chars": 38,
+          "scanned": true,
+          "path": "files/05_2022_TT-BXD_id159421/VanBanGoc_TT_05.2022.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "scan_only"
+    },
+    {
+      "id": "156199",
+      "docNum": "02/2022/TT-BXD",
+      "title": "Thông tư số 02/2022/TT-BXD Ban hành QCVN 02:2022/BXD Quy chuẩn kỹ thuật quốc gia về Số liệu điều kiện tự nhiên dùng trong xây dựng",
+      "qcvnCodes": [
+        "QCVN 02:2022/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Thông tư",
+      "issueDate": "2022-09-26",
+      "effFrom": "2023-03-26",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/156199",
+      "html": {
+        "fileName": "156199_body_content.html",
+        "chars": 1641,
+        "path": "text/02_2022_TT-BXD_id156199.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "Phu Luc A 26092022 LML V9 (B&W) IN.docx",
+          "skipped": "không phải PDF/DOCX/DOC hợp lệ (vbpl trả về trang lỗi)"
+        },
+        {
+          "fileName": "Phu Luc B 26092022 LML V9 (B&W) IN.docx",
+          "skipped": "không phải PDF/DOCX/DOC hợp lệ (vbpl trả về trang lỗi)"
+        },
+        {
+          "fileName": "QCVN 02 26092022 LML V9 (B&W) IN.docx",
+          "skipped": "không phải PDF/DOCX/DOC hợp lệ (vbpl trả về trang lỗi)"
+        },
+        {
+          "fileName": "VanBanGoc_02-2022-TT-BXD_QCVN_20220928030517391390_signed20220928030757.pdf",
+          "kind": "pdf",
+          "size": 18811938,
+          "sha256": "12cce9e43ce7c4f5e143e62239d038f5499cd6c713ab832b2e15b4a962962bce",
+          "pages": 619,
+          "text_chars": 1370492,
+          "scanned": false,
+          "path": "files/02_2022_TT-BXD_id156199/VanBanGoc_02-2022-TT-BXD_QCVN_20220928030517391390_signed20220928030757.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "152388",
+      "docNum": "16/2021/TT-BXD",
+      "title": "Thông tư số 16/2021/TT-BXD Ban hành QCVN 18:2021/BXD Quy chuẩn kỹ thuật quốc gia về An toàn trong thi công xây dựng",
+      "qcvnCodes": [
+        "QCVN 18:2021/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Thông tư",
+      "issueDate": "2021-12-20",
+      "effFrom": "2022-06-20",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/152388",
+      "html": {
+        "fileName": "152388_content.html",
+        "chars": 1496,
+        "path": "text/16_2021_TT-BXD_id152388.txt"
+      },
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "circular_only"
+    },
+    {
+      "id": "148070",
+      "docNum": "03/2021/TT-BXD",
+      "title": "Thông tư số 03/2021/TT-BXD ban hành QCVN 04:2021/BXD quy chuẩn kỹ thuật quốc gia về Nhà chung cư",
+      "qcvnCodes": [
+        "QCVN 04:2021/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Thông tư",
+      "issueDate": "2021-05-19",
+      "effFrom": "2021-07-05",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/148070",
+      "html": null,
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "none"
+    },
+    {
+      "id": "148069",
+      "docNum": "02/2021/TT-BXD",
+      "title": "Thông tư 02/2021/TT-BXD Ban hành QCVN 06:2021/BXD quy chuẩn kỹ thuật quốc gia về An toàn cháy cho nhà và công trình",
+      "qcvnCodes": [
+        "QCVN 06:2021/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Thông tư",
+      "issueDate": "2021-05-19",
+      "effFrom": "2021-07-05",
+      "effTo": "2023-01-16",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/148069",
+      "html": null,
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "none"
+    },
+    {
+      "id": "148068",
+      "docNum": "01/2021/TT-BXD",
+      "title": "Thông tư số 01/2021/TT-BXD ban hành QCVN 01:2021/BXD quy chuẩn kỹ thuật quốc gia về Quy hoạch xây dựng",
+      "qcvnCodes": [
+        "QCVN 01:2021/BXD"
+      ],
+      "matchedBy": "QCVN",
+      "docType": "Thông tư",
+      "issueDate": "2021-05-19",
+      "effFrom": "2021-07-05",
+      "effTo": "2027-01-01",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/148068",
+      "html": null,
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "none"
+    },
+    {
+      "id": "141827",
+      "docNum": "01/2020/TT-BXD",
+      "title": "Thông tư số 01/2020/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về an toàn cháy cho nhà và công trình",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2020-04-06",
+      "effFrom": "2020-07-01",
+      "effTo": "2021-07-05",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/141827",
+      "html": {
+        "fileName": "141827_content.html",
+        "chars": 1547,
+        "path": "text/01_2020_TT-BXD_id141827.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_Phụ lục TT 01.2020.pdf",
+          "kind": "pdf",
+          "size": 6056384,
+          "sha256": "72de4534614e144632c94f9ead469918c1049f1a0edaeb2d8d0be513ffa0af61",
+          "pages": 147,
+          "text_chars": 308625,
+          "scanned": false,
+          "path": "files/01_2020_TT-BXD_id141827/VanBanGoc_Phụ_lục_TT_01.2020.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_TT 01.2020.pdf",
+          "kind": "pdf",
+          "size": 3299282,
+          "sha256": "ed993f4372f94dd81dfdb429956ff24e6c0ce184b0959883ea7a5161409a3368",
+          "pages": 1,
+          "text_chars": 116,
+          "scanned": false,
+          "path": "files/01_2020_TT-BXD_id141827/VanBanGoc_TT_01.2020.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "141828",
+      "docNum": "22/2019/TT-BXD",
+      "title": "Thông tư số 22/2019/TT-BXD ban hành quy chuẩn kỹ thuật quốc gia về quy hoạch xây dựng",
+      "qcvnCodes": [],
+      "matchedBy": "quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2019-12-31",
+      "effFrom": "2020-07-01",
+      "effTo": "2021-07-05",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/141828",
+      "html": {
+        "fileName": "141828_content.html",
+        "chars": 1656,
+        "path": "text/22_2019_TT-BXD_id141828.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_TTu 22.2019.pdf",
+          "kind": "pdf",
+          "size": 15746998,
+          "sha256": "d3e5a2972d45918cbf16203ea4521e53bc900e43438bc706c26e7dc4e535c72d",
+          "pages": 51,
+          "text_chars": 115,
+          "scanned": true,
+          "path": "files/22_2019_TT-BXD_id141828/VanBanGoc_TTu_22.2019.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "scan_only"
+    },
+    {
+      "id": "141075",
+      "docNum": "21/2019/TT-BXD",
+      "title": "Thông tư số 21/2019/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về Nhà chung cư",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2019-12-31",
+      "effFrom": "2020-07-01",
+      "effTo": "2021-07-05",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/141075",
+      "html": {
+        "fileName": "141075_content.html",
+        "chars": 1337,
+        "path": "text/21_2019_TT-BXD_id141075.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_TTu 21.2019.pdf",
+          "kind": "pdf",
+          "size": 9128967,
+          "sha256": "3e99edb7281c8825f5c8551d51375e1aa3bb832bb97db25a9719986a003d8b1e",
+          "pages": 25,
+          "text_chars": 115,
+          "scanned": true,
+          "path": "files/21_2019_TT-BXD_id141075/VanBanGoc_TTu_21.2019.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "scan_only"
+    },
+    {
+      "id": "140433",
+      "docNum": "19/2019/TT-BXD",
+      "title": "Thông tư số 19/2019/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về sản phẩm, hàng hóa vật liệu xây dựng",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2019-12-31",
+      "effFrom": "2020-07-01",
+      "effTo": "",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/140433",
+      "html": {
+        "fileName": "140433_content.html",
+        "chars": 3747,
+        "path": "text/19_2019_TT-BXD_id140433.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "Phụ lục Ttu 19.2019.docx",
+          "kind": "docx",
+          "size": 194266,
+          "sha256": "4acc1f412cc8c5a5ff719fa801771e12c81b066fe3d764a0f6fc64ef39568847",
+          "pages": null,
+          "text_chars": 63166,
+          "scanned": false,
+          "path": "files/19_2019_TT-BXD_id140433/Phụ_lục_Ttu_19.2019.docx"
+        },
+        {
+          "fileName": "Ttu 19.2019.docx",
+          "kind": "docx",
+          "size": 33521,
+          "sha256": "11b3dcded7c33b9bfad537b7f931bb2eba0b52478df87506f95a7a94b44848d2",
+          "pages": null,
+          "text_chars": 4456,
+          "scanned": false,
+          "path": "files/19_2019_TT-BXD_id140433/Ttu_19.2019.docx"
+        },
+        {
+          "fileName": "VanBanGoc_Phụ lục TTu 19.2019.pdf",
+          "kind": "pdf",
+          "size": 11906751,
+          "sha256": "6cbcaaa95a9fc4d482cc7fd6d78cfba3e7666c76ead5579bc38c010f19afe29c",
+          "pages": 43,
+          "text_chars": 116,
+          "scanned": true,
+          "path": "files/19_2019_TT-BXD_id140433/VanBanGoc_Phụ_lục_TTu_19.2019.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_TTu 19.2019.pdf",
+          "kind": "pdf",
+          "size": 3621269,
+          "sha256": "50224366623091496c262ea01b45387a301e3eb83ec362afb8fdd84d7d47bc5b",
+          "pages": 2,
+          "text_chars": 116,
+          "scanned": true,
+          "path": "files/19_2019_TT-BXD_id140433/VanBanGoc_TTu_19.2019.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "134616",
+      "docNum": "12/2018/TT-BXD",
+      "title": "Thông tư số 12/2018/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về Gara ôtô",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2018-12-26",
+      "effFrom": "2019-03-15",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/134616",
+      "html": {
+        "fileName": "134616_content.html",
+        "chars": 1320,
+        "path": "text/12_2018_TT-BXD_id134616.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "QCVN_13_-_Ga_ra_o_to_(file_ban_hanh)_20190129110750826820_20190213103529338330.docx",
+          "kind": "docx",
+          "size": 129500,
+          "sha256": "53dcd796e36634d5e0d49049527371dfc0059ebca72ad49b4d33c8aa3041a38c",
+          "pages": null,
+          "text_chars": 44044,
+          "scanned": false,
+          "path": "files/12_2018_TT-BXD_id134616/QCVN_13_-_Ga_ra_o_to_(file_ban_hanh)_20190129110750826820_20190213103529338330.docx"
+        },
+        {
+          "fileName": "Thong_tu_12 BH_QCVN13_Ga_ra_o_to.docx",
+          "kind": "docx",
+          "size": 36821,
+          "sha256": "1980b8883583fddd1ba508ef1e930cd432628fa707f51a0323b3dcd0108080f7",
+          "pages": null,
+          "text_chars": 2049,
+          "scanned": false,
+          "path": "files/12_2018_TT-BXD_id134616/Thong_tu_12_BH_QCVN13_Ga_ra_o_to.docx"
+        },
+        {
+          "fileName": "VanBanGoc_TT 12.2018TT_0001_201902120349027670.pdf",
+          "kind": "pdf",
+          "size": 866773,
+          "sha256": "ca7ddf226b005bd92a362e7dd5dee4d38b3ccf19320e9fdbd3bdc8d91ee09181",
+          "pages": 34,
+          "text_chars": 0,
+          "scanned": true,
+          "path": "files/12_2018_TT-BXD_id134616/VanBanGoc_TT_12.2018TT_0001_201902120349027670.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "134615",
+      "docNum": "11/2018/TT-BXD",
+      "title": "Thông tư số 11/2018/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về Công trình tàu điện ngầm",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2018-12-26",
+      "effFrom": "2019-03-15",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/134615",
+      "html": {
+        "fileName": "134615_content.html",
+        "chars": 1373,
+        "path": "text/11_2018_TT-BXD_id134615.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "QCVN_08_-_Tau_dien_ngam_(file_ban_hanh)_20190129110119507500_20190213102758507500.docx",
+          "kind": "docx",
+          "size": 109263,
+          "sha256": "1a7f72ea0e1094248352db480b4f1b9256eb3333bdc4228b28e3653c9bc90ff4",
+          "pages": null,
+          "text_chars": 34185,
+          "scanned": false,
+          "path": "files/11_2018_TT-BXD_id134615/QCVN_08_-_Tau_dien_ngam_(file_ban_hanh)_20190129110119507500_20190213102758507500.docx"
+        },
+        {
+          "fileName": "Thong_tu 11_BH_QCVN08_ve_Cong_trinh_tau_dien_ngam.docx",
+          "kind": "docx",
+          "size": 36687,
+          "sha256": "5bcb179b2bf1cb2c754b6e7ace5516eb6b11902d11355d1f407368c7165278bb",
+          "pages": null,
+          "text_chars": 2156,
+          "scanned": false,
+          "path": "files/11_2018_TT-BXD_id134615/Thong_tu_11_BH_QCVN08_ve_Cong_trinh_tau_dien_ngam.docx"
+        },
+        {
+          "fileName": "VanBanGoc_TT 11.2018TT_0001_20190212033639375370.pdf",
+          "kind": "pdf",
+          "size": 687812,
+          "sha256": "92a586789f3e3cc518bb299f002e232f68b60fb4158cc8d6b75df72be2e4f12b",
+          "pages": 24,
+          "text_chars": 0,
+          "scanned": true,
+          "path": "files/11_2018_TT-BXD_id134615/VanBanGoc_TT_11.2018TT_0001_20190212033639375370.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "129257",
+      "docNum": "04/2018/TT-BXD",
+      "title": "Thông tư số 04/2018/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về Xây dựng và lắp đặt phương tiện quảng cáo ngoài trời",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2018-05-20",
+      "effFrom": "2018-11-01",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/129257",
+      "html": {
+        "fileName": "129257_content.html",
+        "chars": 1427,
+        "path": "text/04_2018_TT-BXD_id129257.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "Quy chuan kem Thong tu 04-2018-BXD.doc",
+          "kind": "doc",
+          "size": 760832,
+          "sha256": "42c9d9fcf7fad77ec7ba5901fbb3428ea59a6e3aeed93f83b263631476232710",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/04_2018_TT-BXD_id129257/Quy_chuan_kem_Thong_tu_04-2018-BXD.doc"
+        },
+        {
+          "fileName": "Thong tu 04-2018-BXD.doc",
+          "kind": "doc",
+          "size": 61952,
+          "sha256": "90ee06dd314e8476230036c61ab19b2c985be61a2ea07a14d1f012e1bee9f261",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/04_2018_TT-BXD_id129257/Thong_tu_04-2018-BXD.doc"
+        },
+        {
+          "fileName": "VanBanGoc_Thong tu 04-2018-BXD.pdf",
+          "kind": "pdf",
+          "size": 812848,
+          "sha256": "c66b170f2d52ef4ee3721153c108e508f1955a0287696f2442ebb872f51cbfd3",
+          "pages": 17,
+          "text_chars": 0,
+          "scanned": true,
+          "path": "files/04_2018_TT-BXD_id129257/VanBanGoc_Thong_tu_04-2018-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "doc_only"
+    },
+    {
+      "id": "128758",
+      "docNum": "15/2017/TT-BXD",
+      "title": "Thông tư số 15/2017/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về Các công trình xây dựng sử dụng năng lượng hiệu quả",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2017-12-28",
+      "effFrom": "2018-06-01",
+      "effTo": "2027-02-01",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/128758",
+      "html": {
+        "fileName": "128758_content.html",
+        "chars": 1467,
+        "path": "text/15_2017_TT-BXD_id128758.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "QC kem theo TT 15-2017-BXD.doc",
+          "kind": "doc",
+          "size": 607744,
+          "sha256": "afb873d39e5be811633426ceff7f63371060b9c4fe960a01179e8e58ecebff6f",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/15_2017_TT-BXD_id128758/QC_kem_theo_TT_15-2017-BXD.doc"
+        },
+        {
+          "fileName": "TT 15-2017-BXD.doc",
+          "skipped": "không phải PDF/DOCX/DOC hợp lệ (vbpl trả về trang lỗi)"
+        },
+        {
+          "fileName": "VanBanGoc_TT 15-2017-BXD.pdf",
+          "kind": "pdf",
+          "size": 766243,
+          "sha256": "b88fd2e2906a8ce7ccd45aa29c4bd45f5aee94933f7d0b1ef934b561bafa5e56",
+          "pages": 30,
+          "text_chars": 0,
+          "scanned": true,
+          "path": "files/15_2017_TT-BXD_id128758/VanBanGoc_TT_15-2017-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "doc_only"
+    },
+    {
+      "id": "127135",
+      "docNum": "10/2017/TT-BXD",
+      "title": "Thông tư số 10/2017/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về sản phẩm, hàng hóa vật liệu xây dựng và hướng dẫn chứng nhận hợp quy, công bố hợp quy",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2017-09-29",
+      "effFrom": "2018-01-01",
+      "effTo": "",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/127135",
+      "html": {
+        "fileName": "127135_content.html",
+        "chars": 15438,
+        "path": "text/10_2017_TT-BXD_id127135.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_TT 10-2017-BXD.pdf",
+          "kind": "pdf",
+          "size": 1028591,
+          "sha256": "760db639be4c467b145a7beaebb447b305b18aa05828581f708497426eab15d4",
+          "pages": 33,
+          "text_chars": 0,
+          "scanned": true,
+          "path": "files/10_2017_TT-BXD_id127135/VanBanGoc_TT_10-2017-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "98945",
+      "docNum": "01/2016/TT-BXD",
+      "title": "Thông tư số 01/2016/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về các công trình hạ tầng kỹ thuật",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2016-02-01",
+      "effFrom": "2016-05-01",
+      "effTo": "2024-07-01",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/98945",
+      "html": {
+        "fileName": "98945_content.html",
+        "chars": 2560,
+        "path": "text/01_2016_TT-BXD_id98945.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_01.2016.TT.BXD.1.pdf",
+          "kind": "pdf",
+          "size": 1292287,
+          "sha256": "88c5efd235c6683abf6941e8ed0fba81b56ad083a17cf8ddedb0d7c738c85381",
+          "pages": 87,
+          "text_chars": 147205,
+          "scanned": false,
+          "path": "files/01_2016_TT-BXD_id98945/VanBanGoc_01.2016.TT.BXD.1.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_01.2016.TT.BXD.2.pdf",
+          "kind": "pdf",
+          "size": 644185,
+          "sha256": "44d2a5d2dc98a3fec92d35ade4a2f40aa3fb56aa86c7b61f914ddff998ff7d5a",
+          "pages": 39,
+          "text_chars": 61366,
+          "scanned": false,
+          "path": "files/01_2016_TT-BXD_id98945/VanBanGoc_01.2016.TT.BXD.2.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "111842",
+      "docNum": "21/2014/TT-BXD",
+      "title": "Thông tư số 21/2014/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về Xây dựng công trình đảm bảo người khuyết tật tiếp cận sử dụng",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2014-12-29",
+      "effFrom": "2015-07-01",
+      "effTo": "2025-02-01",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/111842",
+      "html": {
+        "fileName": "111842_content.html",
+        "chars": 21529,
+        "path": "text/21_2014_TT-BXD_id111842.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_QCVN 10-2014-BXD.pdf",
+          "kind": "pdf",
+          "size": 771902,
+          "sha256": "c1cc55e00bb40395988cf517b61eee5bca78bfb60d008a006137a4c5c06396e3",
+          "pages": 16,
+          "text_chars": 22629,
+          "scanned": false,
+          "path": "files/21_2014_TT-BXD_id111842/VanBanGoc_QCVN_10-2014-BXD.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thong tu 21-2014-BXD.pdf",
+          "kind": "pdf",
+          "size": 556884,
+          "sha256": "f9145612d8594500e65b2055cec1fd27dde2fa0859cc4695c5f6d0707c79f566",
+          "pages": 2,
+          "text_chars": 2173,
+          "scanned": false,
+          "path": "files/21_2014_TT-BXD_id111842/VanBanGoc_Thong_tu_21-2014-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "111843",
+      "docNum": "20/2014/TT-BXD",
+      "title": "Thông tư số 20/2014/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về Hệ thống điện của nhà ở và nhà công cộng",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2014-12-29",
+      "effFrom": "2015-07-01",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/111843",
+      "html": {
+        "fileName": "111843_content.html",
+        "chars": 1218,
+        "path": "text/20_2014_TT-BXD_id111843.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_QC 12-2014-BXD.pdf",
+          "kind": "pdf",
+          "size": 2028616,
+          "sha256": "bdb5aba70e0e70821a0042d71f0cf61cbbadcc209cf025800154d140e4c451dd",
+          "pages": 76,
+          "text_chars": 137237,
+          "scanned": false,
+          "path": "files/20_2014_TT-BXD_id111843/VanBanGoc_QC_12-2014-BXD.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_Thong tu 20-2014-BXD.pdf",
+          "kind": "pdf",
+          "size": 554374,
+          "sha256": "94afe3259f8f829979e77f8147236781a075f97bbd92808fa9d02e0e0067d07a",
+          "pages": 2,
+          "text_chars": 2099,
+          "scanned": false,
+          "path": "files/20_2014_TT-BXD_id111843/VanBanGoc_Thong_tu_20-2014-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "46431",
+      "docNum": "15/2014/TT-BXD",
+      "title": "Thông tư số 15/2014/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về sản phẩm, hàng hóa vật liệu xây dựng",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2014-09-15",
+      "effFrom": "2014-11-01",
+      "effTo": "2018-01-01",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/46431",
+      "html": {
+        "fileName": "46431_content.html",
+        "chars": 1333,
+        "path": "text/15_2014_TT-BXD_id46431.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_15.2014.TT.BXD.pdf",
+          "kind": "pdf",
+          "size": 1233707,
+          "sha256": "c190a2196f7d1a18e1ea04b78bb7042a29485cf0dd7f7c7f8f62b42901a2c2a8",
+          "pages": 40,
+          "text_chars": 65471,
+          "scanned": false,
+          "path": "files/15_2014_TT-BXD_id46431/VanBanGoc_15.2014.TT.BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "46430",
+      "docNum": "14/2014/TT-BXD",
+      "title": "Thông tư số 14/2014/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia An toàn trong xây dựng",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2014-09-05",
+      "effFrom": "2014-11-01",
+      "effTo": "2022-06-20",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/46430",
+      "html": {
+        "fileName": "46430_content.html",
+        "chars": 1134,
+        "path": "text/14_2014_TT-BXD_id46430.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_14.2014.TT.BXD.pdf",
+          "kind": "pdf",
+          "size": 968753,
+          "sha256": "ac1cc8693eed87c9520935eb31c2ef924f4f70470b8a895a9fd23d9bb2d97b33",
+          "pages": 82,
+          "text_chars": 191451,
+          "scanned": false,
+          "path": "files/14_2014_TT-BXD_id46430/VanBanGoc_14.2014.TT.BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "46422",
+      "docNum": "19/2013/TT-BXD",
+      "title": "Thông tư số 19/2013/TT-BXD Ban hành quy chuẩn kỹ thuật quốc gia về phương tiện quảng cáo ngoài trời",
+      "qcvnCodes": [],
+      "matchedBy": "quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2013-10-31",
+      "effFrom": "2014-05-01",
+      "effTo": "",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/46422",
+      "html": {
+        "fileName": "46422_content.html",
+        "chars": 1850,
+        "path": "text/19_2013_TT-BXD_id46422.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_19.2013.TT.BXD.pdf",
+          "kind": "pdf",
+          "size": 642097,
+          "sha256": "9ec7c5d9ff65d38309c7cf623f836969082cff0624ac485a0b87d61d6a7617d5",
+          "pages": 16,
+          "text_chars": 24776,
+          "scanned": false,
+          "path": "files/19_2013_TT-BXD_id46422/VanBanGoc_19.2013.TT.BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "32448",
+      "docNum": "15/2013/TT-BXD",
+      "title": "Thông tư số 15/2013/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia các công trình xây dựng sử dụng năng lượng hiệu quả",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2013-09-26",
+      "effFrom": "2013-11-15",
+      "effTo": "",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/32448",
+      "html": {
+        "fileName": "32448_content.html",
+        "chars": 1368,
+        "path": "text/15_2013_TT-BXD_id32448.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "Phu luc.pdf",
+          "kind": "pdf",
+          "size": 809080,
+          "sha256": "ba4ef4ed9bf2dfea8d59f2e19d6772928af341f5c74f1c629ec69b7b193d6afe",
+          "pages": 56,
+          "text_chars": 69719,
+          "scanned": false,
+          "path": "files/15_2013_TT-BXD_id32448/Phu_luc.pdf"
+        },
+        {
+          "fileName": "VanBanGoc_15_2013_TT-BXD.pdf",
+          "kind": "pdf",
+          "size": 894230,
+          "sha256": "2a6affc99ad90c71f5c9d039d59825c4a19a3130f2b9688947fe066971de81bb",
+          "pages": 47,
+          "text_chars": 68812,
+          "scanned": false,
+          "path": "files/15_2013_TT-BXD_id32448/VanBanGoc_15_2013_TT-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "28081",
+      "docNum": "12/2012/TT-BXD",
+      "title": "Thông tư số 12/2012/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia nguyên tắc phân loại, phân cấp công trình dân dụng, công nghiệp và hạ tầng kỹ thuật đô thị",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2012-12-28",
+      "effFrom": "2013-02-15",
+      "effTo": "2023-06-01",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/28081",
+      "html": {
+        "fileName": "28081_content.html",
+        "chars": 1568,
+        "path": "text/12_2012_TT-BXD_id28081.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_12_2012_TT-BXD.pdf",
+          "kind": "pdf",
+          "size": 238412,
+          "sha256": "41de6210d2a57da7b13fc058f4a47300559e14c1c1d0bd7f26e68dd148c41f94",
+          "pages": 22,
+          "text_chars": 34658,
+          "scanned": false,
+          "path": "files/12_2012_TT-BXD_id28081/VanBanGoc_12_2012_TT-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "26997",
+      "docNum": "11/2011/TT-BXD",
+      "title": "Thông tư số 11/2011/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về sản phẩm, hàng hóa vật liệu xây dựng",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2011-08-30",
+      "effFrom": "2011-10-15",
+      "effTo": "2014-11-01",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/26997",
+      "html": {
+        "fileName": "26997_content.html",
+        "chars": 1077,
+        "path": "text/11_2011_TT-BXD_id26997.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_11_2011_TT-BXD.pdf",
+          "kind": "pdf",
+          "size": 2098354,
+          "sha256": "113ee145ddee75e4c81515e3402096bb4c01d8e7e1c522742a726a688683101a",
+          "pages": 38,
+          "text_chars": 74201,
+          "scanned": false,
+          "path": "files/11_2011_TT-BXD_id26997/VanBanGoc_11_2011_TT-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "25834",
+      "docNum": "07/2010/TT-BXD",
+      "title": "Thông tư số 07/2010/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia An toàn cháy cho nhà và công trình",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2010-07-28",
+      "effFrom": "2010-09-17",
+      "effTo": "",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/25834",
+      "html": {
+        "fileName": "25834_content.html",
+        "chars": 83080,
+        "path": "text/07_2010_TT-BXD_id25834.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_07_2010_TT-BXD.pdf",
+          "kind": "pdf",
+          "size": 667927,
+          "sha256": "1a0e41838792c0d33ffbcf3fdc04111c018f76767ac98a15882e2b98555a9e01",
+          "pages": 105,
+          "text_chars": 176221,
+          "scanned": false,
+          "path": "files/07_2010_TT-BXD_id25834/VanBanGoc_07_2010_TT-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    },
+    {
+      "id": "24970",
+      "docNum": "02/2010/TT-BXD",
+      "title": "Thông tư số 02/2010/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia các công trình hạ tầng kỹ thuật đô thị",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2010-02-05",
+      "effFrom": "2010-04-01",
+      "effTo": "2016-05-01",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/24970",
+      "html": {
+        "fileName": "24970_content.html",
+        "chars": 1046,
+        "path": "text/02_2010_TT-BXD_id24970.txt"
+      },
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "circular_only"
+    },
+    {
+      "id": "23628",
+      "docNum": "33/2009/TT-BXD",
+      "title": "Thông tư số 33/2009/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia Phân loại, phân cấp công trình xây dựng dân dụng, công nghiệp và hạ tầng kỹ thuật đô thị",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2009-09-30",
+      "effFrom": "2010-03-30",
+      "effTo": "",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/23628",
+      "html": {
+        "fileName": "23628_content.html",
+        "chars": 1849,
+        "path": "text/33_2009_TT-BXD_id23628.txt"
+      },
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "circular_only"
+    },
+    {
+      "id": "23651",
+      "docNum": "32/2009/TT-BXD",
+      "title": "Thông tư số 32/2009/TT-BXD Ban hành quy chuẩn kỹ thuật quốc gia về quy hoạch xây dựng nông thôn",
+      "qcvnCodes": [],
+      "matchedBy": "quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2009-09-10",
+      "effFrom": "2009-10-25",
+      "effTo": "",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/23651",
+      "html": {
+        "fileName": "23651_content.html",
+        "chars": 1038,
+        "path": "text/32_2009_TT-BXD_id23651.txt"
+      },
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "circular_only"
+    },
+    {
+      "id": "181524",
+      "docNum": "28/2009/TT-BXD",
+      "title": "Thông tư số 28/2009/TT-BXD Ban hành Quy chuẩn kỹ thuật quốc gia về công trình ngầm đô thị (Phần 1. Tầu điện ngầm; Phần 2. Ga ra ô tô)",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật quốc gia",
+      "docType": "Thông tư",
+      "issueDate": "2009-08-14",
+      "effFrom": "2009-10-01",
+      "effTo": "2019-03-15",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/181524",
+      "html": {
+        "fileName": "181524_content_origin.html",
+        "chars": 1483,
+        "path": "text/28_2009_TT-BXD_id181524.txt"
+      },
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "circular_only"
+    },
+    {
+      "id": "24188",
+      "docNum": "09/2008/QĐ-BXD",
+      "title": "Quyết định số 09/2008/QĐ-BXD Về việc ban hành Quy chuẩn xây dựng Việt Nam “Nhà ở và công trình công cộng - An toàn sinh mạng và sức khỏe ”",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn xây dựng",
+      "docType": "Quyết định",
+      "issueDate": "2008-06-06",
+      "effFrom": "2008-07-10",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/24188",
+      "html": {
+        "fileName": "24188_content.html",
+        "chars": 1028,
+        "path": "text/09_2008_QĐ-BXD_id24188.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "09.2008.QD.BXD.doc",
+          "kind": "doc",
+          "size": 42496,
+          "sha256": "f6ecc9ebf57b56999c65d419bfe6f2042e8ca2d5a2e53d503bd3258c43259bc1",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/09_2008_QĐ-BXD_id24188/09.2008.QD.BXD.doc"
+        },
+        {
+          "fileName": "Quy chuan QCXDVN 05.doc",
+          "kind": "doc",
+          "size": 407040,
+          "sha256": "e4d2b16d1cfdb670e75a4f2b3f2cadbef5cc6fcf345e0f962813de36e806e147",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/09_2008_QĐ-BXD_id24188/Quy_chuan_QCXDVN_05.doc"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "doc_only"
+    },
+    {
+      "id": "24321",
+      "docNum": "04/2008/QĐ-BXD",
+      "title": "Quyết định số 04/2008/QĐ-BXD Về việc ban hành: “Quy chuẩn kỹ thuật Quốc gia về Quy hoạch xây dựng”",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn kỹ thuật Quốc gia",
+      "docType": "Quyết định",
+      "issueDate": "2008-04-03",
+      "effFrom": "2008-04-03",
+      "effTo": "",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/24321",
+      "html": {
+        "fileName": "24321_content.html",
+        "chars": 1093,
+        "path": "text/04_2008_QĐ-BXD_id24321.txt"
+      },
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "circular_only"
+    },
+    {
+      "id": "17217",
+      "docNum": "40/2005/QĐ-BXD",
+      "title": "Quyết định số 40/2005/QĐ-BXD Về việc ban hành QCXDVN 09: 2005 \"Quy chuẩn xây dựng Việt Nam - Các công trình xây dựng sử dụng năng lượng có hiệu quả\"",
+      "qcvnCodes": [
+        "QCXDVN 09:2005"
+      ],
+      "matchedBy": "QCXDVN",
+      "docType": "Quyết định",
+      "issueDate": "2005-11-17",
+      "effFrom": "2005-12-16",
+      "effTo": "2013-11-15",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/17217",
+      "html": {
+        "fileName": "17217_content.html",
+        "chars": 961,
+        "path": "text/40_2005_QĐ-BXD_id17217.txt"
+      },
+      "attachments": [],
+      "supplements": [],
+      "contentStatus": "circular_only"
+    },
+    {
+      "id": "111849",
+      "docNum": "01/2002/QĐ-BXD",
+      "title": "Quyết định số 01/2002/QĐ-BXD Về việc ban hành QCXDVN 01:2002 \"Quy chuẩn xây dựng công trình để đảm bảo người tàn tật tiếp cận sử dụng\"",
+      "qcvnCodes": [
+        "QCXDVN 01:2002"
+      ],
+      "matchedBy": "QCXDVN",
+      "docType": "Quyết định",
+      "issueDate": "2002-01-17",
+      "effFrom": "2002-02-01",
+      "effTo": "2015-07-01",
+      "effStatus": "Hết hiệu lực toàn bộ",
+      "expired": true,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/111849",
+      "html": {
+        "fileName": "111849_content.html",
+        "chars": 1162,
+        "path": "text/01_2002_QĐ-BXD_id111849.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "VanBanGoc_QD 01-2002-BXD.pdf",
+          "kind": "pdf",
+          "size": 18961,
+          "sha256": "4f026b0ec16983a195d27c5a055978f27639db2bf2525ed36c1cd85ce353e1a1",
+          "pages": 1,
+          "text_chars": 0,
+          "scanned": true,
+          "path": "files/01_2002_QĐ-BXD_id111849/VanBanGoc_QD_01-2002-BXD.pdf"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "scan_only"
+    },
+    {
+      "id": "43999",
+      "docNum": "439/BXD-CSXD",
+      "title": "Quyết định số 439/BXD-CSXD Về việc ban hành Quy chuẩn xây dựng tập II và tập III",
+      "qcvnCodes": [],
+      "matchedBy": "Quy chuẩn xây dựng",
+      "docType": "Quyết định",
+      "issueDate": "1997-09-25",
+      "effFrom": "1997-11-01",
+      "effTo": "",
+      "effStatus": "Còn hiệu lực",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/43999",
+      "html": {
+        "fileName": "43999_content.html",
+        "chars": 1337,
+        "path": "text/439_BXD-CSXD_id43999.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "439.BXD.CSXD.doc",
+          "kind": "doc",
+          "size": 90112,
+          "sha256": "5fd43ebd52ad0273a64f0411ac02f4ef73e7de88c3dcd9d02f08874659ff2909",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/439_BXD-CSXD_id43999/439.BXD.CSXD.doc"
+        },
+        {
+          "fileName": "Phu luc.doc",
+          "kind": "doc",
+          "size": 1092608,
+          "sha256": "2b20c5fc650ec3dac3cb491a00aee473167f0d1de70816411e7049e16b31d2b4",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/439_BXD-CSXD_id43999/Phu_luc.doc"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "doc_only"
+    },
+    {
+      "id": "74378",
+      "docNum": "682/BXD-CSXD",
+      "title": "Quyết định số 682/BXD-CSXD Về việc ban hành quy chuẩn xây dựng Việt nam",
+      "qcvnCodes": [],
+      "matchedBy": "quy chuẩn xây dựng",
+      "docType": "Quyết định",
+      "issueDate": "1996-12-14",
+      "effFrom": "1997-01-01",
+      "effTo": "",
+      "effStatus": "Hết hiệu lực một phần",
+      "expired": false,
+      "vbplUrl": "https://vbpl.vn/van-ban/chi-tiet/74378",
+      "html": {
+        "fileName": "74378_content.html",
+        "chars": 36904,
+        "path": "text/682_BXD-CSXD_id74378.txt"
+      },
+      "attachments": [
+        {
+          "fileName": "682.BXD.CSXD.doc",
+          "kind": "doc",
+          "size": 142848,
+          "sha256": "3260eb77db9a95a500b92a386f80deeda37950b674e0bd943b263eb89c4bcc97",
+          "pages": null,
+          "text_chars": null,
+          "scanned": null,
+          "path": "files/682_BXD-CSXD_id74378/682.BXD.CSXD.doc"
+        }
+      ],
+      "supplements": [],
+      "contentStatus": "full_text"
+    }
+  ]
+}

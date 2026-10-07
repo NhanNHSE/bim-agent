@@ -33,6 +33,11 @@ jobs:
       - name: Ruff
         run: ruff check --config backend/pyproject.toml --output-format=github backend
 
+      # Ruff misses compile-time errors such as "name used prior to global
+      # declaration" (crawl_qcvn.py shipped with one); the compiler doesn't.
+      - name: Compile all Python
+        run: python -m compileall -q backend/src backend/scripts backend/tests
+
   # ── Secret scan (full history) ────────────────────────────
   secrets:
     name: Secret Scan
