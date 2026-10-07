@@ -7,6 +7,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Query
 from fastapi.concurrency import run_in_threadpool
 
+from src.core import rate_limit
 from src.core.config import get_settings
 from src.core.security import get_current_user, require_roles, Role
 from src.data_pipeline.ifc_parser import parse_ifc, get_ifc_summary, ParsedIFC
@@ -51,6 +52,11 @@ def _safe_filename(filename: str) -> str:
     return name
 
 
+def _limit_ifc(current_user: dict) -> None:
+    """Per-user cap on CPU-heavy IFC work (design, sample generation, upload)."""
+    rate_limit.hit(f"ifc:min:{current_user.get('sub')}", settings.ifc_rate_limit_per_minute, 60)
+
+
 MAX_UPLOAD_BYTES = settings.ifc_max_upload_mb * 1024 * 1024
 _UPLOAD_CHUNK_BYTES = 1024 * 1024
 
@@ -74,6 +80,7 @@ async def upload_ifc(
 
     Parses the file, embeds elements into Qdrant, and builds Neo4j graph.
     """
+    await run_in_threadpool(_limit_ifc, current_user)  # Redis round-trip: keep it off the event loop
     filename = _safe_filename(file.filename or "")
     content = await _read_limited(file)
     user_id = int(current_user.get("sub", 0))
@@ -198,6 +205,7 @@ def generate_sample(
     current_user: dict = Depends(get_current_user),
 ):
     """Generate a sample IFC file for testing."""
+    _limit_ifc(current_user)
     try:
         from scripts.generate_sample_ifc import generate_sample_ifc
         filepath = generate_sample_ifc("data/ifc/sample_building.ifc")
@@ -216,6 +224,7 @@ def design_building(
     Body: {"description": "Tòa nhà 5 tầng văn phòng..."}
     Returns: spec, filepath, summary, violations
     """
+    _limit_ifc(current_user)
     description = req.get("description", "")
     if not description:
         raise HTTPException(400, "Cần mô tả công trình")

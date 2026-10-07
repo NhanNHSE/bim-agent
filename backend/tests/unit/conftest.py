@@ -67,6 +67,16 @@ def setup_tables():
 
 
 @pytest.fixture(autouse=True)
+def _isolated_rate_limiter(monkeypatch):
+    """Fresh in-memory rate limiter per test; never talks to a real Redis."""
+    from src.core import rate_limit
+    monkeypatch.setattr(rate_limit, "_get_redis", lambda: None)
+    rate_limit.reset()
+    yield
+    rate_limit.reset()
+
+
+@pytest.fixture(autouse=True)
 def clean_tables():
     """Clean all data after each test."""
     yield

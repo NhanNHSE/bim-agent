@@ -27,6 +27,26 @@ class TestServices:
         client = redis.Redis(host=settings.redis_host, port=settings.redis_port, socket_connect_timeout=5)
         assert client.ping() is True
 
+    def test_rate_limiter_uses_redis(self):
+        """Counters live in Redis (shared by workers, survive restarts) with a TTL = window."""
+        import uuid
+
+        import pytest
+        from fastapi import HTTPException
+        from src.core import rate_limit
+
+        redis_client = rate_limit._get_redis()
+        assert redis_client is not None, "limiter fell back to in-memory: Redis unreachable"
+
+        key = f"it:{uuid.uuid4().hex}"
+        rate_limit.hit(key, 2, 60)
+        rate_limit.hit(key, 2, 60)
+        with pytest.raises(HTTPException) as exc:
+            rate_limit.hit(key, 2, 60)
+        assert exc.value.status_code == 429
+        assert redis_client.get(f"ratelimit:{key}") == "3"
+        assert 0 < redis_client.ttl(f"ratelimit:{key}") <= 60
+
 
 class TestAuthOnPostgres:
     """Auth flow persisted in the real PostgreSQL database."""
