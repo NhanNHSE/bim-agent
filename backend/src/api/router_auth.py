@@ -7,8 +7,6 @@ Security features:
 """
 
 import re
-import time
-from collections import defaultdict
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -22,6 +20,7 @@ from src.core.security import (
     get_current_user,
     Role,
 )
+from src.core import rate_limit
 from src.core.audit import log_action
 from src.database.models import User
 from src.database.session import get_db
@@ -34,66 +33,11 @@ _RATE_LIMIT_WINDOW = 15 * 60  # 15 minutes
 _LOGIN_MAX = 10
 _REGISTER_MAX = 5
 
-# Redis-backed rate limiter (falls back to in-memory)
-_redis_client = None
-_memory_store: dict[str, list[float]] = defaultdict(list)
-
-
-def _get_redis():
-    """Lazy-init Redis client for rate limiting."""
-    global _redis_client
-    if _redis_client is None:
-        try:
-            import redis
-            from src.core.config import get_settings
-            settings = get_settings()
-            _redis_client = redis.Redis(
-                host=settings.redis_host,
-                port=settings.redis_port,
-                decode_responses=True,
-                socket_connect_timeout=2,
-            )
-            _redis_client.ping()
-        except Exception:
-            _redis_client = False  # Mark as unavailable
-            logger.warning("rate_limiter_redis_unavailable", fallback="in-memory")
-    return _redis_client if _redis_client is not False else None
-
 
 def _check_rate_limit(request: Request, action: str, max_attempts: int):
-    """Check rate limit by IP + action. Uses Redis if available, else in-memory.
-
-    Raises HTTPException(429) if rate limit exceeded.
-    """
+    """Limit `action` per client IP over a 15-minute window; raises HTTPException(429)."""
     client_ip = request.client.host if request.client else "unknown"
-    key = f"ratelimit:{action}:{client_ip}"
-
-    redis_cli = _get_redis()
-    if redis_cli:
-        try:
-            current = redis_cli.incr(key)
-            if current == 1:
-                redis_cli.expire(key, _RATE_LIMIT_WINDOW)
-            if current > max_attempts:
-                raise HTTPException(
-                    status_code=429,
-                    detail=f"Quá nhiều yêu cầu. Thử lại sau {_RATE_LIMIT_WINDOW // 60} phút.",
-                )
-            return
-        except HTTPException:
-            raise
-        except Exception:
-            pass  # Fall through to in-memory
-
-    # In-memory fallback
-    now = time.time()
-    _memory_store[key] = [t for t in _memory_store[key] if now - t < _RATE_LIMIT_WINDOW]
-    if len(_memory_store[key]) >= max_attempts:
-        raise HTTPException(
-            status_code=429,
-            detail=f"Quá nhiều yêu cầu. Thử lại sau {_RATE_LIMIT_WINDOW // 60} phút.",
-        )
-    _memory_store[key].append(now)
+    rate_limit.hit(f"{action}:{client_ip}", max_attempts, _RATE_LIMIT_WINDOW)
 
 
 # --- Request Models ---

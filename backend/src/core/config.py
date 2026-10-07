@@ -66,6 +66,11 @@ class Settings(BaseSettings):
     # --- Agent ---
     agent_mode: str = "multi_agent"  # multi_agent | langgraph | simple
 
+    # --- Rate limits (per user) ---
+    chat_rate_limit_per_minute: int = 20
+    chat_rate_limit_per_day: int = 300  # caps Gemini spend: each question makes 3-4 LLM calls
+    ifc_rate_limit_per_minute: int = 5  # IFC design / sample generation / upload (CPU-heavy)
+
     # --- IFC ---
     ifc_upload_dir: str = "data/ifc"
     ifc_max_upload_mb: int = 200

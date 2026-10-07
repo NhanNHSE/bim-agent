@@ -7,6 +7,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from src.core import rate_limit
 from src.core.config import get_settings
 from src.core.security import get_current_user
 from src.core.audit import log_action
@@ -35,6 +36,10 @@ def chat(
 ):
     """Chat with AI using GraphRAG — returns SSE stream."""
     user_id = int(current_user["sub"])
+
+    # Each question costs 3-4 Gemini calls: cap per user before touching the DB or the LLM
+    rate_limit.hit(f"chat:min:{user_id}", settings.chat_rate_limit_per_minute, 60)
+    rate_limit.hit(f"chat:day:{user_id}", settings.chat_rate_limit_per_day, 24 * 3600)
 
     # Get or create conversation
     if req.conversation_id:
