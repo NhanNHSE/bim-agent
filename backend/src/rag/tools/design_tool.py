@@ -198,7 +198,7 @@ def _design_bridge(question: str, entities: dict) -> dict:
             })
         if chunks:
             embeddings = embed_texts([c["text"] for c in chunks])
-            upsert(embeddings, chunks, "ifc_elements")
+            upsert(embeddings, chunks, "ifc_elements", source_id=f"ifc:{os.path.basename(filepath)}")
 
         from src.knowledge_graph.ifc_to_graph import build_ifc_graph
         build_ifc_graph(parsed.to_dict())
@@ -349,7 +349,7 @@ def _design_building(question: str, entities: dict) -> dict:
             })
         if chunks:
             embeddings = embed_texts([c["text"] for c in chunks])
-            upsert(embeddings, chunks, "ifc_elements")
+            upsert(embeddings, chunks, "ifc_elements", source_id=f"ifc:{os.path.basename(filepath)}")
 
         from src.knowledge_graph.ifc_to_graph import build_ifc_graph
         build_ifc_graph(parsed.to_dict())

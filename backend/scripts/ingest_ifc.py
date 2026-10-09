@@ -102,6 +102,7 @@ def ingest_ifc_file(filepath: str, collection: str = "ifc_elements"):
         embeddings=embeddings,
         documents=chunks,
         collection_name=collection,
+        source_id=f"ifc:{os.path.basename(filepath)}",
     )
     print(f"  ✅ Upserted {len(chunks)} chunks into collection '{collection}'")
 

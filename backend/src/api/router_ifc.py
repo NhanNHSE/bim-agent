@@ -110,7 +110,7 @@ def _store_and_index(filename: str, content: bytes, user_id: int) -> dict:
         # Embed and upsert
         texts = [c["text"] for c in chunks]
         embeddings = embed_texts(texts)
-        upsert(embeddings=embeddings, documents=chunks, collection_name="ifc_elements")
+        upsert(embeddings=embeddings, documents=chunks, collection_name="ifc_elements", source_id=f"ifc:{filename}")
 
         # Build graph
         graph_stats = build_ifc_graph(parsed.to_dict())

@@ -1,5 +1,13 @@
-"""Qdrant vector store operations for QCVN/TCVN chunks."""
+"""Qdrant vector store operations for QCVN/TCVN chunks.
 
+Point ids are deterministic (UUID5) and every point carries a `source_id` payload (one
+regulation, one IFC file, ...). Upserting a source first deletes that source's old points, so
+re-ingesting replaces instead of piling up stale points, and two sources never overwrite each
+other (the old `id=i` scheme made every IFC upload overwrite the previous model's vectors).
+"""
+
+import json
+import uuid
 from typing import Any, Optional
 
 from qdrant_client import QdrantClient
@@ -9,7 +17,10 @@ from qdrant_client.models import (
     VectorParams,
     Filter,
     FieldCondition,
+    FilterSelector,
+    MatchAny,
     MatchValue,
+    PayloadSchemaType,
 )
 import structlog
 
@@ -21,18 +32,23 @@ settings = get_settings()
 
 _client: Optional[QdrantClient] = None
 
+# Fixed namespace: the same (collection, source, position) always maps to the same point id
+_ID_NAMESPACE = uuid.UUID("6f0d7c1e-3b0a-5f4e-9a51-7c2b1d9e4a10")
+
 
 def get_client() -> QdrantClient:
     """Get or create the Qdrant client (singleton)."""
     global _client
     if _client is None:
-        _client = QdrantClient(host=settings.qdrant_host, port=settings.qdrant_port)
+        # Creating a collection / bulk upserts can exceed the 5 s client default on slow disks
+        # (observed 9 s inside WSL2); a timeout there left the collection half-initialised.
+        _client = QdrantClient(host=settings.qdrant_host, port=settings.qdrant_port, timeout=60)
         logger.info("qdrant_connected", host=settings.qdrant_host)
     return _client
 
 
 def ensure_collection(collection_name: str = None):
-    """Create the collection if it doesn't exist.
+    """Create the collection (and its `source_id` payload index) if it doesn't exist.
 
     Args:
         collection_name: Override the default collection name.
@@ -52,36 +68,80 @@ def ensure_collection(collection_name: str = None):
         logger.info("collection_created", name=name, dim=EMBEDDING_DIM)
     else:
         logger.info("collection_exists", name=name)
+    try:
+        client.create_payload_index(name, field_name="source_id", field_schema=PayloadSchemaType.KEYWORD)
+    except Exception as e:  # already indexed, or a client mode without payload indexes
+        logger.debug("payload_index_skipped", collection=name, error=str(e))
+
+
+def point_id(collection: str, source_id: Optional[str], index: int, chunk: dict) -> str:
+    """Deterministic point id: by (source, position) when the source is known, else by content."""
+    if source_id:
+        key = f"{collection}|{source_id}|{index}"
+    else:
+        key = f"{collection}|{chunk.get('text', '')}|{json.dumps(chunk.get('metadata', {}), sort_keys=True, ensure_ascii=False, default=str)}"
+    return str(uuid.uuid5(_ID_NAMESPACE, key))
+
+
+def delete_source(source_id: str, collection_name: str = None) -> None:
+    """Delete every point of one source (regulation, IFC file, ...)."""
+    name = collection_name or settings.qdrant_collection
+    get_client().delete(
+        collection_name=name,
+        points_selector=FilterSelector(
+            filter=Filter(must=[FieldCondition(key="source_id", match=MatchValue(value=source_id))])
+        ),
+    )
+    logger.info("source_deleted", collection=name, source_id=source_id)
+
+
+def prune_sources(keep: set[str], collection_name: str = None) -> None:
+    """Delete every point whose source is not in `keep` (also points without a source_id,
+    e.g. sample data or vectors written before source ids existed)."""
+    name = collection_name or settings.qdrant_collection
+    get_client().delete(
+        collection_name=name,
+        points_selector=FilterSelector(
+            filter=Filter(must_not=[FieldCondition(key="source_id", match=MatchAny(any=sorted(keep)))])
+        ),
+    )
+    logger.info("sources_pruned", collection=name, kept=len(keep))
 
 
 def upsert_chunks(
     chunks: list[dict],
     embeddings: list[list[float]],
     collection_name: str = None,
+    source_id: Optional[str] = None,
+    replace: bool = True,
 ):
-    """Insert or update chunks with their embeddings into Qdrant.
+    """Insert or replace chunks with their embeddings in Qdrant.
 
     Args:
         chunks: List of chunk dicts with 'text' and 'metadata'.
         embeddings: Corresponding embedding vectors.
         collection_name: Override the default collection name.
+        source_id: Source of all chunks; otherwise each chunk's `metadata["source_id"]` is used.
+        replace: Delete the existing points of each source before inserting (default).
     """
     name = collection_name or settings.qdrant_collection
     client = get_client()
     ensure_collection(name)
 
+    sources = [source_id or chunk.get("metadata", {}).get("source_id") for chunk in chunks]
+    if replace:
+        for sid in dict.fromkeys(s for s in sources if s):
+            delete_source(sid, name)
+
+    positions: dict[Optional[str], int] = {}
     points = []
-    for i, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
-        points.append(
-            PointStruct(
-                id=i,
-                vector=embedding,
-                payload={
-                    "text": chunk["text"],
-                    **chunk.get("metadata", {}),
-                },
-            )
-        )
+    for chunk, embedding, sid in zip(chunks, embeddings, sources):
+        index = positions.get(sid, 0)
+        positions[sid] = index + 1
+        payload = {"text": chunk["text"], **chunk.get("metadata", {})}
+        if sid:
+            payload["source_id"] = sid
+        points.append(PointStruct(id=point_id(name, sid, index, chunk), vector=embedding, payload=payload))
 
     # Upsert in batches of 100
     batch_size = 100
@@ -89,7 +149,7 @@ def upsert_chunks(
         batch = points[start : start + batch_size]
         client.upsert(collection_name=name, points=batch)
 
-    logger.info("chunks_upserted", collection=name, count=len(points))
+    logger.info("chunks_upserted", collection=name, count=len(points), sources=len(positions))
 
 
 def search(
@@ -168,10 +228,11 @@ def get_collection_info(collection_name: str = None) -> dict:
         return {"name": name, "status": "not_found"}
 
 
-def upsert(embeddings: list, documents: list, collection_name: str = None):
-    """Simplified upsert — wraps upsert_chunks for IFC/agent usage."""
+def upsert(embeddings: list, documents: list, collection_name: str = None, source_id: Optional[str] = None):
+    """Simplified upsert — wraps upsert_chunks for IFC/agent usage (`source_id` = one IFC file)."""
     upsert_chunks(
         chunks=documents,
         embeddings=embeddings,
         collection_name=collection_name,
+        source_id=source_id,
     )

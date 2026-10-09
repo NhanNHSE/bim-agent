@@ -1,8 +1,16 @@
-"""Build knowledge graph from parsed QCVN/TCVN data into Neo4j."""
+"""Build knowledge graph from parsed QCVN/TCVN data into Neo4j.
+
+Graph: (Standard)-[:CONTAINS]->(Chapter)-[:HAS_SECTION]->(Section)-[:HAS_ARTICLE]->(Article)
+       -[:SPECIFIES]->(Requirement), plus SUPERSEDES / RELATED_TO between standards and
+       BuildingType / Material nodes for classification and material requirements.
+
+Each standard is rebuilt as a whole: its previous chapters/sections/articles/requirements are
+deleted first, so a re-ingest never leaves stale clauses behind. Writes are batched with
+UNWIND (one query per level instead of one per node).
+"""
 
 import json
 import os
-from typing import Any
 
 import structlog
 
@@ -10,6 +18,115 @@ from src.knowledge_graph.neo4j_client import run_write_query
 from src.knowledge_graph.graph_schema import init_schema
 
 logger = structlog.get_logger()
+
+BATCH_SIZE = 500
+
+
+def _batches(rows: list[dict]):
+    for start in range(0, len(rows), BATCH_SIZE):
+        yield rows[start:start + BATCH_SIZE]
+
+
+def _rows(data: dict) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
+    """Flatten a standard into chapter / section / article / requirement rows."""
+    code = data["standard_code"]
+    chapters, sections, articles, requirements = [], [], [], []
+    for chapter in data.get("chapters", []):
+        chapter_id = f"{code}_ch{chapter['number']}"
+        chapters.append({
+            "chapter_id": chapter_id, "number": str(chapter["number"]),
+            "title": chapter.get("title", ""), "kind": chapter.get("kind", "chapter"),
+        })
+        for section in chapter.get("sections", []):
+            section_id = f"{code}_sec{section['number']}"
+            sections.append({
+                "chapter_id": chapter_id, "section_id": section_id,
+                "number": str(section["number"]), "title": section.get("title", ""),
+            })
+            for article in section.get("articles", []):
+                article_id = f"{code}_art{article['number']}"
+                articles.append({
+                    "section_id": section_id, "article_id": article_id,
+                    "number": str(article["number"]), "title": article.get("title", ""),
+                    "content": article.get("content", ""),
+                })
+                for i, req in enumerate(article.get("requirements", [])):
+                    requirements.append({
+                        "article_id": article_id, "req_id": f"{article_id}_req{i}", "req": req,
+                        "type": req.get("type", ""), "description": req.get("description", ""),
+                        "values_json": json.dumps(req.get("values", {}), ensure_ascii=False),
+                        "min_value": req.get("min_value"), "max_value": req.get("max_value"),
+                        "unit": req.get("unit", ""),
+                        "applies_to": req.get("applies_to", ""), "condition": req.get("condition", ""),
+                    })
+    return chapters, sections, articles, requirements
+
+
+def build_graph_from_dict(data: dict) -> dict[str, int]:
+    """Rebuild one standard's subgraph from its structured dict."""
+    code = data["standard_code"]
+    counters = {"nodes": 0, "relationships": 0}
+
+    _create_standard_node(data, counters)
+    _delete_standard_content(code)
+
+    chapters, sections, articles, requirements = _rows(data)
+    for batch in _batches(chapters):
+        run_write_query(
+            """
+            MATCH (s:Standard {code: $code})
+            UNWIND $rows AS row
+            MERGE (ch:Chapter {chapter_id: row.chapter_id})
+            SET ch.number = row.number, ch.title = row.title, ch.kind = row.kind
+            MERGE (s)-[:CONTAINS]->(ch)
+            """,
+            {"code": code, "rows": batch},
+        )
+    for batch in _batches(sections):
+        run_write_query(
+            """
+            UNWIND $rows AS row
+            MATCH (ch:Chapter {chapter_id: row.chapter_id})
+            MERGE (sec:Section {section_id: row.section_id})
+            SET sec.number = row.number, sec.title = row.title
+            MERGE (ch)-[:HAS_SECTION]->(sec)
+            """,
+            {"rows": batch},
+        )
+    for batch in _batches(articles):
+        run_write_query(
+            """
+            UNWIND $rows AS row
+            MATCH (sec:Section {section_id: row.section_id})
+            MERGE (a:Article {article_id: row.article_id})
+            SET a.number = row.number, a.title = row.title, a.content = row.content,
+                a.standard_code = $code
+            MERGE (sec)-[:HAS_ARTICLE]->(a)
+            """,
+            {"code": code, "rows": batch},
+        )
+    for batch in _batches(requirements):
+        run_write_query(
+            """
+            UNWIND $rows AS row
+            MATCH (a:Article {article_id: row.article_id})
+            MERGE (r:Requirement {req_id: row.req_id})
+            SET r.type = row.type, r.description = row.description, r.values_json = row.values_json,
+                r.min_value = row.min_value, r.max_value = row.max_value, r.unit = row.unit,
+                r.applies_to = row.applies_to, r.condition = row.condition
+            MERGE (a)-[:SPECIFIES]->(r)
+            """,
+            {"rows": [{k: v for k, v in row.items() if k != "req"} for row in batch]},
+        )
+    for row in requirements:
+        _create_domain_nodes(row["req"], row["req_id"], counters)
+
+    counters["nodes"] += len(chapters) + len(sections) + len(articles) + len(requirements)
+    counters["relationships"] += len(chapters) + len(sections) + len(articles) + len(requirements)
+    _create_standard_references(data, counters)
+
+    logger.info("graph_built", standard=code, nodes=counters["nodes"], relationships=counters["relationships"])
+    return counters
 
 
 def build_graph_from_json(filepath: str) -> dict[str, int]:
@@ -22,31 +139,11 @@ def build_graph_from_json(filepath: str) -> dict[str, int]:
         Summary of nodes and relationships created.
     """
     with open(filepath, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    counters = {"nodes": 0, "relationships": 0}
-
-    # 1. Create Standard node
-    _create_standard_node(data, counters)
-
-    # 2. Create chapters, sections, articles
-    for chapter in data.get("chapters", []):
-        _create_chapter(data["standard_code"], chapter, counters)
-
-    # 3. Create cross-references between standards
-    _create_standard_references(data, counters)
-
-    logger.info(
-        "graph_built",
-        standard=data["standard_code"],
-        nodes=counters["nodes"],
-        relationships=counters["relationships"],
-    )
-    return counters
+        return build_graph_from_dict(json.load(f))
 
 
 def _create_standard_node(data: dict, counters: dict):
-    """Create a Standard node."""
+    """Create or update the Standard node, including its validity."""
     run_write_query(
         """
         MERGE (s:Standard {code: $code})
@@ -54,6 +151,12 @@ def _create_standard_node(data: dict, counters: dict):
             s.year = $year,
             s.issuing_body = $issuing_body,
             s.status = $status,
+            s.eff_status = $eff_status,
+            s.expired = $expired,
+            s.effective_date = $effective_date,
+            s.doc_num = $doc_num,
+            s.vbpl_url = $vbpl_url,
+            s.full_text = $full_text,
             s.scope = $scope
         """,
         {
@@ -62,130 +165,30 @@ def _create_standard_node(data: dict, counters: dict):
             "year": data.get("year", 0),
             "issuing_body": data.get("issuing_body", ""),
             "status": data.get("status", "active"),
+            "eff_status": data.get("eff_status", ""),
+            "expired": bool(data.get("expired", False)),
+            "effective_date": data.get("effective_date", ""),
+            "doc_num": data.get("doc_num", ""),
+            "vbpl_url": data.get("vbpl_url", ""),
+            "full_text": data.get("full_text", True),
             "scope": data.get("scope", ""),
         },
     )
     counters["nodes"] += 1
 
 
-def _create_chapter(standard_code: str, chapter: dict, counters: dict):
-    """Create Chapter node and link to Standard."""
-    chapter_id = f"{standard_code}_ch{chapter['number']}"
-
+def _delete_standard_content(code: str):
+    """Remove the previous chapters/sections/articles/requirements of a standard."""
     run_write_query(
         """
-        MATCH (s:Standard {code: $standard_code})
-        MERGE (ch:Chapter {chapter_id: $chapter_id})
-        SET ch.number = $number, ch.title = $title
-        MERGE (s)-[:CONTAINS]->(ch)
+        MATCH (s:Standard {code: $code})-[:CONTAINS]->(ch:Chapter)
+        OPTIONAL MATCH (ch)-[:HAS_SECTION]->(sec:Section)
+        OPTIONAL MATCH (sec)-[:HAS_ARTICLE]->(a:Article)
+        OPTIONAL MATCH (a)-[:SPECIFIES]->(r:Requirement)
+        DETACH DELETE r, a, sec, ch
         """,
-        {
-            "standard_code": standard_code,
-            "chapter_id": chapter_id,
-            "number": chapter["number"],
-            "title": chapter["title"],
-        },
+        {"code": code},
     )
-    counters["nodes"] += 1
-    counters["relationships"] += 1
-
-    for section in chapter.get("sections", []):
-        _create_section(standard_code, chapter_id, section, counters)
-
-
-def _create_section(
-    standard_code: str, chapter_id: str, section: dict, counters: dict
-):
-    """Create Section node and link to Chapter."""
-    section_id = f"{standard_code}_sec{section['number']}"
-
-    run_write_query(
-        """
-        MATCH (ch:Chapter {chapter_id: $chapter_id})
-        MERGE (sec:Section {section_id: $section_id})
-        SET sec.number = $number, sec.title = $title
-        MERGE (ch)-[:HAS_SECTION]->(sec)
-        """,
-        {
-            "chapter_id": chapter_id,
-            "section_id": section_id,
-            "number": section["number"],
-            "title": section["title"],
-        },
-    )
-    counters["nodes"] += 1
-    counters["relationships"] += 1
-
-    for article in section.get("articles", []):
-        _create_article(standard_code, section_id, article, counters)
-
-
-def _create_article(
-    standard_code: str, section_id: str, article: dict, counters: dict
-):
-    """Create Article node with requirements and link to Section."""
-    article_id = f"{standard_code}_art{article['number']}"
-
-    run_write_query(
-        """
-        MATCH (sec:Section {section_id: $section_id})
-        MERGE (a:Article {article_id: $article_id})
-        SET a.number = $number,
-            a.title = $title,
-            a.content = $content,
-            a.standard_code = $standard_code
-        MERGE (sec)-[:HAS_ARTICLE]->(a)
-        """,
-        {
-            "section_id": section_id,
-            "article_id": article_id,
-            "number": article["number"],
-            "title": article["title"],
-            "content": article["content"],
-            "standard_code": standard_code,
-        },
-    )
-    counters["nodes"] += 1
-    counters["relationships"] += 1
-
-    # Create Requirement nodes
-    for i, req in enumerate(article.get("requirements", [])):
-        _create_requirement(article_id, i, req, counters)
-
-
-def _create_requirement(
-    article_id: str, index: int, req: dict, counters: dict
-):
-    """Create Requirement node and link to Article."""
-    req_id = f"{article_id}_req{index}"
-    req_json = json.dumps(req.get("values", {}), ensure_ascii=False)
-
-    run_write_query(
-        """
-        MATCH (a:Article {article_id: $article_id})
-        MERGE (r:Requirement {req_id: $req_id})
-        SET r.type = $type,
-            r.description = $description,
-            r.values_json = $values_json,
-            r.applies_to = $applies_to,
-            r.condition = $condition
-        MERGE (a)-[:SPECIFIES]->(r)
-        """,
-        {
-            "article_id": article_id,
-            "req_id": req_id,
-            "type": req.get("type", ""),
-            "description": req.get("description", ""),
-            "values_json": req_json,
-            "applies_to": req.get("applies_to", ""),
-            "condition": req.get("condition", ""),
-        },
-    )
-    counters["nodes"] += 1
-    counters["relationships"] += 1
-
-    # Create BuildingType/Material nodes from classification values
-    _create_domain_nodes(req, req_id, counters)
 
 
 def _create_domain_nodes(req: dict, req_id: str, counters: dict):
@@ -233,7 +236,8 @@ def _create_standard_references(data: dict, counters: dict):
     """Create RELATED_TO and SUPERSEDES relationships between standards."""
     standard_code = data["standard_code"]
 
-    # Supersedes
+    # Supersedes: a placeholder node created here is marked superseded; a real node keeps
+    # the status from its own data (vbpl validity is authoritative)
     if data.get("supersedes"):
         run_write_query(
             """
@@ -246,20 +250,21 @@ def _create_standard_references(data: dict, counters: dict):
         )
         counters["relationships"] += 1
 
-    # Related standards
-    for related_code in data.get("related_standards", []):
+    related = [c for c in data.get("related_standards", []) if c != standard_code]
+    if related:
         run_write_query(
             """
             MATCH (s:Standard {code: $code})
-            MERGE (r:Standard {code: $related_code})
+            UNWIND $related AS related_code
+            MERGE (r:Standard {code: related_code})
             MERGE (s)-[:RELATED_TO]->(r)
             """,
-            {"code": standard_code, "related_code": related_code},
+            {"code": standard_code, "related": related},
         )
-        counters["relationships"] += 1
+        counters["relationships"] += len(related)
 
 
-def build_graph_from_directory(data_dir: str = "data/qcvn") -> dict[str, int]:
+def build_graph_from_directory(data_dir: str = "data/vbpl_bxd/parsed") -> dict[str, int]:
     """Build knowledge graph from all JSON files in a directory.
 
     Args:
@@ -276,7 +281,7 @@ def build_graph_from_directory(data_dir: str = "data/qcvn") -> dict[str, int]:
         logger.warning("data_directory_not_found", path=data_dir)
         return total
 
-    json_files = [f for f in os.listdir(data_dir) if f.endswith(".json")]
+    json_files = sorted(f for f in os.listdir(data_dir) if f.endswith(".json") and not f.startswith("_"))
     logger.info("building_graph", files_found=len(json_files), directory=data_dir)
 
     for filename in json_files:
