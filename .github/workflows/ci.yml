@@ -168,7 +168,9 @@ jobs:
           EOF
 
       - name: Start services
-        run: docker compose up -d --build --wait --wait-timeout 300
+        # knowledge-refresh is left out: it would crawl vbpl.vn and re-embed the corpus (~13 min)
+        # during the tests; its logic is covered by unit tests.
+        run: docker compose up -d --build --wait --wait-timeout 300 backend frontend
 
       - name: Wait for backend health
         run: |

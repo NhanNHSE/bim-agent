@@ -59,6 +59,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: bim-knowledge-refresh
+    # Same image as backend, but no web server: the image's HTTP healthcheck would mark it
+    # unhealthy forever (and fail `compose up --wait`). Progress is in data/vbpl_bxd/refresh_report.json.
+    healthcheck:
+      disable: true
     env_file:
       - .env
     command: ["python", "scripts/refresh_knowledge.py", "--loop", "--interval-hours", "${KNOWLEDGE_REFRESH_HOURS:-168}"]
