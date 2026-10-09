@@ -51,6 +51,7 @@ sequenceDiagram
     participant GM as Gemini
 
     FE->>API: POST /chat (JWT)
+    API-->>FE: message rỗng/chỉ khoảng trắng hoặc > CHAT_MAX_MESSAGE_CHARS (4000) thì 422, không gọi LLM
     API->>RL: hit 20/phút và 300/ngày theo user
     RL-->>API: vượt hạn mức thì 429 + Retry-After
     API->>PG: tạo/lấy Conversation, lưu tin nhắn user, lấy 10 tin gần nhất
@@ -58,8 +59,8 @@ sequenceDiagram
     CO->>GM: classify_question → tools + entities (từ khóa thiết kế thì bỏ qua LLM)
     CO->>AG: AGENT_MAP: QCVNAgent / BIMAgent / DesignAgent
     AG->>QD: vector search (qcvn_chunks hoặc ifc_elements)
-    AG->>N4: Cypher theo mẫu, hoặc LLM sinh Cypher (chặn từ khóa ghi)
-    AG->>GM: DesignAgent: mô tả → spec JSON → sinh file IFC
+    AG->>N4: Cypher theo mẫu, hoặc LLM sinh Cypher (chặn từ khóa ghi + run_query chạy trong read transaction, không có APOC)
+    AG->>GM: DesignAgent: mô tả → spec JSON → validate_spec_bounds → sinh file IFC
     CO->>GM: _rerank tài liệu
     CO->>GM: generate_content_stream
     CO-->>API: stream + sources
@@ -89,8 +90,8 @@ flowchart TD
     end
     subgraph de["POST /design · POST /generate-sample"]
         D1["mô tả tiếng Việt"] --> D2{"_detect_structure_type"}
-        D2 -->|nhà| D3["Gemini → spec → ifc_generator_v2<br/>(IFC4, IfcLocalPlacement)"]
-        D2 -->|cầu| D4["Gemini → spec → ifc_bridge_generator<br/>+ kiểm tra bridge_compliance"]
+        D2 -->|nhà| D3["Gemini → spec → validate_spec_bounds → ifc_generator_v2<br/>(IFC4, IfcLocalPlacement)"]
+        D2 -->|cầu| D4["Gemini → spec → validate_spec_bounds → ifc_bridge_generator<br/>+ kiểm tra bridge_compliance"]
         D3 --> D5["file .ifc trong /app/data/ifc"]
         D4 --> D5
     end
@@ -172,7 +173,9 @@ flowchart LR
 | `core/` | Config, JWT/RBAC, lỗi, rate limit, audit, logging, client LLM | `config.py`, `security.py`, `rate_limit.py`, `errors.py`, `llm.py` |
 | `database/` | SQLAlchemy models + session (bảng tạo bằng `create_all`, chưa dùng Alembic) | `models.py`, `session.py` |
 
-Ngoài `src`: `backend/scripts/` (crawl, ingest, build_graph, set_role), `backend/tests/{unit,integration,smoke}`, `frontend/` (Nginx + `js/{app,api,auth,graph,ifc-upload}.js`).
+Ngoài `src`: `backend/scripts/` (crawl, ingest, build_graph, set_role), `backend/tests/{unit,integration,smoke}`, `frontend/` (Nginx + `js/{app,api,auth,graph,ifc-upload}.js`; mọi giá trị động chèn vào `innerHTML` đi qua `escapeHtml` trong `js/escape.js`, được `tests/unit/test_frontend_xss.py` kiểm tra tĩnh trong CI).
+
+Guardrails trên đầu vào do LLM sinh: `validate_spec_bounds` (`data_pipeline/base_spec.py`, bảng `SPEC_BOUNDS`) chọn giới hạn theo lớp spec chứ không theo field `structure_type` (LLM điều khiển được), và từ chối mọi field số chưa có giới hạn.
 
 ## 7. Lỗi / giới hạn đã biết (⚠️ trong sơ đồ)
 
@@ -182,4 +185,5 @@ Ngoài `src`: `backend/scripts/` (crawl, ingest, build_graph, set_role), `backen
 | Embedding | MiniLM chỉ đọc ~128 token đầu mỗi chunk; chưa có hybrid/sparse search |
 | `router_ifc.py` | `GET /geometry/{filename}` khai báo **2 lần** — chỉ route đầu có hiệu lực |
 | 3 bộ điều phối | `coordinator.py`, `rag/agent.py`, `rag/graph_rag.py` trùng chức năng; `SYSTEM_PROMPT` của agent không được dùng khi sinh câu trả lời |
-| `/health` | Trả 200 cả khi một dịch vụ "degraded" |
+| `/health` | Trả 200 cả khi một dịch vụ "degraded"; `qdrant_vectors` luôn `None` (Qdrant mới trả `points_count`) |
+| Frontend | Link tải IFC đưa JWT vào query string (`js/api.js`, `?token=`); chưa có CSP (còn `onclick` inline) |
