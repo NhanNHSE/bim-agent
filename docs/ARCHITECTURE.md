@@ -142,6 +142,7 @@ flowchart LR
 - Kho hiện tại: 51 văn bản → 69 quy chuẩn, 46 có toàn văn, ~4.160 điều khoản, ~7.060 chunk. Văn bản không có chữ (scan, `.doc`, chỉ có thông tư) vẫn có bản ghi tổng quan để trả lời về hiệu lực.
 - Mỗi điểm Qdrant có `source_id` (`vbpl:<id>:<mã>`, `ifc:<file>`); id = UUID5 tất định. Nạp lại một nguồn sẽ thay thế đúng nguồn đó; nguồn không còn trong kho bị xóa.
 - PDF lẻ: `ingest_qcvn.py --pdf file.pdf` (dùng `qcvn_parser.py`, báo lỗi nếu là bản scan).
+- Quy trình tự động hóa: `python scripts/refresh_knowledge.py` xâu chuỗi crawl → parse corpus → tính fingerprint sha256 → (khi thay đổi hoặc `--force`) nạp Qdrant và Neo4j, ghi báo cáo JSON. Service Compose `knowledge-refresh` chạy nền định kỳ (`--loop`, mặc định 168h).
 
 ## 5. CI/CD — `.github/workflows/ci.yml` (mọi PR vào `main`, push `main`/`develop`)
 

@@ -22,18 +22,15 @@ Usage:
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 
-from src.data_pipeline.chunker import chunk_from_json_file
-from src.embeddings.embedding_service import embed_texts
+from src.data_pipeline.ingest import chunk_json_dir, embed_and_upsert
 from src.embeddings.vector_store import (
     ensure_collection,
     get_client,
     get_collection_info,
     prune_sources,
-    upsert_chunks,
 )
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
@@ -42,31 +39,13 @@ PARSED_DIR = VBPL_DIR / "parsed"
 SAMPLE_DIR = DATA_DIR / "qcvn"
 
 
-def chunk_json_dir(data_dir: Path) -> list[dict]:
-    """Chunk all standard JSON files in a directory (files starting with "_" are reports)."""
-    json_files = sorted(f for f in os.listdir(data_dir) if f.endswith(".json") and not f.startswith("_"))
-    print(f"\n✂️  Chunking {len(json_files)} JSON files from {data_dir}...")
-    all_chunks = []
-    for filename in json_files:
-        chunks = chunk_from_json_file(str(data_dir / filename))
-        all_chunks.extend(chunks)
-    print(f"  📋 {len(all_chunks)} chunks")
-    return all_chunks
-
-
-def embed_and_upsert(chunks: list[dict]):
-    """Embed chunks and upsert to Qdrant (each source replaces its previous vectors)."""
-    print(f"\n🧮 Embedding {len(chunks)} chunks...")
-    texts = [c["text"] for c in chunks]
-    batch_size = 256
-    all_embeddings = []
-    total_batches = (len(texts) - 1) // batch_size + 1
-    for i in range(0, len(texts), batch_size):
-        all_embeddings.extend(embed_texts(texts[i:i + batch_size]))
-        print(f"  ✅ Embedded batch {i // batch_size + 1}/{total_batches}")
-
-    print(f"\n📥 Upserting {len(all_embeddings)} vectors into Qdrant...")
-    upsert_chunks(chunks, all_embeddings)
+def chunk_and_report(data_dir: Path) -> list[dict]:
+    """Chunk JSON files in directory and print CLI progress."""
+    files = sorted(f.name for f in data_dir.iterdir() if f.name.endswith(".json") and not f.name.startswith("_")) if data_dir.exists() else []
+    print(f"\n✂️  Chunking {len(files)} JSON files from {data_dir}...")
+    chunks = chunk_json_dir(data_dir)
+    print(f"  📋 {len(chunks)} chunks")
+    return chunks
 
 
 def main() -> int:
@@ -92,9 +71,9 @@ def main() -> int:
 
         if not SAMPLE_DIR.exists() or not any(SAMPLE_DIR.glob("*.json")):
             generate_sample_data(str(SAMPLE_DIR))
-        chunks = chunk_json_dir(SAMPLE_DIR)
+        chunks = chunk_and_report(SAMPLE_DIR)
     elif args.json_dir:
-        chunks = chunk_json_dir(args.json_dir)
+        chunks = chunk_and_report(args.json_dir)
     elif args.pdf or args.pdf_dir:
         from src.data_pipeline.qcvn_parser import parse_directory, parse_pdf_to_json
 
@@ -103,7 +82,7 @@ def main() -> int:
             parse_pdf_to_json(str(args.pdf), str(out))
         else:
             parse_directory(str(args.pdf_dir), str(out))
-        chunks = chunk_json_dir(out)
+        chunks = chunk_and_report(out)
         prune = False  # an ad-hoc PDF adds to the corpus, it does not replace it
     else:
         if not (VBPL_DIR / "catalog.json").exists():
@@ -120,7 +99,7 @@ def main() -> int:
             for item in report["items"]:
                 if "error" in item:
                     print(f"  ⚠️ {item['doc_num']}: {item['error']}")
-        chunks = chunk_json_dir(PARSED_DIR)
+        chunks = chunk_and_report(PARSED_DIR)
 
     if not chunks:
         print("\n⚠️ No data to ingest.")
@@ -130,6 +109,7 @@ def main() -> int:
         print("\n🗑️  Dropping collection...")
         get_client().delete_collection(get_collection_info()["name"])
     ensure_collection()
+    print(f"\n🧮 Embedding and upserting {len(chunks)} chunks into Qdrant...")
     embed_and_upsert(chunks)
     if prune:
         keep = {c["metadata"]["source_id"] for c in chunks}

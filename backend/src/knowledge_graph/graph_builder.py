@@ -11,6 +11,7 @@ UNWIND (one query per level instead of one per node).
 
 import json
 import os
+from pathlib import Path
 
 import structlog
 
@@ -296,3 +297,59 @@ def build_graph_from_directory(data_dir: str = "data/vbpl_bxd/parsed") -> dict[s
     logger.info("graph_build_complete", total_nodes=total["nodes"],
                 total_relationships=total["relationships"])
     return total
+
+
+def prune_standards(keep: set[str]) -> None:
+    """Delete regulations (with their content) built earlier but absent from this corpus."""
+    if not keep:
+        raise ValueError("refusing to prune with an empty keep set")
+    run_write_query(
+        """
+        MATCH (s:Standard)-[:CONTAINS]->(:Chapter)
+        WHERE NOT s.code IN $keep
+        WITH DISTINCT s
+        OPTIONAL MATCH (s)-[:CONTAINS]->(ch:Chapter)
+        OPTIONAL MATCH (ch)-[:HAS_SECTION]->(sec:Section)
+        OPTIONAL MATCH (sec)-[:HAS_ARTICLE]->(a:Article)
+        OPTIONAL MATCH (a)-[:SPECIFIES]->(r:Requirement)
+        DETACH DELETE r, a, sec, ch, s
+        """,
+        {"keep": sorted(keep)},
+    )
+
+
+def build_graph_for_corpus(json_dir: Path, prune: bool = True) -> dict[str, int]:
+    """Build knowledge graph from directory and optionally prune standards not in corpus.
+
+    Args:
+        json_dir: Directory containing parsed standard JSON files.
+        prune: Whether to remove standards not in this corpus.
+
+    Returns:
+        Summary dict with 'nodes' and 'relationships' counts.
+
+    Raises:
+        ValueError: If no standard JSON files are found, or if any JSON file is invalid or missing standard_code.
+    """
+    json_dir = Path(json_dir)
+    files = sorted(f for f in os.listdir(json_dir) if f.endswith(".json") and not f.startswith("_")) if json_dir.exists() else []
+    if not files:
+        raise ValueError(f"No standard JSON files in {json_dir}")
+
+    keep: set[str] = set()
+    for f in files:
+        filepath = json_dir / f
+        try:
+            data = json.loads(filepath.read_text(encoding="utf-8"))
+        except Exception as e:
+            raise ValueError(f"Invalid JSON file {f}: {e}") from e
+        code = data.get("standard_code")
+        if not code:
+            raise ValueError(f"Missing standard_code in {f}")
+        keep.add(code)
+
+    result = build_graph_from_directory(str(json_dir))
+    if prune:
+        prune_standards(keep)
+    return result
+

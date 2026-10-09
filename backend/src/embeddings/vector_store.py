@@ -98,6 +98,8 @@ def delete_source(source_id: str, collection_name: str = None) -> None:
 def prune_sources(keep: set[str], collection_name: str = None) -> None:
     """Delete every point whose source is not in `keep` (also points without a source_id,
     e.g. sample data or vectors written before source ids existed)."""
+    if not keep:
+        raise ValueError("refusing to prune with an empty keep set")
     name = collection_name or settings.qdrant_collection
     get_client().delete(
         collection_name=name,
