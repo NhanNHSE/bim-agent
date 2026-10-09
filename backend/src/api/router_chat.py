@@ -4,7 +4,7 @@ import json
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from src.core import rate_limit
@@ -23,9 +23,16 @@ router = APIRouter()
 
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str = Field(min_length=1, max_length=settings.chat_max_message_chars)
     conversation_id: int | None = None
     mode: str | None = None  # 'consult' | 'design' | 'analyze'
+
+    @field_validator("message")
+    @classmethod
+    def validate_message(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("Tin nhắn không được để trống hoặc chỉ chứa khoảng trắng")
+        return v
 
 
 @router.post("/chat")

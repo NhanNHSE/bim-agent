@@ -165,12 +165,17 @@ def _design_bridge(question: str, entities: dict) -> dict:
                 logger.info("bridge_spec_regex_fallback", spec=spec_dict)
 
     # Step 2: Create BridgeSpec
-    from src.data_pipeline.base_spec import BridgeSpec
+    from src.data_pipeline.base_spec import BridgeSpec, validate_spec_bounds
     from src.data_pipeline.ifc_bridge_generator import generate_bridge
     from src.rag.bridge_compliance import check_bridge_compliance
 
-    spec = BridgeSpec(**{k: v for k, v in spec_dict.items()
-                        if k in BridgeSpec.__dataclass_fields__})
+    try:
+        spec = BridgeSpec(**{k: v for k, v in spec_dict.items()
+                            if k in BridgeSpec.__dataclass_fields__})
+        validate_spec_bounds(spec)
+    except (ValueError, TypeError) as e:
+        logger.warning("bridge_spec_validation_failed", error=str(e))
+        return {"error": str(e), "summary": "", "violations": []}
 
     # Step 3: Generate IFC
     try:
@@ -318,11 +323,17 @@ def _design_building(question: str, entities: dict) -> dict:
                 logger.info("design_spec_regex_fallback", spec=spec_dict)
 
     # Step 2: Create BuildingSpec
+    from src.data_pipeline.base_spec import validate_spec_bounds
     from src.data_pipeline.ifc_generator_v2 import BuildingSpec, generate_from_spec
     from src.rag.compliance_checker import check_compliance
 
-    spec = BuildingSpec(**{k: v for k, v in spec_dict.items()
-                          if k in BuildingSpec.__dataclass_fields__})
+    try:
+        spec = BuildingSpec(**{k: v for k, v in spec_dict.items()
+                              if k in BuildingSpec.__dataclass_fields__})
+        validate_spec_bounds(spec)
+    except (ValueError, TypeError) as e:
+        logger.warning("building_spec_validation_failed", error=str(e))
+        return {"error": str(e), "summary": "", "violations": []}
 
     # Step 3: Generate IFC
     try:

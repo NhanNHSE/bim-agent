@@ -69,6 +69,7 @@ class Settings(BaseSettings):
     # --- Rate limits (per user) ---
     chat_rate_limit_per_minute: int = 20
     chat_rate_limit_per_day: int = 300  # caps Gemini spend: each question makes 3-4 LLM calls
+    chat_max_message_chars: int = 4000  # Chặn tin nhắn khổng lồ đốt chi phí Gemini
     ifc_rate_limit_per_minute: int = 5  # IFC design / sample generation / upload (CPU-heavy)
 
     # --- IFC ---

@@ -88,16 +88,16 @@ const IFCViewer = {
                 resultDiv.classList.remove('hidden');
                 resultDiv.innerHTML = `
                     <div class="upload-success">
-                        <h4>✅ ${result.building || result.filename}</h4>
+                        <h4>✅ ${escapeHtml(result.building || result.filename)}</h4>
                         <div class="result-grid">
-                            <div class="result-item"><span>📐 Dự án</span><strong>${result.project}</strong></div>
-                            <div class="result-item"><span>🏢 Tầng</span><strong>${result.storeys}</strong></div>
-                            <div class="result-item"><span>🧱 Cấu kiện</span><strong>${result.elements}</strong></div>
-                            <div class="result-item"><span>📦 Vật liệu</span><strong>${result.materials}</strong></div>
-                            <div class="result-item"><span>🏠 Không gian</span><strong>${result.spaces}</strong></div>
-                            <div class="result-item"><span>🕸️ Graph nodes</span><strong>${result.graph_nodes}</strong></div>
+                            <div class="result-item"><span>📐 Dự án</span><strong>${escapeHtml(result.project)}</strong></div>
+                            <div class="result-item"><span>🏢 Tầng</span><strong>${escapeHtml(result.storeys)}</strong></div>
+                            <div class="result-item"><span>🧱 Cấu kiện</span><strong>${escapeHtml(result.elements)}</strong></div>
+                            <div class="result-item"><span>📦 Vật liệu</span><strong>${escapeHtml(result.materials)}</strong></div>
+                            <div class="result-item"><span>🏠 Không gian</span><strong>${escapeHtml(result.spaces)}</strong></div>
+                            <div class="result-item"><span>🕸️ Graph nodes</span><strong>${escapeHtml(result.graph_nodes)}</strong></div>
                         </div>
-                        <button class="btn-primary" onclick="IFCViewer._showViewer('${result.filename}')" style="margin-top:12px;width:100%">
+                        <button class="btn-primary" onclick="IFCViewer._showViewer('${escapeHtml(result.filename)}')" style="margin-top:12px;width:100%">
                             🏗️ Xem mô hình 3D
                         </button>
                     </div>
@@ -107,7 +107,7 @@ const IFCViewer = {
         } catch (err) {
             progressDiv.classList.add('hidden');
             resultDiv.classList.remove('hidden');
-            resultDiv.innerHTML = `<div class="upload-error">❌ Lỗi: ${err.message}</div>`;
+            resultDiv.innerHTML = `<div class="upload-error">❌ Lỗi: ${escapeHtml(err.message)}</div>`;
             dropzone.classList.remove('hidden');
             if (typeof Toast !== 'undefined') Toast.error('Upload thất bại', err.message);
         }
@@ -152,12 +152,12 @@ const IFCViewer = {
                     resultDiv.classList.remove('hidden');
                     resultDiv.innerHTML = `
                         <div class="upload-success">
-                            <h4>✅ ${result.building || 'Mô hình mẫu'}</h4>
+                            <h4>✅ ${escapeHtml(result.building || 'Mô hình mẫu')}</h4>
                             <div class="result-grid">
-                                <div class="result-item"><span>📐 Dự án</span><strong>${result.project}</strong></div>
-                                <div class="result-item"><span>🏢 Tầng</span><strong>${result.storeys}</strong></div>
-                                <div class="result-item"><span>🧱 Cấu kiện</span><strong>${result.elements}</strong></div>
-                                <div class="result-item"><span>📦 Vật liệu</span><strong>${result.materials}</strong></div>
+                                <div class="result-item"><span>📐 Dự án</span><strong>${escapeHtml(result.project)}</strong></div>
+                                <div class="result-item"><span>🏢 Tầng</span><strong>${escapeHtml(result.storeys)}</strong></div>
+                                <div class="result-item"><span>🧱 Cấu kiện</span><strong>${escapeHtml(result.elements)}</strong></div>
+                                <div class="result-item"><span>📦 Vật liệu</span><strong>${escapeHtml(result.materials)}</strong></div>
                             </div>
                             <button class="btn-primary" onclick="IFCViewer._showViewer('sample_building.ifc')" style="margin-top:12px;width:100%">
                                 🏗️ Xem mô hình 3D
@@ -213,9 +213,9 @@ const IFCViewer = {
             const div = document.getElementById('ifc-stats');
             if (!div || !stats.building) return;
 
-            let html = `<span class="stat-chip">${stats.building}</span>`;
-            if (stats.total_elements) html += `<span class="stat-chip">${stats.total_elements} cấu kiện</span>`;
-            if (stats.storeys) html += `<span class="stat-chip">${stats.storeys.length} tầng</span>`;
+            let html = `<span class="stat-chip">${escapeHtml(stats.building)}</span>`;
+            if (stats.total_elements) html += `<span class="stat-chip">${escapeHtml(stats.total_elements)} cấu kiện</span>`;
+            if (stats.storeys) html += `<span class="stat-chip">${escapeHtml(stats.storeys.length)} tầng</span>`;
             div.innerHTML = html;
 
             // Legend
@@ -226,7 +226,7 @@ const IFCViewer = {
                     'Slab': '#78909C', 'Door': '#8D6E63', 'Window': '#4FC3F7', 'Space': '#A5D6A7',
                 };
                 legendDiv.innerHTML = Object.entries(stats.element_counts).map(([type, count]) =>
-                    `<span class="legend-item"><span class="legend-dot" style="background:${colors[type] || '#bbb'}"></span>${type}: ${count}</span>`
+                    `<span class="legend-item"><span class="legend-dot" style="background:${escapeHtml(colors[type] || '#bbb')}"></span>${escapeHtml(type)}: ${escapeHtml(count)}</span>`
                 ).join('');
             }
 
@@ -1019,9 +1019,9 @@ const IFCViewer = {
                                spec.bridge_type === 'arch' ? 'Cầu vòm' :
                                spec.bridge_type || 'Cầu';
             d.innerHTML = `
-                <div style="font-size:13px;font-weight:600">🌉 ${spec.bridge_name || bridgeType}</div>
-                <div style="color:#90CAF9">${bridgeType} · ${spec.num_spans || '?'} nhịp · ${((spec.total_length||0)/1000).toFixed(0)}m</div>
-                <div style="color:#aaa">Rộng ${((spec.deck_width||0)/1000).toFixed(1)}m · ${spec.num_lanes||'?'} làn xe · Dầm ${spec.girder_type||'I'}</div>
+                <div style="font-size:13px;font-weight:600">🌉 ${escapeHtml(spec.bridge_name || bridgeType)}</div>
+                <div style="color:#90CAF9">${escapeHtml(bridgeType)} · ${escapeHtml(spec.num_spans || '?')} nhịp · ${escapeHtml(((spec.total_length||0)/1000).toFixed(0))}m</div>
+                <div style="color:#aaa">Rộng ${escapeHtml(((spec.deck_width||0)/1000).toFixed(1))}m · ${escapeHtml(spec.num_lanes||'?')} làn xe · Dầm ${escapeHtml(spec.girder_type||'I')}</div>
                 <div style="margin-top:4px;font-size:10px;color:#888">
                     <span style="color:#B0B0B0">■</span>Trụ
                     <span style="color:#A0A0A0">■</span>Dầm
@@ -1032,9 +1032,9 @@ const IFCViewer = {
                 </div>`;
         } else {
             d.innerHTML = `
-                <div style="font-size:13px;font-weight:600">${spec.building_name||'Tòa nhà'}</div>
-                <div style="color:#90CAF9">${spec.building_function||''} · ${N} tầng · ${L.toFixed(1)}×${W.toFixed(1)}m</div>
-                <div style="color:#aaa">Sàn ${(L*W).toFixed(0)}m² · Cột ${numCols}/tầng · ${spec.num_staircases||1} thang</div>
+                <div style="font-size:13px;font-weight:600">${escapeHtml(spec.building_name||'Tòa nhà')}</div>
+                <div style="color:#90CAF9">${escapeHtml(spec.building_function||'')} · ${escapeHtml(N)} tầng · ${escapeHtml(L.toFixed(1))}×${escapeHtml(W.toFixed(1))}m</div>
+                <div style="color:#aaa">Sàn ${escapeHtml((L*W).toFixed(0))}m² · Cột ${escapeHtml(numCols)}/tầng · ${escapeHtml(spec.num_staircases||1)} thang</div>
                 <div style="margin-top:4px;font-size:10px;color:#888">
                     <span style="color:#E8E0D4">■</span>Tường
                     <span style="color:#B0B0B0">■</span>Cột
@@ -1140,32 +1140,32 @@ const IFCViewer = {
                 <div class="prop-group-title">Thông tin chung</div>
                 <div class="prop-row">
                     <span class="prop-label">Loại</span>
-                    <span class="prop-badge ${typeClass}">${typeName}</span>
+                    <span class="prop-badge ${escapeHtml(typeClass)}">${escapeHtml(typeName)}</span>
                 </div>
-                ${bim.storey ? `<div class="prop-row"><span class="prop-label">Tầng</span><span class="prop-value">${bim.storey}</span></div>` : ''}
-                ${bim.material ? `<div class="prop-row"><span class="prop-label">Vật liệu</span><span class="prop-value">${bim.material}</span></div>` : ''}
+                ${bim.storey ? `<div class="prop-row"><span class="prop-label">Tầng</span><span class="prop-value">${escapeHtml(bim.storey)}</span></div>` : ''}
+                ${bim.material ? `<div class="prop-row"><span class="prop-label">Vật liệu</span><span class="prop-value">${escapeHtml(bim.material)}</span></div>` : ''}
             </div>
             <div class="prop-group">
                 <div class="prop-group-title">Kích thước</div>
-                <div class="prop-row"><span class="prop-label">Dài (X)</span><span class="prop-value">${(bim.width * 1000).toFixed(0)} mm</span></div>
-                <div class="prop-row"><span class="prop-label">Cao (Y)</span><span class="prop-value">${(bim.height * 1000).toFixed(0)} mm</span></div>
-                <div class="prop-row"><span class="prop-label">Rộng (Z)</span><span class="prop-value">${(bim.depth * 1000).toFixed(0)} mm</span></div>
+                <div class="prop-row"><span class="prop-label">Dài (X)</span><span class="prop-value">${escapeHtml((bim.width * 1000).toFixed(0))} mm</span></div>
+                <div class="prop-row"><span class="prop-label">Cao (Y)</span><span class="prop-value">${escapeHtml((bim.height * 1000).toFixed(0))} mm</span></div>
+                <div class="prop-row"><span class="prop-label">Rộng (Z)</span><span class="prop-value">${escapeHtml((bim.depth * 1000).toFixed(0))} mm</span></div>
             </div>
             <div class="prop-group">
                 <div class="prop-group-title">Khối lượng</div>
-                <div class="prop-row"><span class="prop-label">Thể tích</span><span class="prop-value highlight">${vol.toFixed(3)} m³</span></div>
-                <div class="prop-row"><span class="prop-label">Diện tích mặt</span><span class="prop-value">${area.toFixed(2)} m²</span></div>
+                <div class="prop-row"><span class="prop-label">Thể tích</span><span class="prop-value highlight">${escapeHtml(vol.toFixed(3))} m³</span></div>
+                <div class="prop-row"><span class="prop-label">Diện tích mặt</span><span class="prop-value">${escapeHtml(area.toFixed(2))} m²</span></div>
             </div>
             <div class="prop-group">
                 <div class="prop-group-title">Vị trí (m)</div>
-                <div class="prop-row"><span class="prop-label">X</span><span class="prop-value">${bim.x.toFixed(2)}</span></div>
-                <div class="prop-row"><span class="prop-label">Y</span><span class="prop-value">${bim.y.toFixed(2)}</span></div>
-                <div class="prop-row"><span class="prop-label">Z</span><span class="prop-value">${bim.z.toFixed(2)}</span></div>
+                <div class="prop-row"><span class="prop-label">X</span><span class="prop-value">${escapeHtml(bim.x.toFixed(2))}</span></div>
+                <div class="prop-row"><span class="prop-label">Y</span><span class="prop-value">${escapeHtml(bim.y.toFixed(2))}</span></div>
+                <div class="prop-row"><span class="prop-label">Z</span><span class="prop-value">${escapeHtml(bim.z.toFixed(2))}</span></div>
             </div>
             ${bim.properties ? `
             <div class="prop-group">
                 <div class="prop-group-title">Property Sets</div>
-                ${Object.entries(bim.properties).map(([k,v]) => `<div class="prop-row"><span class="prop-label">${k}</span><span class="prop-value">${v}</span></div>`).join('')}
+                ${Object.entries(bim.properties).map(([k,v]) => `<div class="prop-row"><span class="prop-label">${escapeHtml(k)}</span><span class="prop-value">${escapeHtml(v)}</span></div>`).join('')}
             </div>` : ''}
         `;
 
@@ -1198,20 +1198,20 @@ const IFCViewer = {
                 Railing:'#607D8B', Pile:'#8D6E63', Footing:'#A1887F', BuildingElementProxy:'#4DB6AC' };
 
             html = `
-                <div class="stat-card"><div class="stat-number">${totalLen}</div><div class="stat-label">m tổng dài</div></div>
-                <div class="stat-card"><div class="stat-number">${spec.num_spans || '?'}</div><div class="stat-label">Nhịp</div></div>
-                <div class="stat-card"><div class="stat-number">${deckW}</div><div class="stat-label">m rộng cầu</div></div>
-                <div class="stat-card"><div class="stat-number">${spec.num_lanes || '?'}</div><div class="stat-label">Làn xe</div></div>
-                <div class="stat-card"><div class="stat-number">${totalElements}</div><div class="stat-label">Cấu kiện</div></div>
+                <div class="stat-card"><div class="stat-number">${escapeHtml(totalLen)}</div><div class="stat-label">m tổng dài</div></div>
+                <div class="stat-card"><div class="stat-number">${escapeHtml(spec.num_spans || '?')}</div><div class="stat-label">Nhịp</div></div>
+                <div class="stat-card"><div class="stat-number">${escapeHtml(deckW)}</div><div class="stat-label">m rộng cầu</div></div>
+                <div class="stat-card"><div class="stat-number">${escapeHtml(spec.num_lanes || '?')}</div><div class="stat-label">Làn xe</div></div>
+                <div class="stat-card"><div class="stat-number">${escapeHtml(totalElements)}</div><div class="stat-label">Cấu kiện</div></div>
             `;
             for (const [type, count] of Object.entries(this._elementCounts)) {
                 const pct = Math.round(count / totalElements * 100);
                 const color = colors[type] || '#888';
                 html += `
                     <div class="stat-card">
-                        <div class="stat-number" style="color:${color}">${count}</div>
-                        <div class="stat-label">${type}</div>
-                        <div class="stat-bar"><div class="stat-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+                        <div class="stat-number" style="color:${escapeHtml(color)}">${escapeHtml(count)}</div>
+                        <div class="stat-label">${escapeHtml(type)}</div>
+                        <div class="stat-bar"><div class="stat-bar-fill" style="width:${escapeHtml(pct)}%;background:${escapeHtml(color)}"></div></div>
                     </div>`;
             }
         } else {
@@ -1221,19 +1221,19 @@ const IFCViewer = {
                 Door:'#8D6E63', Window:'#4FC3F7', Stair:'#BCAAA4', Railing:'#607D8B', Footing:'#A1887F' };
 
             html = `
-                <div class="stat-card"><div class="stat-number">${N}</div><div class="stat-label">Tầng</div></div>
-                <div class="stat-card"><div class="stat-number">${totalArea}</div><div class="stat-label">m² sàn tổng</div></div>
-                <div class="stat-card"><div class="stat-number">${totalHeight}</div><div class="stat-label">m chiều cao</div></div>
-                <div class="stat-card"><div class="stat-number">${totalElements}</div><div class="stat-label">Cấu kiện</div></div>
+                <div class="stat-card"><div class="stat-number">${escapeHtml(N)}</div><div class="stat-label">Tầng</div></div>
+                <div class="stat-card"><div class="stat-number">${escapeHtml(totalArea)}</div><div class="stat-label">m² sàn tổng</div></div>
+                <div class="stat-card"><div class="stat-number">${escapeHtml(totalHeight)}</div><div class="stat-label">m chiều cao</div></div>
+                <div class="stat-card"><div class="stat-number">${escapeHtml(totalElements)}</div><div class="stat-label">Cấu kiện</div></div>
             `;
             for (const [type, count] of Object.entries(this._elementCounts)) {
                 const pct = Math.round(count / totalElements * 100);
                 const color = colors[type] || '#888';
                 html += `
                     <div class="stat-card">
-                        <div class="stat-number" style="color:${color}">${count}</div>
-                        <div class="stat-label">${type}</div>
-                        <div class="stat-bar"><div class="stat-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+                        <div class="stat-number" style="color:${escapeHtml(color)}">${escapeHtml(count)}</div>
+                        <div class="stat-label">${escapeHtml(type)}</div>
+                        <div class="stat-bar"><div class="stat-bar-fill" style="width:${escapeHtml(pct)}%;background:${escapeHtml(color)}"></div></div>
                     </div>`;
             }
         }

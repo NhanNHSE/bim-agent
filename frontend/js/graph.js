@@ -347,9 +347,9 @@ const GraphViz = {
             Section: 'Mục',
         };
         this.tooltip.innerHTML = `
-            <div class="tooltip-title">${node.label}</div>
-            <div class="tooltip-type">${typeMap[node.type] || node.type}</div>
-            ${node.detail ? `<div style="margin-top:4px;font-size:0.72rem;color:#94a3b8">${node.detail.slice(0, 120)}</div>` : ''}
+            <div class="tooltip-title">${escapeHtml(node.label)}</div>
+            <div class="tooltip-type">${escapeHtml(typeMap[node.type] || node.type)}</div>
+            ${node.detail ? `<div style="margin-top:4px;font-size:0.72rem;color:#94a3b8">${escapeHtml(node.detail.slice(0, 120))}</div>` : ''}
         `;
         this.tooltip.style.display = 'block';
         this.tooltip.style.left = (x + 15) + 'px';
