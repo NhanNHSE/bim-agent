@@ -1,6 +1,5 @@
 """Neo4j client with connection pooling and health check."""
 
-from contextlib import contextmanager
 from typing import Any, Optional
 
 from neo4j import GraphDatabase, Driver
@@ -65,8 +64,9 @@ def run_query(
     """
     driver = get_driver()
     with driver.session(database=database) as session:
-        result = session.run(query, parameters or {})
-        return [record.data() for record in result]
+        return session.execute_read(
+            lambda tx: [record.data() for record in tx.run(query, parameters or {})]
+        )
 
 
 def run_write_query(

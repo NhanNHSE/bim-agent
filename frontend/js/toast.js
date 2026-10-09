@@ -39,10 +39,10 @@ const Toast = {
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         toast.innerHTML = `
-            <span class="toast-icon">${this._icons[type] || 'ℹ️'}</span>
+            <span class="toast-icon">${escapeHtml(this._icons[type] || 'ℹ️')}</span>
             <div class="toast-body">
-                <div class="toast-title">${title}</div>
-                ${message ? `<div class="toast-message">${message}</div>` : ''}
+                <div class="toast-title">${escapeHtml(title)}</div>
+                ${message ? `<div class="toast-message">${escapeHtml(message)}</div>` : ''}
             </div>
             <button class="toast-close" title="Đóng">✕</button>
         `;

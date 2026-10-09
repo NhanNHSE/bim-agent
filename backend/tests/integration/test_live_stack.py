@@ -15,6 +15,15 @@ class TestServices:
         from src.knowledge_graph.neo4j_client import run_query
         assert run_query("RETURN 1 AS ok") == [{"ok": 1}]
 
+    def test_neo4j_run_query_rejects_write_in_read_transaction(self):
+        import pytest
+        from neo4j.exceptions import Neo4jError
+        from src.knowledge_graph.neo4j_client import run_query
+
+        with pytest.raises(Neo4jError):
+            run_query("CREATE (n:GuardrailProbe) RETURN n")
+        assert run_query("MATCH (n:GuardrailProbe) RETURN count(n) AS c") == [{"c": 0}]
+
     def test_qdrant_reachable(self):
         from src.embeddings.vector_store import get_client
         collections = get_client().get_collections().collections

@@ -204,7 +204,7 @@ const App = {
                         if (score < 0.5) level = 'low';
                         else if (score < 0.7) level = 'medium';
                         badge.classList.add(`confidence-${level}`);
-                        badge.innerHTML = `<span class="confidence-dot"></span> ${label} (${Math.round(score * 100)}%)`;
+                        badge.innerHTML = `<span class="confidence-dot"></span> ${escapeHtml(label)} (${escapeHtml(Math.round(score * 100))}%)`;
                         badge.title = doneData.reflection_feedback || '';
                         msgBody.appendChild(badge);
                     }
@@ -376,18 +376,18 @@ const App = {
             <div class="design-spec-card">
                 <h4>🌉 Thông số thiết kế cầu</h4>
                 <div class="spec-grid">
-                    <div class="spec-item"><label>Loại cầu</label><span>${spec.bridge_type === 'beam' ? 'Dầm BTCT' : spec.bridge_type || '?'}</span></div>
-                    <div class="spec-item"><label>Tổng chiều dài</label><span>${((spec.total_length || 0)/1000).toFixed(0)}m</span></div>
-                    <div class="spec-item"><label>Số nhịp</label><span>${spec.num_spans || '?'}</span></div>
-                    <div class="spec-item"><label>Nhịp cầu</label><span>${((spec.span_length || 0)/1000).toFixed(0)}m</span></div>
-                    <div class="spec-item"><label>Bề rộng mặt cầu</label><span>${((spec.deck_width || 0)/1000).toFixed(1)}m</span></div>
-                    <div class="spec-item"><label>Số làn xe</label><span>${spec.num_lanes || '?'}</span></div>
-                    <div class="spec-item"><label>Dầm cầu</label><span>${spec.girder_type || 'I'}-${((spec.girder_height || 0))}mm</span></div>
-                    <div class="spec-item"><label>Trụ cầu</label><span>${spec.num_piers || '?'} trụ, H=${((spec.pier_height || 0)/1000).toFixed(0)}m</span></div>
-                    <div class="spec-item"><label>Lan can</label><span>${spec.barrier_height || '?'}mm</span></div>
-                    <div class="spec-item"><label>Cọc móng</label><span>D${spec.pile_diameter || '?'}, L=${((spec.pile_depth || 0)/1000).toFixed(0)}m</span></div>
-                    <div class="spec-item"><label>VL Dầm</label><span>${spec.girder_material || '?'}</span></div>
-                    <div class="spec-item"><label>Tải trọng</label><span>${spec.design_load || 'HL-93'}</span></div>
+                    <div class="spec-item"><label>Loại cầu</label><span>${escapeHtml(spec.bridge_type === 'beam' ? 'Dầm BTCT' : spec.bridge_type || '?')}</span></div>
+                    <div class="spec-item"><label>Tổng chiều dài</label><span>${escapeHtml(((spec.total_length || 0)/1000).toFixed(0))}m</span></div>
+                    <div class="spec-item"><label>Số nhịp</label><span>${escapeHtml(spec.num_spans || '?')}</span></div>
+                    <div class="spec-item"><label>Nhịp cầu</label><span>${escapeHtml(((spec.span_length || 0)/1000).toFixed(0))}m</span></div>
+                    <div class="spec-item"><label>Bề rộng mặt cầu</label><span>${escapeHtml(((spec.deck_width || 0)/1000).toFixed(1))}m</span></div>
+                    <div class="spec-item"><label>Số làn xe</label><span>${escapeHtml(spec.num_lanes || '?')}</span></div>
+                    <div class="spec-item"><label>Dầm cầu</label><span>${escapeHtml(spec.girder_type || 'I')}-${escapeHtml(spec.girder_height || 0)}mm</span></div>
+                    <div class="spec-item"><label>Trụ cầu</label><span>${escapeHtml(spec.num_piers || '?')} trụ, H=${escapeHtml(((spec.pier_height || 0)/1000).toFixed(0))}m</span></div>
+                    <div class="spec-item"><label>Lan can</label><span>${escapeHtml(spec.barrier_height || '?')}mm</span></div>
+                    <div class="spec-item"><label>Cọc móng</label><span>D${escapeHtml(spec.pile_diameter || '?')}, L=${escapeHtml(((spec.pile_depth || 0)/1000).toFixed(0))}m</span></div>
+                    <div class="spec-item"><label>VL Dầm</label><span>${escapeHtml(spec.girder_material || '?')}</span></div>
+                    <div class="spec-item"><label>Tải trọng</label><span>${escapeHtml(spec.design_load || 'HL-93')}</span></div>
                 </div>
             </div>
         `;
@@ -396,14 +396,14 @@ const App = {
             <div class="design-spec-card">
                 <h4>📐 Thông số thiết kế</h4>
                 <div class="spec-grid">
-                    <div class="spec-item"><label>Tầng</label><span>${spec.num_storeys || '?'}</span></div>
-                    <div class="spec-item"><label>Chiều cao tầng</label><span>${((spec.storey_height || 0)/1000).toFixed(1)}m</span></div>
-                    <div class="spec-item"><label>Mặt bằng</label><span>${((spec.footprint_length||0)/1000).toFixed(0)} × ${((spec.footprint_width||0)/1000).toFixed(0)}m</span></div>
-                    <div class="spec-item"><label>Diện tích sàn</label><span>${((spec.footprint_length||0)/1000 * (spec.footprint_width||0)/1000).toFixed(0)}m²</span></div>
-                    <div class="spec-item"><label>Cột</label><span>${spec.column_size || '?'}mm</span></div>
-                    <div class="spec-item"><label>Cầu thang</label><span>${spec.num_staircases || 0}</span></div>
-                    <div class="spec-item"><label>VL Cột</label><span>${spec.column_material || '?'}</span></div>
-                    <div class="spec-item"><label>VL Tường</label><span>${spec.wall_material || '?'}</span></div>
+                    <div class="spec-item"><label>Tầng</label><span>${escapeHtml(spec.num_storeys || '?')}</span></div>
+                    <div class="spec-item"><label>Chiều cao tầng</label><span>${escapeHtml(((spec.storey_height || 0)/1000).toFixed(1))}m</span></div>
+                    <div class="spec-item"><label>Mặt bằng</label><span>${escapeHtml(((spec.footprint_length||0)/1000).toFixed(0))} × ${escapeHtml(((spec.footprint_width||0)/1000).toFixed(0))}m</span></div>
+                    <div class="spec-item"><label>Diện tích sàn</label><span>${escapeHtml(((spec.footprint_length||0)/1000 * (spec.footprint_width||0)/1000).toFixed(0))}m²</span></div>
+                    <div class="spec-item"><label>Cột</label><span>${escapeHtml(spec.column_size || '?')}mm</span></div>
+                    <div class="spec-item"><label>Cầu thang</label><span>${escapeHtml(spec.num_staircases || 0)}</span></div>
+                    <div class="spec-item"><label>VL Cột</label><span>${escapeHtml(spec.column_material || '?')}</span></div>
+                    <div class="spec-item"><label>VL Tường</label><span>${escapeHtml(spec.wall_material || '?')}</span></div>
                 </div>
             </div>
         `;
@@ -423,9 +423,9 @@ const App = {
                 <div class="compliance-header">
                     <h4>📋 Kiểm tra Quy chuẩn</h4>
                     <div class="compliance-summary">
-                        ${errors.length ? `<span class="compliance-badge error">${errors.length} lỗi</span>` : ''}
-                        ${warnings.length ? `<span class="compliance-badge warning">${warnings.length} cảnh báo</span>` : ''}
-                        ${passes.length ? `<span class="compliance-badge pass">${passes.length} đạt</span>` : ''}
+                        ${errors.length ? `<span class="compliance-badge error">${escapeHtml(errors.length)} lỗi</span>` : ''}
+                        ${warnings.length ? `<span class="compliance-badge warning">${escapeHtml(warnings.length)} cảnh báo</span>` : ''}
+                        ${passes.length ? `<span class="compliance-badge pass">${escapeHtml(passes.length)} đạt</span>` : ''}
                     </div>
                 </div>
                 <div class="compliance-items">
@@ -434,11 +434,11 @@ const App = {
         for (const v of [...errors, ...warnings, ...infos, ...passes]) {
             complianceHtml += `
                 <div class="compliance-item">
-                    <span class="compliance-icon">${severityIcon(v.severity)}</span>
+                    <span class="compliance-icon">${escapeHtml(severityIcon(v.severity))}</span>
                     <div class="compliance-content">
-                        <div class="compliance-rule">${v.rule || ''}</div>
-                        <div class="compliance-issue">${v.issue || ''}</div>
-                        ${v.suggestion ? `<div class="compliance-suggestion">💡 ${v.suggestion}</div>` : ''}
+                        <div class="compliance-rule">${escapeHtml(v.rule || '')}</div>
+                        <div class="compliance-issue">${escapeHtml(v.issue || '')}</div>
+                        ${v.suggestion ? `<div class="compliance-suggestion">💡 ${escapeHtml(v.suggestion)}</div>` : ''}
                     </div>
                 </div>
             `;
@@ -449,12 +449,12 @@ const App = {
         let actionsHtml = '<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">';
         if (design.filename) {
             const downloadUrl = API.getIFCDownloadUrl(design.filename);
-            actionsHtml += `<a href="${downloadUrl}" class="btn-download" download>📥 Tải file IFC</a>`;
+            actionsHtml += `<a href="${escapeHtml(downloadUrl)}" class="btn-download" download>📥 Tải file IFC</a>`;
             // Store spec+filename in global array for 3D viewer
             if (!window._designSpecs) window._designSpecs = [];
             const specIdx = window._designSpecs.length;
             window._designSpecs.push({ spec: design.spec, filename: design.filename });
-            actionsHtml += `<button class="btn-download" style="background:linear-gradient(135deg,#3b82f6,#06b6d4)" onclick="App._openDesign3D(${specIdx})">🏗️ Xem 3D</button>`;
+            actionsHtml += `<button class="btn-download" style="background:linear-gradient(135deg,#3b82f6,#06b6d4)" onclick="App._openDesign3D(${escapeHtml(specIdx)})">🏗️ Xem 3D</button>`;
         }
         actionsHtml += '</div>';
 
@@ -538,9 +538,9 @@ const App = {
 
             list.innerHTML = convos.map(c => `
                 <div class="conv-item ${c.id === this.currentConversationId ? 'active' : ''}"
-                     data-id="${c.id}">
-                    <span class="conv-title">${c.title || 'Cuộc hội thoại mới'}</span>
-                    <button class="conv-delete" data-delete-id="${c.id}" title="Xóa">✕</button>
+                     data-id="${escapeHtml(c.id)}">
+                    <span class="conv-title">${escapeHtml(c.title || 'Cuộc hội thoại mới')}</span>
+                    <button class="conv-delete" data-delete-id="${escapeHtml(c.id)}" title="Xóa">✕</button>
                 </div>
             `).join('');
 
