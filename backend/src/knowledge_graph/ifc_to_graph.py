@@ -1,7 +1,8 @@
 """IFC to Knowledge Graph — Import parsed IFC data into Neo4j.
 
 Creates graph structure:
-  (Building) -[:HAS_STOREY]-> (Storey)
+  (Building) -[:HAS_STOREY]-> (Storey)   Storey is keyed by storey_id = "<building>::<name>",
+                                         so "Tầng 1" of different buildings stay separate
   (Storey) -[:CONTAINS]-> (Element)
   (Element) -[:MADE_OF]-> (Material)
   (Storey) -[:CONTAINS]-> (Space)
@@ -57,12 +58,13 @@ def build_ifc_graph(parsed_ifc: dict) -> dict:
         for storey in parsed_ifc.get("storeys", []):
             session.run(
                 """
-                MERGE (s:Storey {name: $name})
-                SET s.elevation = $elevation
+                MERGE (s:Storey {storey_id: $storey_id})
+                SET s.name = $name, s.building = $building, s.elevation = $elevation
                 WITH s
                 MATCH (b:Building {name: $building})
                 MERGE (b)-[:HAS_STOREY]->(s)
                 """,
+                storey_id=_storey_id(building_name, storey["name"]),
                 name=storey["name"],
                 elevation=storey.get("elevation", 0),
                 building=building_name,
@@ -103,11 +105,11 @@ def build_ifc_graph(parsed_ifc: dict) -> dict:
             if el.get("storey"):
                 session.run(
                     f"""
-                    MATCH (s:Storey {{name: $storey}})
+                    MATCH (s:Storey {{storey_id: $storey_id}})
                     MATCH (e:{label} {{global_id: $global_id}})
                     MERGE (s)-[:CONTAINS]->(e)
                     """,
-                    storey=el["storey"],
+                    storey_id=_storey_id(building_name, el["storey"]),
                     global_id=el["global_id"],
                 )
                 stats["relationships"] += 1
@@ -144,11 +146,11 @@ def build_ifc_graph(parsed_ifc: dict) -> dict:
             if space.get("storey"):
                 session.run(
                     """
-                    MATCH (s:Storey {name: $storey})
+                    MATCH (s:Storey {storey_id: $storey_id})
                     MATCH (sp:Space {global_id: $global_id})
                     MERGE (s)-[:CONTAINS]->(sp)
                     """,
-                    storey=space["storey"],
+                    storey_id=_storey_id(building_name, space["storey"]),
                     global_id=space["global_id"],
                 )
                 stats["relationships"] += 1
@@ -245,18 +247,37 @@ def query_material_usage(material_name: str) -> list:
     return elements
 
 
+def _storey_id(building: str, storey: str) -> str:
+    return f"{building}::{storey}"
+
+
 def _create_constraints(session):
-    """Create uniqueness constraints for graph nodes."""
+    """Create uniqueness constraints; migrate the old global `Storey.name` uniqueness."""
+    # Databases created before storey_id had UNIQUE(Storey.name): drop it and key old storeys
+    for record in session.run(
+        "SHOW CONSTRAINTS YIELD name, labelsOrTypes, properties "
+        "WHERE labelsOrTypes = ['Storey'] AND properties = ['name'] RETURN name"
+    ):
+        # constraint names come from the database itself, not from user input
+        session.run(f"DROP CONSTRAINT `{record['name']}` IF EXISTS")
+    session.run(
+        """
+        MATCH (b:Building)-[:HAS_STOREY]->(s:Storey)
+        WHERE s.storey_id IS NULL
+        WITH s, min(b.name) AS building
+        SET s.storey_id = building + '::' + s.name, s.building = building
+        """
+    )
     constraints = [
         "CREATE CONSTRAINT IF NOT EXISTS FOR (b:Building) REQUIRE b.name IS UNIQUE",
-        "CREATE CONSTRAINT IF NOT EXISTS FOR (s:Storey) REQUIRE s.name IS UNIQUE",
+        "CREATE CONSTRAINT IF NOT EXISTS FOR (s:Storey) REQUIRE s.storey_id IS UNIQUE",
         "CREATE CONSTRAINT IF NOT EXISTS FOR (m:Material) REQUIRE m.name IS UNIQUE",
     ]
     for c in constraints:
         try:
             session.run(c)
-        except Exception:
-            pass  # Constraint may already exist
+        except Exception as e:
+            logger.warning("ifc_constraint_failed", query=c, error=str(e))
 
 
 def _ifc_type_to_label(ifc_type: str) -> str:

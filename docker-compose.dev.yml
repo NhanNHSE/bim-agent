@@ -29,6 +29,13 @@ services:
         limits:
           memory: 6G  # More memory for dev (embedding model loading)
 
+  knowledge-refresh:
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/scripts:/app/scripts
+      - ./backend/data:/app/data
+      - ./backend/data/vbpl_bxd:/app/data/vbpl_bxd
+
   # Expose DB ports for local dev tools
   qdrant:
     ports:

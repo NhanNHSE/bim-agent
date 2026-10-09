@@ -10,3 +10,5 @@ tests/outputs
 data/cache
 data/vbpl_bxd/text
 data/vbpl_bxd/files
+data/vbpl_bxd/parsed
+data/pdf_parsed

@@ -1,6 +1,6 @@
 # Kiến trúc BIM AI Agent — cách hệ thống đang chạy (as-is)
 
-> Mô tả **code hiện có trên `main`** (cập nhật 2026-10-07, sau PR #10), không phải kiến trúc mục tiêu.
+> Mô tả **code hiện có trên `main`** (cập nhật 2026-10-09, sau PR #12 — parser QCVN thật), không phải kiến trúc mục tiêu.
 > Lộ trình và việc tiếp theo: `.agent/PROGRESS.md` (file cục bộ). Khi một PR đổi luồng nào dưới đây, cập nhật file này **trong cùng PR**.
 > Ký hiệu: nét đứt `-.->` = chưa nối / dự kiến; ⚠️ = lỗi hoặc giới hạn đã biết (mục 7).
 
@@ -84,8 +84,8 @@ flowchart TD
         U1["kiểm tên file (path traversal),<br/>≤ IFC_MAX_UPLOAD_MB, 5 req/phút"] --> U2["lưu /app/data/ifc/*.ifc"]
         U2 --> U3["parse_ifc (IfcOpenShell)"]
         U3 --> U4["chunk theo cấu kiện → FastEmbed"]
-        U4 --> U5[("Qdrant ifc_elements ⚠️")]
-        U3 --> U6[("Neo4j: build_ifc_graph ⚠️")]
+        U4 --> U5[("Qdrant ifc_elements<br/>source_id = ifc:file")]
+        U3 --> U6[("Neo4j: build_ifc_graph<br/>Storey theo tòa nhà")]
     end
     subgraph de["POST /design · POST /generate-sample"]
         D1["mô tả tiếng Việt"] --> D2{"_detect_structure_type"}
@@ -118,26 +118,31 @@ flowchart LR
         CAT["catalog.json<br/>(commit vào git)"]
         TXT["text/*.txt<br/>(không commit)"]
         FIL["files/**/*.pdf|docx|doc<br/>(không commit)"]
+        PJ["parsed/*.json<br/>1 file / quy chuẩn (không commit)"]
     end
     V --> CR
     CB --> CR
     CR --> CAT
     CR --> TXT
     CR --> FIL
-
-    SG["sample_data_generator.py<br/>dữ liệu MẪU ~27 điều"] --> JS["data/qcvn/*.json"]
-    PDF["data/pdf/*.pdf"] -.-> QP["qcvn_parser.py ⚠️"]
-    QP -.-> JS
-    TXT -.->|"chưa nối: cần parser mới"| QP
-    FIL -.-> QP
-    JS --> IN["scripts/ingest_qcvn.py<br/>chunker → FastEmbed"]
+    CAT --> VC["vbpl_corpus.build_corpus<br/>chọn nguồn nhiều điều khoản nhất,<br/>mã QCVN, hiệu lực"]
+    TXT --> VC
+    FIL --> VC
+    VC --> TP["qcvn_text_parser<br/>chương · x.y · x.y.z · phụ lục A.1.1"]
+    TP --> PJ
+    PJ --> CH["chunker<br/>nhãn [HẾT HIỆU LỰC], tách ≤ 1.200 ký tự"]
+    CH --> IN["scripts/ingest_qcvn.py<br/>FastEmbed → upsert theo source_id,<br/>xóa nguồn cũ"]
     IN --> QDC[("Qdrant qcvn_chunks")]
-    JS --> BG["scripts/build_graph.py"]
-    BG --> N4G[("Neo4j: Standard, Article,<br/>BuildingType, Material...")]
+    PJ --> BG["scripts/build_graph.py<br/>UNWIND theo lô, dựng lại từng quy chuẩn"]
+    BG --> N4G[("Neo4j: Standard (hiệu lực),<br/>Chapter, Section, Article, Requirement")]
+    SG["sample_data_generator.py<br/>dữ liệu MẪU"] -.->|"chỉ với --sample"| IN
 ```
 
-- **Hiện tại chatbot trả lời từ dữ liệu mẫu** (`data/qcvn/*.json`). Dữ liệu thật đã tải (51 QCVN, `catalog.json`) **chưa được nạp**. Việc tiếp theo là viết parser cho thư mục `data/vbpl_bxd`.
-- `ingest_qcvn.py` và `build_graph.py` tự sinh dữ liệu mẫu nếu thư mục rỗng.
+- Lệnh: `python scripts/ingest_qcvn.py` (phân tích kho crawl rồi nạp Qdrant), sau đó `python scripts/build_graph.py`. Dữ liệu mẫu chỉ dùng khi chạy `--sample`; không còn tự sinh khi thư mục rỗng.
+- Kho hiện tại: 51 văn bản → 69 quy chuẩn, 46 có toàn văn, ~4.160 điều khoản, ~7.060 chunk. Văn bản không có chữ (scan, `.doc`, chỉ có thông tư) vẫn có bản ghi tổng quan để trả lời về hiệu lực.
+- Mỗi điểm Qdrant có `source_id` (`vbpl:<id>:<mã>`, `ifc:<file>`); id = UUID5 tất định. Nạp lại một nguồn sẽ thay thế đúng nguồn đó; nguồn không còn trong kho bị xóa.
+- PDF lẻ: `ingest_qcvn.py --pdf file.pdf` (dùng `qcvn_parser.py`, báo lỗi nếu là bản scan).
+- Quy trình tự động hóa: `python scripts/refresh_knowledge.py` xâu chuỗi crawl → parse corpus → tính fingerprint sha256 → (khi thay đổi hoặc `--force`) nạp Qdrant và Neo4j, ghi báo cáo JSON. Service Compose `knowledge-refresh` chạy nền định kỳ (`--loop`, mặc định 168h).
 
 ## 5. CI/CD — `.github/workflows/ci.yml` (mọi PR vào `main`, push `main`/`develop`)
 
@@ -163,7 +168,7 @@ flowchart LR
 | `rag/` | Classifier + tools, GraphRAG đơn giản, rerank, reflection, kiểm tra tuân thủ | `agent.py`, `graph_rag.py`, `tools/*`, `reflection.py`, `compliance_checker.py`, `bridge_compliance.py` |
 | `knowledge_graph/` | Neo4j: driver, schema, truy vấn mẫu, LLM sinh Cypher có kiểm tra | `neo4j_client.py`, `graph_builder.py`, `graph_query_generator.py`, `ifc_to_graph.py` |
 | `embeddings/` | FastEmbed + Qdrant | `embedding_service.py`, `vector_store.py` |
-| `data_pipeline/` | Parse QCVN/IFC, sinh IFC nhà/cầu, chunk | `qcvn_parser.py`, `ifc_parser.py`, `ifc_generator_v2.py`, `ifc_bridge_generator.py`, `chunker.py` |
+| `data_pipeline/` | Parse QCVN (kho vbpl, PDF lẻ) và IFC, sinh IFC nhà/cầu, chunk | `qcvn_text_parser.py`, `vbpl_corpus.py`, `qcvn_parser.py`, `chunker.py`, `ifc_parser.py`, `ifc_generator_v2.py`, `ifc_bridge_generator.py` |
 | `core/` | Config, JWT/RBAC, lỗi, rate limit, audit, logging, client LLM | `config.py`, `security.py`, `rate_limit.py`, `errors.py`, `llm.py` |
 | `database/` | SQLAlchemy models + session (bảng tạo bằng `create_all`, chưa dùng Alembic) | `models.py`, `session.py` |
 
@@ -173,9 +178,8 @@ Ngoài `src`: `backend/scripts/` (crawl, ingest, build_graph, set_role), `backen
 
 | Vị trí | Vấn đề |
 |---|---|
-| `vector_store.upsert_chunks` | Point id = số thứ tự (`id=i`) → upload IFC sau **ghi đè** vector của file trước; nạp lại để sót điểm rác |
-| `ifc_to_graph.py` | `Storey.name` UNIQUE → "Tầng 1" của mọi tòa nhà gộp làm một node |
-| `qcvn_parser.py` | Chỉ nhận "Chương/Điều", QCVN thật đánh số `x.y.z` → giữ ~1,5% nội dung; regex đơn vị `m` khớp cả `mm` |
+| Dữ liệu QCVN | Chưa có toàn văn dạng chữ cho QCVN 03:2022 (scan), 04:2021 và 01:2021 (vbpl trống), 18:2021 (chỉ thông tư); `.doc` cũ chưa đọc được. Chưa có golden set đo chất lượng truy hồi |
+| Embedding | MiniLM chỉ đọc ~128 token đầu mỗi chunk; chưa có hybrid/sparse search |
 | `router_ifc.py` | `GET /geometry/{filename}` khai báo **2 lần** — chỉ route đầu có hiệu lực |
 | 3 bộ điều phối | `coordinator.py`, `rag/agent.py`, `rag/graph_rag.py` trùng chức năng; `SYSTEM_PROMPT` của agent không được dùng khi sinh câu trả lời |
 | `/health` | Trả 200 cả khi một dịch vụ "degraded" |

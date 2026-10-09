@@ -1,153 +1,132 @@
-"""Ingest QCVN/TCVN data into Qdrant vector store.
+"""Ingest QCVN/TCVN data into the Qdrant vector store.
 
-Supports both:
-- JSON files (from sample_data_generator or qcvn_parser)
-- PDF files (auto-parsed via qcvn_parser)
+Default source is the real regulations crawled from vbpl.vn (scripts/crawl_vbpl_bxd.py):
+data/vbpl_bxd is parsed into data/vbpl_bxd/parsed/*.json (one file per regulation), chunked,
+embedded and upserted. Each regulation replaces its own previous vectors, and vectors of
+sources that are no longer in the corpus (e.g. old sample data) are removed.
 
 Usage:
-    # Ingest sample data (auto-generated)
+    # Real data (crawl first if data/vbpl_bxd/catalog.json is missing)
     docker exec bim-backend python scripts/ingest_qcvn.py
 
-    # Ingest from specific directory
-    docker exec bim-backend python scripts/ingest_qcvn.py --pdf-dir data/pdf
+    # Hand-written sample data (dev / demo only)
+    docker exec bim-backend python scripts/ingest_qcvn.py --sample
 
-    # Ingest a single PDF file
-    docker exec bim-backend python scripts/ingest_qcvn.py --pdf data/pdf/QCVN06.pdf
+    # Existing JSON files, or arbitrary PDFs
+    docker exec bim-backend python scripts/ingest_qcvn.py --json-dir data/vbpl_bxd/parsed --skip-parse
+    docker exec bim-backend python scripts/ingest_qcvn.py --pdf path/to/QCVN.pdf
+
+    # Start from an empty collection (after changing the embedding model)
+    docker exec bim-backend python scripts/ingest_qcvn.py --recreate
 """
 
 import argparse
-import os
+import json
+import sys
+from pathlib import Path
+
+from src.data_pipeline.ingest import chunk_json_dir, embed_and_upsert
+from src.embeddings.vector_store import (
+    ensure_collection,
+    get_client,
+    get_collection_info,
+    prune_sources,
+)
+
+DATA_DIR = Path(__file__).resolve().parents[1] / "data"
+VBPL_DIR = DATA_DIR / "vbpl_bxd"
+PARSED_DIR = VBPL_DIR / "parsed"
+SAMPLE_DIR = DATA_DIR / "qcvn"
 
 
-from src.data_pipeline.sample_data_generator import generate_sample_data
-from src.data_pipeline.qcvn_parser import parse_pdf_to_json, parse_directory
-from src.data_pipeline.chunker import chunk_from_json_file
-from src.embeddings.embedding_service import embed_texts
-from src.embeddings.vector_store import ensure_collection, upsert_chunks, get_collection_info
+def chunk_and_report(data_dir: Path) -> list[dict]:
+    """Chunk JSON files in directory and print CLI progress."""
+    files = sorted(f.name for f in data_dir.iterdir() if f.name.endswith(".json") and not f.name.startswith("_")) if data_dir.exists() else []
+    print(f"\n✂️  Chunking {len(files)} JSON files from {data_dir}...")
+    chunks = chunk_json_dir(data_dir)
+    print(f"  📋 {len(chunks)} chunks")
+    return chunks
 
 
-def ingest_json_files(data_dir: str) -> list[dict]:
-    """Chunk all JSON files in a directory."""
-    json_files = [f for f in os.listdir(data_dir) if f.endswith(".json")]
-    if not json_files:
-        return []
-
-    print(f"\n✂️  Chunking {len(json_files)} JSON files...")
-    all_chunks = []
-    for filename in sorted(json_files):
-        filepath = os.path.join(data_dir, filename)
-        chunks = chunk_from_json_file(filepath)
-        all_chunks.extend(chunks)
-        print(f"  📋 {filename}: {len(chunks)} chunks")
-
-    return all_chunks
-
-
-def ingest_pdf_files(pdf_dir: str, json_output_dir: str) -> list[dict]:
-    """Parse PDFs → JSON → Chunks."""
-    pdf_files = [f for f in os.listdir(pdf_dir) if f.lower().endswith('.pdf')]
-    if not pdf_files:
-        print(f"⚠️ No PDF files found in {pdf_dir}")
-        return []
-
-    print(f"\n📄 Parsing {len(pdf_files)} PDF files...")
-    json_paths = parse_directory(pdf_dir, json_output_dir)
-
-    # Now chunk the parsed JSONs
-    all_chunks = []
-    for json_path in json_paths:
-        chunks = chunk_from_json_file(json_path)
-        all_chunks.extend(chunks)
-        print(f"  ✂️  {os.path.basename(json_path)}: {len(chunks)} chunks")
-
-    return all_chunks
-
-
-def embed_and_upsert(chunks: list[dict]):
-    """Embed chunks and upsert to Qdrant."""
-    if not chunks:
-        print("⚠️ No chunks to embed")
-        return
-
-    print(f"\n🧮 Embedding {len(chunks)} chunks...")
-    texts = [c["text"] for c in chunks]
-
-    # Batch embed to avoid memory issues with large datasets
-    batch_size = 64
-    all_embeddings = []
-    for i in range(0, len(texts), batch_size):
-        batch = texts[i:i + batch_size]
-        batch_embeddings = embed_texts(batch)
-        all_embeddings.extend(batch_embeddings)
-        print(f"  ✅ Embedded batch {i // batch_size + 1}/{(len(texts) - 1) // batch_size + 1}")
-
-    print(f"\n📥 Upserting {len(all_embeddings)} vectors into Qdrant...")
-    ensure_collection()
-    upsert_chunks(chunks, all_embeddings)
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Ingest QCVN/TCVN data")
-    parser.add_argument("--pdf-dir", type=str, help="Directory with PDF files to parse")
-    parser.add_argument("--pdf", type=str, help="Single PDF file to parse")
-    parser.add_argument("--json-dir", type=str, default="data/qcvn",
-                        help="Directory with JSON files (default: data/qcvn)")
-    parser.add_argument("--no-sample", action="store_true",
-                        help="Don't generate sample data if no files found")
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Ingest QCVN/TCVN data into Qdrant")
+    source = parser.add_mutually_exclusive_group()
+    source.add_argument("--sample", action="store_true", help="Use hand-written sample data (data/qcvn)")
+    source.add_argument("--json-dir", type=Path, help="Ingest existing standard JSON files")
+    source.add_argument("--pdf", type=Path, help="Parse and ingest a single PDF")
+    source.add_argument("--pdf-dir", type=Path, help="Parse and ingest every PDF in a directory")
+    parser.add_argument("--skip-parse", action="store_true", help="Reuse data/vbpl_bxd/parsed as is")
+    parser.add_argument("--recreate", action="store_true", help="Drop the collection first")
+    parser.add_argument("--no-prune", action="store_true",
+                        help="Keep vectors of sources that are not part of this run")
     args = parser.parse_args()
 
     print("=" * 60)
-    print("🏗️  BIM AI Agent — QCVN/TCVN Data Ingestion")
+    print("🏗️  BIM AI Agent — QCVN Data Ingestion")
     print("=" * 60)
 
-    all_chunks = []
+    prune = not args.no_prune
+    if args.sample:
+        from src.data_pipeline.sample_data_generator import generate_sample_data
 
-    # Option 1: Parse a single PDF
-    if args.pdf:
-        print(f"\n📄 Parsing single PDF: {args.pdf}")
-        json_path = parse_pdf_to_json(args.pdf, args.json_dir)
-        chunks = chunk_from_json_file(json_path)
-        all_chunks.extend(chunks)
-        print(f"  ✂️ {len(chunks)} chunks created")
+        if not SAMPLE_DIR.exists() or not any(SAMPLE_DIR.glob("*.json")):
+            generate_sample_data(str(SAMPLE_DIR))
+        chunks = chunk_and_report(SAMPLE_DIR)
+    elif args.json_dir:
+        chunks = chunk_and_report(args.json_dir)
+    elif args.pdf or args.pdf_dir:
+        from src.data_pipeline.qcvn_parser import parse_directory, parse_pdf_to_json
 
-    # Option 2: Parse a directory of PDFs
-    elif args.pdf_dir:
-        chunks = ingest_pdf_files(args.pdf_dir, args.json_dir)
-        all_chunks.extend(chunks)
-
-    # Option 3: Ingest existing JSON files (or generate samples)
+        out = DATA_DIR / "pdf_parsed"
+        if args.pdf:
+            parse_pdf_to_json(str(args.pdf), str(out))
+        else:
+            parse_directory(str(args.pdf_dir), str(out))
+        chunks = chunk_and_report(out)
+        prune = False  # an ad-hoc PDF adds to the corpus, it does not replace it
     else:
-        data_dir = args.json_dir
-        json_files = []
+        if not (VBPL_DIR / "catalog.json").exists():
+            print(f"❌ {VBPL_DIR / 'catalog.json'} not found — run scripts/crawl_vbpl_bxd.py first "
+                  "(or use --sample for demo data).")
+            return 1
+        if not args.skip_parse:
+            from src.data_pipeline.vbpl_corpus import build_corpus
 
-        if os.path.exists(data_dir):
-            json_files = [f for f in os.listdir(data_dir) if f.endswith(".json")]
+            print(f"\n📚 Parsing crawled regulations in {VBPL_DIR}...")
+            report = build_corpus(VBPL_DIR, PARSED_DIR)
+            print(f"  ✅ {report['standards']} regulations ({report['full_text']} with full text), "
+                  f"{report['articles']} articles from {report['documents']} documents")
+            for item in report["items"]:
+                if "error" in item:
+                    print(f"  ⚠️ {item['doc_num']}: {item['error']}")
+        chunks = chunk_and_report(PARSED_DIR)
 
-        if not json_files and not args.no_sample:
-            print("\n📄 No data found. Generating sample QCVN/TCVN data...")
-            generate_sample_data(data_dir)
+    if not chunks:
+        print("\n⚠️ No data to ingest.")
+        return 1
 
-        chunks = ingest_json_files(data_dir)
-        all_chunks.extend(chunks)
+    if args.recreate:
+        print("\n🗑️  Dropping collection...")
+        get_client().delete_collection(get_collection_info()["name"])
+    ensure_collection()
+    print(f"\n🧮 Embedding and upserting {len(chunks)} chunks into Qdrant...")
+    embed_and_upsert(chunks)
+    if prune:
+        keep = {c["metadata"]["source_id"] for c in chunks}
+        prune_sources(keep)
+        print(f"🧹 Removed vectors of sources outside this run (kept {len(keep)} sources)")
 
-    # Embed and upsert
-    if all_chunks:
-        embed_and_upsert(all_chunks)
-
-        # Show collection info
-        info = get_collection_info()
-        print("\n" + "=" * 60)
-        print("✅ Ingestion complete!")
-        print(f"   Total chunks: {len(all_chunks)}")
-        print(f"   Qdrant collection: {info.get('name', 'N/A')}")
-        print(f"   Total vectors: {info.get('vectors_count', 'N/A')}")
-        print("=" * 60)
-    else:
-        print("\n⚠️ No data to ingest. Provide PDFs or JSON files.")
-        print("   Usage:")
-        print("     python scripts/ingest_qcvn.py --pdf-dir data/pdf")
-        print("     python scripts/ingest_qcvn.py --pdf path/to/file.pdf")
+    info = get_collection_info()
+    print("\n" + "=" * 60)
+    print("✅ Ingestion complete!")
+    print(f"   Total chunks: {len(chunks)}")
+    print(f"   Qdrant collection: {info.get('name', 'N/A')}")
+    print(f"   Points: {info.get('points_count', 'N/A')}")
+    print("=" * 60)
+    expired = sum(1 for c in chunks if c["metadata"].get("chunk_type") == "overview" and c["metadata"].get("expired"))
+    print(json.dumps({"chunks": len(chunks), "expired_regulations": expired}, ensure_ascii=False))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

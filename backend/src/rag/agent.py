@@ -53,6 +53,11 @@ _TOOL_REGISTRY = {
 }
 
 
+# Context sent to the LLM per retrieved document: chunks are ≤ ~1.6k chars
+# (chunker.MAX_CHUNK_CHARS + context header); a 500-char cut used to hide half a clause
+CONTEXT_CHARS_PER_DOC = 1600
+
+
 # ===== Agent Nodes =====
 
 def classify_question(state: AgentState) -> AgentState:
@@ -273,8 +278,11 @@ def _generate_stream(question, documents, messages, intent):
     # Build context from documents
     context_parts = []
     for i, doc in enumerate(documents):
-        preview = doc["text"][:500]
-        source = doc.get("metadata", {}).get("source", "unknown")
+        preview = doc["text"][:CONTEXT_CHARS_PER_DOC]
+        meta = doc.get("metadata", {})
+        source = meta.get("standard_code") or meta.get("source", "unknown")
+        if meta.get("article_number"):
+            source += f", {meta['article_number']}"
         context_parts.append(f"[{i+1}] ({source}) {preview}")
 
     context = "\n\n".join(context_parts) if context_parts else "Không có dữ liệu liên quan."
@@ -315,8 +323,9 @@ Bạn đang suy luận đa bước từ Knowledge Graph quy chuẩn xây dựng.
 {intent_instructions}
 
 Dựa trên ngữ cảnh dưới đây, hãy trả lời câu hỏi.
-Trả lời bằng tiếng Việt, cụ thể và chính xác.
+Trả lời bằng tiếng Việt, cụ thể và chính xác. Trích dẫn mã quy chuẩn và số điều khoản.
 Nếu không có đủ dữ liệu, nói rõ giới hạn.
+Văn bản gắn nhãn [HẾT HIỆU LỰC] không còn áp dụng: ưu tiên văn bản còn hiệu lực; chỉ trích văn bản hết hiệu lực khi người dùng hỏi về nó hoặc không có văn bản thay thế, và khi đó phải nói rõ nó đã hết hiệu lực (nêu văn bản thay thế nếu có). Văn bản gắn nhãn [CHƯA CÓ HIỆU LỰC] phải nêu rõ là chưa có hiệu lực.
 
 ### Ngữ cảnh:
 {context}

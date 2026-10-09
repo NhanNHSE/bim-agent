@@ -53,6 +53,44 @@ services:
         max-size: "50m"
         max-file: "5"
 
+  # --- Knowledge Refresh Worker ---
+  knowledge-refresh:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bim-knowledge-refresh
+    # Same image as backend, but no web server: the image's HTTP healthcheck would mark it
+    # unhealthy forever (and fail `compose up --wait`). Progress is in data/vbpl_bxd/refresh_report.json.
+    healthcheck:
+      disable: true
+    env_file:
+      - .env
+    command: ["python", "scripts/refresh_knowledge.py", "--loop", "--interval-hours", "${KNOWLEDGE_REFRESH_HOURS:-168}"]
+    volumes:
+      - vbpl_data:/app/data/vbpl_bxd
+      - hf_cache:/home/appuser/.cache/huggingface
+      - fastembed_cache:/home/appuser/.cache/fastembed
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    networks:
+      - bim-network
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
   # --- Frontend (Nginx) ---
   frontend:
     build:
@@ -178,6 +216,7 @@ volumes:
   ifc_data:
   hf_cache:
   fastembed_cache:
+  vbpl_data:
 
 networks:
   bim-network:
