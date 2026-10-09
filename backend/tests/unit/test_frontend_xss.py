@@ -8,6 +8,8 @@ from pathlib import Path
 import re
 from typing import NamedTuple
 
+import pytest
+
 
 class TemplateLiteral(NamedTuple):
     filename: str
@@ -217,8 +219,12 @@ class TestFrontendProductionFiles:
     """Scan all JavaScript files in frontend/js/ for XSS vulnerabilities."""
 
     def test_all_frontend_js_escaped(self):
-        root_dir = Path(__file__).resolve().parents[3]
-        js_dir = root_dir / "frontend" / "js"
+        repo_root = Path(__file__).resolve().parents[3]
+        if not (repo_root / "docker-compose.yml").exists():
+            pytest.skip(
+                "frontend/ không có trong image backend; test này chạy ở job Unit Tests trên checkout repo"
+            )
+        js_dir = repo_root / "frontend" / "js"
         assert js_dir.is_dir(), f"Directory not found: {js_dir}"
 
         all_violations = []
