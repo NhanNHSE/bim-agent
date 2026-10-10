@@ -8,10 +8,13 @@
 #   - External ports for all databases (debugging)
 #   - Uvicorn --reload mode
 #   - DEBUG=true
+#   - restart: "no" — the dev stack only runs when started on purpose; it never
+#     comes back by itself when Docker/WSL starts (e.g. after a reboot or crash)
 # ==========================================================
 
 services:
   backend:
+    restart: "no"
     # Override CMD: enable hot-reload for development
     command: ["uvicorn", "src.main:app",
               "--host", "0.0.0.0", "--port", "8000", "--reload"]
@@ -30,27 +33,35 @@ services:
           memory: 6G  # More memory for dev (embedding model loading)
 
   knowledge-refresh:
+    restart: "no"
     volumes:
       - ./backend/src:/app/src
       - ./backend/scripts:/app/scripts
       - ./backend/data:/app/data
       - ./backend/data/vbpl_bxd:/app/data/vbpl_bxd
 
+  frontend:
+    restart: "no"
+
   # Expose DB ports for local dev tools
   qdrant:
+    restart: "no"
     ports:
       - "6335:6333"
       - "6336:6334"
 
   neo4j:
+    restart: "no"
     ports:
       - "7475:7474"
       - "7688:7687"
 
   postgres:
+    restart: "no"
     ports:
       - "5433:5432"
 
   redis:
+    restart: "no"
     ports:
       - "6380:6379"
