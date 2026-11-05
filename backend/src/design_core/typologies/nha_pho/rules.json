@@ -1,0 +1,18 @@
+{
+  "typology": "nha_pho",
+  "version": 1,
+  "note": "Kích thước đo theo tim tường (trục), đơn vị mét. Mọi số dưới đây là kinh nghiệm thiết kế nhà phố, CHƯA đối chiếu TCVN 4451 / QCVN: cần kỹ sư xác nhận trước khi dùng cho hồ sơ.",
+  "kinds": {
+    "san":       {"label": "Sân trước",          "min_width_m": 1.5, "min_area_m2": 4.0,  "max_aspect": 5.0,  "needs_daylight": false, "outdoor": true,  "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true},
+    "ban_cong":  {"label": "Ban công / lô gia",  "min_width_m": 0.9, "min_area_m2": 2.0,  "max_aspect": 6.0,  "needs_daylight": false, "outdoor": true,  "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true},
+    "giat_phoi": {"label": "Sân phơi / giặt",    "min_width_m": 1.2, "min_area_m2": 3.0,  "max_aspect": 5.0,  "needs_daylight": false, "outdoor": true,  "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true},
+    "khach":     {"label": "Phòng khách",        "min_width_m": 3.0, "min_area_m2": 12.0, "max_aspect": 2.5,  "needs_daylight": true,  "outdoor": false, "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true},
+    "bep_an":    {"label": "Bếp + ăn",           "min_width_m": 2.4, "min_area_m2": 9.0,  "max_aspect": 3.0,  "needs_daylight": true,  "outdoor": false, "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true},
+    "ngu":       {"label": "Phòng ngủ",          "min_width_m": 2.7, "min_area_m2": 9.0,  "max_aspect": 2.0,  "needs_daylight": true,  "outdoor": false, "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true},
+    "tho":       {"label": "Phòng thờ",          "min_width_m": 2.4, "min_area_m2": 6.0,  "max_aspect": 2.0,  "needs_daylight": true,  "outdoor": false, "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true},
+    "wc":        {"label": "Vệ sinh",            "min_width_m": 1.2, "min_area_m2": 2.5,  "max_aspect": 2.5,  "needs_daylight": false, "outdoor": false, "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true},
+    "sanh":      {"label": "Sảnh / sinh hoạt chung", "min_width_m": 1.2, "min_area_m2": 3.0, "max_aspect": 6.0, "needs_daylight": false, "outdoor": false, "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true},
+    "hanh_lang": {"label": "Hành lang",          "min_width_m": 1.0, "min_area_m2": 2.0,  "max_aspect": 10.0, "needs_daylight": false, "outdoor": false, "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true},
+    "kho":       {"label": "Kho",                "min_width_m": 1.0, "min_area_m2": 1.5,  "max_aspect": 3.0,  "needs_daylight": false, "outdoor": false, "source": "Kinh nghiệm thiết kế nhà phố", "needs_engineer_review": true}
+  }
+}

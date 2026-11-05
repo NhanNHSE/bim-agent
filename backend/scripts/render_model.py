@@ -9,11 +9,13 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 _BACKEND_DIR = Path(__file__).resolve().parents[1]
 if str(_BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(_BACKEND_DIR))
+
+from src.design_core.draw import load_font
 
 _HEADER_HEIGHT = 60
 _BG_COLOR = (245, 247, 250)
@@ -169,7 +171,7 @@ def render(geometry: dict, out_path: str, size: tuple[int, int] = (1400, 700)) -
     element_counts = stats.get("element_counts") or {}
     counts_str = ", ".join(f"{k}: {v}" for k, v in sorted(element_counts.items())) or "none"
 
-    font = ImageFont.load_default()
+    font = load_font(14)
     line1 = (
         f"Building: {building_name}  |  Meshes: {len(meshes)}  |  "
         f"BBox (m): {bbox_m[0]:.2f} x {bbox_m[1]:.2f} x {bbox_m[2]:.2f}"
