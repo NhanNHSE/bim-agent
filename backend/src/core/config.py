@@ -75,6 +75,7 @@ class Settings(BaseSettings):
 
     # --- IFC ---
     ifc_upload_dir: str = "data/ifc"
+    ifc_geometry_cache_dir: str = "data/cache/geometry"
     ifc_max_upload_mb: int = 200
     ifc_download_token_seconds: int = 60
 
