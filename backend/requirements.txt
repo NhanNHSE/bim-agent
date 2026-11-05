@@ -36,8 +36,8 @@ ifcopenshell==0.8.1
 # Numerics
 numpy==1.26.4
 
-# Floor-plan layout solver (CP-SAT). 9.15 needs numpy 2.x; 9.14 resolves with numpy 1.26 + protobuf 6.31
-ortools==9.14.6206
+# Floor-plan layout solver (CP-SAT). 9.12: resolves with numpy 1.26 + protobuf 5.29.6 (patched for PYSEC-2026-1805); 9.14 caps protobuf <6.32 (vulnerable), 9.15 needs numpy 2
+ortools==9.12.4544
 
 # Cache
 redis==5.2.1
