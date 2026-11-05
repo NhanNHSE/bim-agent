@@ -161,6 +161,8 @@ flowchart LR
     M -->|có| MG["merge commit vào main"]
 ```
 
+Unit Tests chạy `scripts/check_models.py`, số lỗi model chỉ được giảm (so với `backend/eval/model_baseline.json`).
+
 ## 6. Bản đồ module `backend/src`
 
 | Thư mục | Vai trò | File chính |
@@ -171,6 +173,7 @@ flowchart LR
 | `knowledge_graph/` | Neo4j: driver, schema, truy vấn mẫu, LLM sinh Cypher có kiểm tra | `neo4j_client.py`, `graph_builder.py`, `graph_query_generator.py`, `ifc_to_graph.py` |
 | `embeddings/` | FastEmbed + Qdrant | `embedding_service.py`, `vector_store.py` |
 | `data_pipeline/` | Parse QCVN (kho vbpl, PDF lẻ) và IFC, sinh IFC nhà/cầu, chunk | `qcvn_text_parser.py`, `vbpl_corpus.py`, `qcvn_parser.py`, `chunker.py`, `ifc_parser.py`, `ifc_generator_v2.py`, `ifc_bridge_generator.py` |
+| `model_checks/` | 8 kiểm tra model IFC tự động, `run_all` | `checks.py`, `__init__.py` |
 | `core/` | Config, JWT/RBAC, lỗi, rate limit, audit, logging, client LLM | `config.py`, `security.py`, `client_ip.py`, `rate_limit.py`, `errors.py`, `llm.py` |
 | `database/` | SQLAlchemy models + session (bảng tạo bằng `create_all`, chưa dùng Alembic) | `models.py`, `session.py` |
 
