@@ -1,5 +1,6 @@
 """Design core package: architectural program schemas, CP-SAT layout solver, and 2D plan drawing."""
 
+from src.design_core.building import build_ifc
 from src.design_core.draw import draw_layout, load_font
 from src.design_core.layout import (
     Connection,
@@ -26,6 +27,7 @@ __all__ = [
     "RoomReq",
     "SolveStats",
     "StairSpec",
+    "build_ifc",
     "draw_layout",
     "load_font",
     "load_rules",
