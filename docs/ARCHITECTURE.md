@@ -2,6 +2,7 @@
 
 > Mô tả **code hiện có trên `main`** (cập nhật 2026-10-09, sau PR #12 — parser QCVN thật), không phải kiến trúc mục tiêu.
 > Lộ trình và việc tiếp theo: `.agent/PROGRESS.md` (file cục bộ). Khi một PR đổi luồng nào dưới đây, cập nhật file này **trong cùng PR**.
+> Quyết định kiến trúc kèm lý do: [`docs/adr/`](adr/). Định hướng sản phẩm: [`docs/ideas/bim-design-copilot.md`](ideas/bim-design-copilot.md) (bộ sinh nhà sẽ được thay theo ADR-0001).
 > Ký hiệu: nét đứt `-.->` = chưa nối / dự kiến; ⚠️ = lỗi hoặc giới hạn đã biết (mục 7).
 
 ## 1. Tổng quan triển khai (`docker-compose.yml`)
