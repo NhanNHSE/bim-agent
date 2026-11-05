@@ -87,6 +87,10 @@ jobs:
           -v --tb=short --junitxml=../test-results/unit.xml
           --cov=src --cov-report=term-missing:skip-covered --cov-report=xml:../test-results/coverage.xml
 
+      # Ratchet: issue counts per generated model may only go down (eval/model_baseline.json)
+      - name: Model checks
+        run: python scripts/check_models.py --out ../test-results/model_checks.json | tee -a "$GITHUB_STEP_SUMMARY"
+
       # Coverage gate lives here (pytest --cov-fail-under printed FAIL but exited 0 with pytest 9 + pytest-cov 7).
       # Threshold and report options: [tool.coverage.report] in backend/pyproject.toml
       - name: Coverage summary

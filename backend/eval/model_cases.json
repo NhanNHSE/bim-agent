@@ -1,0 +1,12 @@
+{
+  "_comment": "Cases for scripts/check_models.py. 'spec' = BuildingSpec fields (mm). Bridges are frozen (docs/ideas/bim-design-copilot.md) and not listed.",
+  "cases": [
+    {"id": "default_3t", "generator": "building_v2", "spec": {}},
+    {"id": "nha_pho_4t", "generator": "building_v2", "spec": {
+      "num_storeys": 4, "footprint_length": 18000, "footprint_width": 5000,
+      "building_type": "F1", "building_function": "Nhà ở",
+      "column_spacing_x": 4500, "column_spacing_y": 5000}},
+    {"id": "van_phong_6t", "generator": "building_v2", "spec": {
+      "num_storeys": 6, "footprint_length": 30000, "footprint_width": 15000}}
+  ]
+}
