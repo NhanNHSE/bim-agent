@@ -46,6 +46,14 @@ Giải chương trình công năng cho các mẫu nhà phố bằng bộ giải 
 python scripts/layout_samples.py [--typology nha_pho] [--out-dir ../test-results/layouts]
 ```
 
+## Dựng nhà mẫu ra IFC
+
+Giải mặt bằng, dựng mô hình IFC4 LOD 200 hoàn chỉnh, kiểm tra tự động bằng `model_checks` và xuất `.ifc` kèm ảnh `.png`:
+
+```bash
+python scripts/build_samples.py [--typology nha_pho] [--out-dir /tmp/buildings-020]
+```
+
 ## Quy ước
 
 - Dịch vụ ngoài trong `unit/` luôn được mock; không gọi LLM thật, không cần API key.
