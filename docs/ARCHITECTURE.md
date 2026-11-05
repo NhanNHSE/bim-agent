@@ -97,8 +97,8 @@ flowchart TD
         D4 --> D5
     end
     subgraph view["Xem / tải"]
-        V1["GET /geometry/{filename} ⚠️"] --> V2["Three.js viewer"]
-        V3["GET /download/{filename}"]
+        V1["GET /geometry/{filename}"] --> V2["Three.js viewer"]
+        V3["POST /download-token/{filename} → link GET /download/{filename}?dt= (60 s)"]
         V4["GET /stats · GET /elements"]
     end
     D5 --> V1
@@ -174,7 +174,7 @@ Unit Tests chạy `scripts/check_models.py`, số lỗi model chỉ được gi�
 | `embeddings/` | FastEmbed + Qdrant | `embedding_service.py`, `vector_store.py` |
 | `data_pipeline/` | Parse QCVN (kho vbpl, PDF lẻ) và IFC, sinh IFC nhà/cầu, chunk | `qcvn_text_parser.py`, `vbpl_corpus.py`, `qcvn_parser.py`, `chunker.py`, `ifc_parser.py`, `ifc_generator_v2.py`, `ifc_bridge_generator.py` |
 | `model_checks/` | 8 kiểm tra model IFC tự động, `run_all` | `checks.py`, `__init__.py` |
-| `core/` | Config, JWT/RBAC, lỗi, rate limit, audit, logging, client LLM | `config.py`, `security.py`, `rate_limit.py`, `errors.py`, `llm.py` |
+| `core/` | Config, JWT/RBAC, lỗi, rate limit, audit, logging, client LLM | `config.py`, `security.py`, `client_ip.py`, `rate_limit.py`, `errors.py`, `llm.py` |
 | `database/` | SQLAlchemy models + session (bảng tạo bằng `create_all`, chưa dùng Alembic) | `models.py`, `session.py` |
 
 Ngoài `src`: `backend/scripts/` (crawl, ingest, build_graph, set_role), `backend/tests/{unit,integration,smoke}`, `frontend/` (Nginx + `js/{app,api,auth,graph,ifc-upload}.js`; mọi giá trị động chèn vào `innerHTML` đi qua `escapeHtml` trong `js/escape.js`, được `tests/unit/test_frontend_xss.py` kiểm tra tĩnh trong CI).
@@ -187,7 +187,6 @@ Guardrails trên đầu vào do LLM sinh: `validate_spec_bounds` (`data_pipeline
 |---|---|
 | Dữ liệu QCVN | Chưa có toàn văn dạng chữ cho QCVN 03:2022 (scan), 04:2021 và 01:2021 (vbpl trống), 18:2021 (chỉ thông tư); `.doc` cũ chưa đọc được. Chưa có golden set đo chất lượng truy hồi |
 | Embedding | MiniLM chỉ đọc ~128 token đầu mỗi chunk; chưa có hybrid/sparse search |
-| `router_ifc.py` | `GET /geometry/{filename}` khai báo **2 lần** — chỉ route đầu có hiệu lực |
 | 3 bộ điều phối | `coordinator.py`, `rag/agent.py`, `rag/graph_rag.py` trùng chức năng; `SYSTEM_PROMPT` của agent không được dùng khi sinh câu trả lời |
-| `/health` | Trả 200 cả khi một dịch vụ "degraded"; `qdrant_vectors` luôn `None` (Qdrant mới trả `points_count`) |
-| Frontend | Link tải IFC đưa JWT vào query string (`js/api.js`, `?token=`); chưa có CSP (còn `onclick` inline) |
+| `/health` | Trả 200 cả khi một dịch vụ "degraded" |
+| Frontend | chưa có CSP (còn `onclick` inline) |

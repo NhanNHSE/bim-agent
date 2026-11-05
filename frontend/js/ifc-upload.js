@@ -508,10 +508,7 @@ const IFCViewer = {
         // Download IFC
         document.getElementById('viewer-download')?.addEventListener('click', () => {
             if (this._currentFilename) {
-                const url = API.getIFCDownloadUrl(this._currentFilename);
-                const a = document.createElement('a');
-                a.href = url; a.download = this._currentFilename;
-                a.click();
+                API.downloadIFC(this._currentFilename).catch(err => Toast.error('Tải file thất bại', err.message));
             }
         });
 

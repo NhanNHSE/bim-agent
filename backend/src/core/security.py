@@ -48,6 +48,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 # --- JWT utilities ---
+DOWNLOAD_TOKEN_SCOPE = "ifc_download"
+
+
 def create_access_token(
     data: dict,
     expires_delta: Optional[timedelta] = None,
@@ -63,6 +66,50 @@ def create_access_token(
         settings.jwt_secret_key,
         algorithm=settings.jwt_algorithm,
     )
+
+
+def create_download_token(
+    user_id: str,
+    filename: str,
+    ttl_seconds: Optional[int] = None,
+) -> str:
+    """Create a short-lived JWT download token scoped to a single IFC file."""
+    ttl = settings.ifc_download_token_seconds if ttl_seconds is None else ttl_seconds
+    payload = {
+        "sub": str(user_id),
+        "scope": DOWNLOAD_TOKEN_SCOPE,
+        "file": filename,
+        "exp": datetime.now(timezone.utc) + timedelta(seconds=ttl),
+    }
+    return jwt.encode(
+        payload,
+        settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+    )
+
+
+def decode_download_token(token: str, filename: str) -> dict:
+    """Decode and validate a short-lived IFC download token."""
+    try:
+        payload = jwt.decode(
+            token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+        )
+    except jwt.InvalidTokenError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Link tải không hợp lệ hoặc đã hết hạn",
+        )
+    if (
+        payload.get("scope") != DOWNLOAD_TOKEN_SCOPE
+        or payload.get("file") != filename
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Link tải không hợp lệ hoặc đã hết hạn",
+        )
+    return payload
 
 
 def decode_token(token: str) -> dict:
@@ -93,7 +140,7 @@ async def get_current_user(
         )
     payload = decode_token(credentials.credentials)
     user_id = payload.get("sub")
-    if user_id is None:
+    if user_id is None or "scope" in payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token không hợp lệ",

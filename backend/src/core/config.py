@@ -62,6 +62,7 @@ class Settings(BaseSettings):
     jwt_secret_key: str = "change_this_to_a_random_secret_key_in_production"
     jwt_algorithm: str = "HS256"
     jwt_expiration_minutes: int = 1440
+    trusted_proxies: str = "127.0.0.1/32,::1/128,172.16.0.0/12"
 
     # --- Agent ---
     agent_mode: str = "multi_agent"  # multi_agent | langgraph | simple
@@ -75,6 +76,7 @@ class Settings(BaseSettings):
     # --- IFC ---
     ifc_upload_dir: str = "data/ifc"
     ifc_max_upload_mb: int = 200
+    ifc_download_token_seconds: int = 60
 
     @property
     def database_url(self) -> str:

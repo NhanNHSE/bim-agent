@@ -200,9 +200,17 @@ const API = {
         return res.json();
     },
 
-    getIFCDownloadUrl(filename) {
-        const token = localStorage.getItem('token');
-        return `${this.BASE_URL}/ifc/download/${encodeURIComponent(filename)}?token=${token}`;
+    async downloadIFC(filename) {
+        const res = await this._fetch('/ifc/download-token/' + encodeURIComponent(filename), {
+            method: 'POST',
+        });
+        const data = await res.json();
+        const a = document.createElement('a');
+        a.href = data.url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
     },
 
     // === Feedback ===

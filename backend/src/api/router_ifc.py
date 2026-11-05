@@ -3,13 +3,23 @@
 import os
 import json
 from typing import Optional
+from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Query
 from fastapi.concurrency import run_in_threadpool
+from fastapi.security import HTTPAuthorizationCredentials
 
 from src.core import rate_limit
 from src.core.config import get_settings
-from src.core.security import get_current_user, require_roles, Role
+from src.core.security import (
+    bearer_scheme,
+    create_download_token,
+    decode_download_token,
+    decode_token,
+    get_current_user,
+    require_roles,
+    Role,
+)
 from src.data_pipeline.ifc_parser import parse_ifc, get_ifc_summary, ParsedIFC
 from src.knowledge_graph.ifc_to_graph import (
     build_ifc_graph,
@@ -142,8 +152,8 @@ def _store_and_index(filename: str, content: bytes, user_id: int) -> dict:
         }
 
     except Exception as e:
-        logger.error("ifc_processing_failed", error=str(e))
-        raise HTTPException(500, f"Lỗi xử lý IFC: {str(e)}")
+        logger.error("ifc_processing_failed", error=str(e), exc_info=True)
+        raise HTTPException(500, "Lỗi xử lý IFC. Vui lòng kiểm tra file và thử lại.")
 
 
 @router.get("/stats")
@@ -155,8 +165,8 @@ def get_ifc_stats(
         summary = get_ifc_building_summary()
         return summary
     except Exception as e:
-        logger.error("ifc_stats_failed", error=str(e))
-        return {"error": str(e), "building": None, "element_counts": {}}
+        logger.error("ifc_stats_failed", error=str(e), exc_info=True)
+        return {"error": "Không lấy được thống kê IFC", "building": None, "element_counts": {}}
 
 
 @router.get("/elements")
@@ -178,7 +188,8 @@ def get_elements(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(500, f"Lỗi truy vấn: {str(e)}")
+        logger.error("ifc_elements_failed", error=str(e), exc_info=True)
+        raise HTTPException(500, "Lỗi truy vấn dữ liệu BIM.")
 
 
 @router.get("/geometry/{filename}")
@@ -187,7 +198,8 @@ def get_geometry(
     current_user: dict = Depends(get_current_user),
 ):
     """Get simplified 3D geometry data for frontend viewer."""
-    json_path = os.path.join(settings.ifc_upload_dir, filename.replace(".ifc", "_parsed.json"))
+    safe = _safe_filename(filename)
+    json_path = os.path.join(settings.ifc_upload_dir, safe[:-4] + "_parsed.json")
     if not os.path.exists(json_path):
         raise HTTPException(404, "File chưa được parse")
 
@@ -195,7 +207,6 @@ def get_geometry(
         parsed = json.load(f)
 
     # Create simplified geometry for 3D viewer
-    # Each element becomes a box with position/dimensions based on its properties
     geometry_data = _create_viewer_geometry(parsed)
     return geometry_data
 
@@ -211,7 +222,8 @@ def generate_sample(
         filepath = generate_sample_ifc("data/ifc/sample_building.ifc")
         return {"status": "success", "filepath": filepath}
     except Exception as e:
-        raise HTTPException(500, f"Lỗi tạo sample: {str(e)}")
+        logger.error("generate_sample_failed", error=str(e), exc_info=True)
+        raise HTTPException(500, "Lỗi tạo file mẫu.")
 
 
 @router.post("/design")
@@ -247,19 +259,48 @@ def design_building(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error("design_failed", error=str(e))
-        raise HTTPException(500, f"Lỗi thiết kế: {str(e)}")
+        logger.error("design_failed", error=str(e), exc_info=True)
+        raise HTTPException(500, "Lỗi thiết kế công trình. Vui lòng thử lại.")
+
+
+@router.post("/download-token/{filename}")
+def issue_download_token(
+    filename: str,
+    current_user: dict = Depends(get_current_user),
+):
+    """Issue a short-lived download URL for an IFC file."""
+    safe = _safe_filename(filename)
+    filepath = os.path.join(settings.ifc_upload_dir, safe)
+    if not os.path.exists(filepath):
+        raise HTTPException(404, "File không tồn tại")
+
+    token = create_download_token(str(current_user["sub"]), safe)
+    return {
+        "url": f"/api/v1/ifc/download/{quote(safe)}?dt={token}",
+        "expires_in": settings.ifc_download_token_seconds,
+    }
 
 
 @router.get("/download/{filename}")
 def download_ifc(
     filename: str,
-    current_user: dict = Depends(get_current_user),
+    dt: Optional[str] = Query(None),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
 ):
     """Download a generated IFC file."""
     from fastapi.responses import FileResponse
 
-    safe_name = _safe_filename(filename)
+    if credentials is not None:
+        payload = decode_token(credentials.credentials)
+        if payload.get("sub") is None or "scope" in payload:
+            raise HTTPException(401, "Token không hợp lệ")
+        safe_name = _safe_filename(filename)
+    elif dt is not None:
+        safe_name = _safe_filename(filename)
+        decode_download_token(dt, safe_name)
+    else:
+        raise HTTPException(401, "Chưa đăng nhập")
+
     filepath = os.path.join(settings.ifc_upload_dir, safe_name)
     if not os.path.exists(filepath):
         raise HTTPException(404, "File không tồn tại")
@@ -269,40 +310,6 @@ def download_ifc(
         filename=safe_name,
         media_type="application/octet-stream",
     )
-
-
-@router.get("/geometry/{filename}")
-async def get_ifc_geometry(
-    filename: str,
-    current_user: dict = Depends(get_current_user),
-):
-    """Extract 3D geometry from an IFC file for frontend rendering.
-
-    Returns mesh data (vertices, faces, colors, metadata) that maps
-    directly to the IFC file content, ensuring the 3D viewer shows
-    exactly what's in the file.
-
-    Uses run_in_executor to avoid blocking the event loop during
-    CPU-intensive geometry extraction.
-    """
-    import asyncio
-    from src.data_pipeline.ifc_geometry import extract_geometry
-
-    safe_name = _safe_filename(filename)
-    filepath = os.path.join(settings.ifc_upload_dir, safe_name)
-    if not os.path.exists(filepath):
-        raise HTTPException(404, "File không tồn tại")
-
-    try:
-        # Run CPU-intensive extraction in thread pool to not block event loop
-        loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(
-            None, extract_geometry, filepath, "data/cache/geometry"
-        )
-        return result
-    except Exception as e:
-        logger.error("geometry_extraction_failed", filename=safe_name, error=str(e))
-        raise HTTPException(500, f"Lỗi trích xuất geometry: {str(e)}")
 
 
 # ===== Helper functions =====
