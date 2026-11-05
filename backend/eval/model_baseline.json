@@ -7,8 +7,8 @@
       "wall_connections": 12,
       "columns_on_grid": 0,
       "spaces": 3,
-      "extent": 52,
-      "clashes": 57
+      "extent": 0,
+      "clashes": 54
     },
     "nha_pho_4t": {
       "schema": 66,
@@ -17,8 +17,8 @@
       "wall_connections": 16,
       "columns_on_grid": 0,
       "spaces": 4,
-      "extent": 96,
-      "clashes": 124
+      "extent": 0,
+      "clashes": 116
     },
     "van_phong_6t": {
       "schema": 138,
@@ -27,8 +27,8 @@
       "wall_connections": 24,
       "columns_on_grid": 1,
       "spaces": 6,
-      "extent": 184,
-      "clashes": 294
+      "extent": 0,
+      "clashes": 190
     }
   }
 }

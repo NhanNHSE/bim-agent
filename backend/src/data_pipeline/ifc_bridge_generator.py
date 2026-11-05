@@ -162,7 +162,7 @@ def _mk_pier(model, body, storey, mats, spec: BridgeSpec, name: str, x: float):
     profile.YDim = spec.pier_depth
 
     rep = run("geometry.add_profile_representation", model, context=body,
-              profile=profile, depth=spec.pier_height)
+              profile=profile, depth=_m(spec.pier_height))
     run("geometry.assign_representation", model, product=pier, representation=rep)
 
     # Pier center at x, centered on deck width, bottom at -pier_height
@@ -199,9 +199,9 @@ def _mk_abutment(model, body, storey, mats, spec: BridgeSpec,
               predefined_type="STANDARD")
 
     rep = run("geometry.add_wall_representation", model, context=body,
-              length=spec.abutment_width,
-              height=spec.abutment_height,
-              thickness=spec.abutment_depth)
+              length=_m(spec.abutment_depth),
+              height=_m(spec.abutment_height),
+              thickness=_m(spec.abutment_width))
     run("geometry.assign_representation", model, product=abt, representation=rep)
 
     # Position: start abutment at x=0 (offset back by depth), end at x=total_length
@@ -233,7 +233,7 @@ def _mk_abutment(model, body, storey, mats, spec: BridgeSpec,
     profile.YDim = f_width
 
     rep = run("geometry.add_profile_representation", model, context=body,
-              profile=profile, depth=f_thickness)
+              profile=profile, depth=_m(f_thickness))
     run("geometry.assign_representation", model, product=footing, representation=rep)
     run("geometry.edit_object_placement", model, product=footing,
         matrix=_mat4(ax - 500, -500, -spec.abutment_height - f_thickness))
@@ -263,7 +263,7 @@ def _mk_girders(model, body, storey, mats, spec: BridgeSpec,
         profile.FlangeThickness = spec.girder_flange_thickness
 
         rep = run("geometry.add_profile_representation", model, context=body,
-                  profile=profile, depth=spec.span_length)
+                  profile=profile, depth=_m(spec.span_length))
         run("geometry.assign_representation", model, product=girder,
             representation=rep)
 
@@ -271,7 +271,7 @@ def _mk_girders(model, body, storey, mats, spec: BridgeSpec,
         gy = spacing * (gi + 1)
         gz = -spec.girder_height  # below deck level
         run("geometry.edit_object_placement", model, product=girder,
-            matrix=_mat4(span_start, gy, gz))
+            matrix=_mat4_x(span_start, gy, gz))
         run("spatial.assign_container", model, relating_structure=storey,
             products=[girder])
         run("material.assign_material", model, products=[girder],
@@ -293,13 +293,13 @@ def _mk_deck(model, body, storey, mats, spec: BridgeSpec,
 
     polyline = [
         (0.0, 0.0),
-        (spec.span_length, 0.0),
-        (spec.span_length, spec.deck_width),
-        (0.0, spec.deck_width),
+        (_m(spec.span_length), 0.0),
+        (_m(spec.span_length), _m(spec.deck_width)),
+        (0.0, _m(spec.deck_width)),
         (0.0, 0.0),
     ]
     rep = run("geometry.add_slab_representation", model, context=body,
-              depth=spec.deck_thickness, polyline=polyline)
+              depth=_m(spec.deck_thickness), polyline=polyline)
     run("geometry.assign_representation", model, product=deck, representation=rep)
     run("geometry.edit_object_placement", model, product=deck,
         matrix=_mat4(span_start, 0, 0))
@@ -340,7 +340,7 @@ def _mk_barriers(model, body, storey, mats, spec: BridgeSpec):
             profile.YDim = 100  # post depth
 
             rep = run("geometry.add_profile_representation", model, context=body,
-                      profile=profile, depth=spec.barrier_height)
+                      profile=profile, depth=_m(spec.barrier_height))
             run("geometry.assign_representation", model, product=post,
                 representation=rep)
             run("geometry.edit_object_placement", model, product=post,
@@ -361,12 +361,12 @@ def _mk_barriers(model, body, storey, mats, spec: BridgeSpec):
         profile.YDim = 80
 
         rep = run("geometry.add_profile_representation", model, context=body,
-                  profile=profile, depth=spec.total_length)
+                  profile=profile, depth=_m(spec.total_length))
         run("geometry.assign_representation", model, product=rail,
             representation=rep)
         rail_z = spec.deck_thickness + spec.barrier_height - 80
         run("geometry.edit_object_placement", model, product=rail,
-            matrix=_mat4(0, y_pos, rail_z))
+            matrix=_mat4_x(0, y_pos, rail_z))
         run("spatial.assign_container", model, relating_structure=storey,
             products=[rail])
         run("material.assign_material", model, products=[rail],
@@ -396,7 +396,7 @@ def _mk_bearings(model, body, storey, mats, spec: BridgeSpec):
             profile.YDim = spec.bearing_width
 
             rep = run("geometry.add_profile_representation", model, context=body,
-                      profile=profile, depth=spec.bearing_height)
+                      profile=profile, depth=_m(spec.bearing_height))
             run("geometry.assign_representation", model, product=bearing,
                 representation=rep)
 
@@ -455,7 +455,7 @@ def _mk_pile_group(model, body, storey, mats, spec: BridgeSpec,
             profile.Radius = spec.pile_diameter / 2
 
             rep = run("geometry.add_profile_representation", model, context=body,
-                      profile=profile, depth=spec.pile_depth)
+                      profile=profile, depth=_m(spec.pile_depth))
             run("geometry.assign_representation", model, product=pile,
                 representation=rep)
 
@@ -547,11 +547,25 @@ def _export_foundation_json(spec: BridgeSpec, output_dir: str, safe_name: str):
 
 # ===== Helpers =====
 
+def _m(mm: float) -> float:
+    return mm / 1000.0
+
+
 def _mat4(x, y, z):
-    """4×4 translation matrix."""
+    """4×4 translation matrix (inputs in mm, output in SI metres)."""
     return np.array([
-        [1, 0, 0, x],
-        [0, 1, 0, y],
-        [0, 0, 1, z],
+        [1, 0, 0, _m(x)],
+        [0, 1, 0, _m(y)],
+        [0, 0, 1, _m(z)],
+        [0, 0, 0, 1],
+    ], dtype=float)
+
+
+def _mat4_x(x, y, z):
+    """4×4 matrix orienting local +Z extrusion along world +X (inputs in mm, output in SI metres)."""
+    return np.array([
+        [0, 0, 1, _m(x)],
+        [1, 0, 0, _m(y)],
+        [0, 1, 0, _m(z)],
         [0, 0, 0, 1],
     ], dtype=float)

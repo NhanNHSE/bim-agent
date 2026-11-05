@@ -102,7 +102,7 @@ def generate_from_spec(spec: BuildingSpec, output_dir: str = "data/ifc") -> str:
         storey = run("root.create_entity", model, ifc_class="IfcBuildingStorey",
                      name=f"Tầng {s + 1}")
         run("geometry.edit_object_placement", model, product=storey,
-            matrix=_mat4(0, 0, elev))
+            matrix=_mat4(0, 0, _m(elev)))
         storeys.append(storey)
     run("aggregate.assign_object", model, relating_object=building, products=storeys)
 
@@ -119,12 +119,13 @@ def generate_from_spec(spec: BuildingSpec, output_dir: str = "data/ifc") -> str:
         interior_cols.append(not on_edge)
 
     for s_idx, storey in enumerate(storeys):
+        elev = s_idx * spec.storey_height
         wall_h = spec.storey_height - st  # Wall height = storey - slab
-        wall_z = st  # Walls start above slab
+        wall_z = elev + st  # Walls start above slab
 
-        # --- Slab (at bottom of storey, z=0) ---
+        # --- Slab (at bottom of storey, z=elev) ---
         _mk_slab(model, body, storey, mats, spec, f"Sàn T{s_idx+1}",
-                 L, W, st)
+                 L, W, st, z=elev)
 
         # --- Exterior Walls (above slab, corners don't overlap) ---
         # North & South walls: full length
@@ -142,7 +143,7 @@ def generate_from_spec(spec: BuildingSpec, output_dir: str = "data/ifc") -> str:
         for ci, (cx, cy) in enumerate(col_grid):
             if interior_cols[ci]:
                 _mk_column(model, body, storey, mats, spec,
-                           f"Cột C{ci+1} T{s_idx+1}", cx, cy, spec.storey_height)
+                           f"Cột C{ci+1} T{s_idx+1}", cx, cy, spec.storey_height, z=elev)
 
         # --- Beams (between column faces, at top under slab) ---
         _mk_beams(model, body, storey, mats, spec, col_grid, s_idx)
@@ -165,7 +166,7 @@ def generate_from_spec(spec: BuildingSpec, output_dir: str = "data/ifc") -> str:
         for sti in range(spec.num_staircases):
             stx = L - wt - 2600 if sti == 0 else wt + 200
             _mk_stair(model, body, storey, spec, f"Thang CT{sti+1} T{s_idx+1}",
-                      stx, W / 2 - 1000, 2200, 1000, spec.storey_height)
+                      stx, W / 2 - 1000, 2200, 1000, spec.storey_height, z=elev)
 
         # --- Footings (ground floor only, below slab) ---
         if s_idx == 0 and spec.has_foundation:
@@ -176,7 +177,7 @@ def generate_from_spec(spec: BuildingSpec, output_dir: str = "data/ifc") -> str:
     # Roof slab (offset to overhang)
     if storeys:
         _mk_slab(model, body, storeys[-1], mats, spec, "Mái",
-                 L + 600, W + 600, 250)
+                 L + 600, W + 600, 250, z=spec.num_storeys * spec.storey_height)
 
     model.write(filepath)
     logger.info("ifc_v2_generated", filepath=filepath, storeys=spec.num_storeys,
@@ -219,9 +220,9 @@ def _mk_wall(model, body, storey, mats, spec, name, x, y, length, height, thickn
     wall = run("root.create_entity", model, ifc_class="IfcWall", name=name,
                predefined_type="STANDARD")
     rep = run("geometry.add_wall_representation", model, context=body,
-              length=length, height=height, thickness=thickness)
+              length=_m(length), height=_m(height), thickness=_m(thickness))
     run("geometry.assign_representation", model, product=wall, representation=rep)
-    run("geometry.edit_object_placement", model, product=wall, matrix=_mat4(x, y, z))
+    run("geometry.edit_object_placement", model, product=wall, matrix=_mat4(_m(x), _m(y), _m(z)))
     run("spatial.assign_container", model, relating_structure=storey, products=[wall])
     run("material.assign_material", model, products=[wall],
         material=mats["_wall_set"], type="IfcMaterialLayerSetUsage")
@@ -231,16 +232,16 @@ def _mk_wall(model, body, storey, mats, spec, name, x, y, length, height, thickn
     return wall
 
 
-def _mk_column(model, body, storey, mats, spec, name, cx, cy, height):
+def _mk_column(model, body, storey, mats, spec, name, cx, cy, height, z=0):
     col = run("root.create_entity", model, ifc_class="IfcColumn", name=name)
     profile = run("profile.add_parameterized_profile", model,
                   ifc_class="IfcRectangleProfileDef")
     profile.XDim = spec.column_size
     profile.YDim = spec.column_size
     rep = run("geometry.add_profile_representation", model, context=body,
-              profile=profile, depth=height)
+              profile=profile, depth=_m(height))
     run("geometry.assign_representation", model, product=col, representation=rep)
-    run("geometry.edit_object_placement", model, product=col, matrix=_mat4(cx, cy, 0))
+    run("geometry.edit_object_placement", model, product=col, matrix=_mat4(_m(cx), _m(cy), _m(z)))
     run("spatial.assign_container", model, relating_structure=storey, products=[col])
     run("material.assign_material", model, products=[col], material=mats[spec.column_material])
     pset = run("pset.add_pset", model, product=col, name="Pset_ColumnCommon")
@@ -254,6 +255,7 @@ def _mk_beams(model, body, storey, mats, spec, col_grid, s_idx):
     nx = max(2, int(L / sx) + 1)
     ny = max(2, int(W / sy) + 1)
     bi = 0
+    elev = s_idx * spec.storey_height
 
     # X-direction beams
     for j in range(ny):
@@ -265,7 +267,7 @@ def _mk_beams(model, body, storey, mats, spec, col_grid, s_idx):
             if bl > 500:
                 bi += 1
                 _mk_beam(model, body, storey, mats, spec,
-                         f"Dầm BX{bi} T{s_idx+1}", x1, cz, bl, 0)
+                         f"Dầm BX{bi} T{s_idx+1}", x1, cz, bl, 0, elev=elev)
 
     # Y-direction beams
     for i in range(nx):
@@ -277,22 +279,22 @@ def _mk_beams(model, body, storey, mats, spec, col_grid, s_idx):
             if bl > 500:
                 bi += 1
                 _mk_beam(model, body, storey, mats, spec,
-                         f"Dầm BY{bi} T{s_idx+1}", cx, y1, bl, math.pi / 2)
+                         f"Dầm BY{bi} T{s_idx+1}", cx, y1, bl, math.pi / 2, elev=elev)
 
 
-def _mk_beam(model, body, storey, mats, spec, name, x, y, length, angle):
+def _mk_beam(model, body, storey, mats, spec, name, x, y, length, angle, elev=0):
     beam = run("root.create_entity", model, ifc_class="IfcBeam", name=name)
     profile = run("profile.add_parameterized_profile", model,
                   ifc_class="IfcRectangleProfileDef")
     profile.XDim = spec.beam_width
     profile.YDim = spec.beam_height
     rep = run("geometry.add_profile_representation", model, context=body,
-              profile=profile, depth=length)
+              profile=profile, depth=_m(length))
     run("geometry.assign_representation", model, product=beam, representation=rep)
 
-    beam_z = spec.storey_height - spec.beam_height
+    beam_z = elev + spec.storey_height - spec.beam_height
     run("geometry.edit_object_placement", model, product=beam,
-        matrix=_mat4_rz(x, y, beam_z, angle))
+        matrix=_mat4_beam(_m(x), _m(y), _m(beam_z), angle))
     run("spatial.assign_container", model, relating_structure=storey, products=[beam])
     run("material.assign_material", model, products=[beam], material=mats[spec.beam_material])
     pset = run("pset.add_pset", model, product=beam, name="Pset_BeamCommon")
@@ -300,14 +302,14 @@ def _mk_beam(model, body, storey, mats, spec, name, x, y, length, angle):
     return beam
 
 
-def _mk_slab(model, body, storey, mats, spec, name, length, width, thickness):
+def _mk_slab(model, body, storey, mats, spec, name, length, width, thickness, z=0):
     slab = run("root.create_entity", model, ifc_class="IfcSlab", name=name,
                predefined_type="FLOOR")
-    polyline = [(0.0, 0.0), (length, 0.0), (length, width), (0.0, width), (0.0, 0.0)]
+    polyline = [(0.0, 0.0), (_m(length), 0.0), (_m(length), _m(width)), (0.0, _m(width)), (0.0, 0.0)]
     rep = run("geometry.add_slab_representation", model, context=body,
-              depth=thickness, polyline=polyline)
+              depth=_m(thickness), polyline=polyline)
     run("geometry.assign_representation", model, product=slab, representation=rep)
-    run("geometry.edit_object_placement", model, product=slab, matrix=_mat4(0, 0, 0))
+    run("geometry.edit_object_placement", model, product=slab, matrix=_mat4(0, 0, _m(z)))
     run("spatial.assign_container", model, relating_structure=storey, products=[slab])
     run("material.assign_material", model, products=[slab], material=mats[spec.slab_material])
     return slab
@@ -315,13 +317,13 @@ def _mk_slab(model, body, storey, mats, spec, name, length, width, thickness):
 
 def _mk_door(model, body, storey, spec, name, x, y, width, height, z=0):
     door = run("root.create_entity", model, ifc_class="IfcDoor", name=name)
-    lining = {"LiningDepth": spec.wall_thickness, "LiningThickness": 50.0,
-              "ThresholdDepth": 100.0, "ThresholdThickness": 25.0}
+    lining = {"LiningDepth": _m(spec.wall_thickness), "LiningThickness": _m(50.0),
+              "ThresholdDepth": _m(100.0), "ThresholdThickness": _m(25.0)}
     rep = run("geometry.add_door_representation", model, context=body,
-              overall_height=height, overall_width=width,
+              overall_height=_m(height), overall_width=_m(width),
               lining_properties=lining)
     run("geometry.assign_representation", model, product=door, representation=rep)
-    run("geometry.edit_object_placement", model, product=door, matrix=_mat4(x, y, z))
+    run("geometry.edit_object_placement", model, product=door, matrix=_mat4(_m(x), _m(y), _m(z)))
     run("spatial.assign_container", model, relating_structure=storey, products=[door])
     pset = run("pset.add_pset", model, product=door, name="Pset_DoorCommon")
     run("pset.edit_pset", model, pset=pset, properties={"IsExternal": False, "FireRating": "EI 60"})
@@ -330,18 +332,18 @@ def _mk_door(model, body, storey, spec, name, x, y, width, height, z=0):
 
 def _mk_window(model, body, storey, mats, spec, name, x, y, width, height, sill):
     win = run("root.create_entity", model, ifc_class="IfcWindow", name=name)
-    lining = {"LiningDepth": spec.wall_thickness * 0.5, "LiningThickness": 50.0}
+    lining = {"LiningDepth": _m(spec.wall_thickness * 0.5), "LiningThickness": _m(50.0)}
     rep = run("geometry.add_window_representation", model, context=body,
-              overall_height=height, overall_width=width,
+              overall_height=_m(height), overall_width=_m(width),
               lining_properties=lining)
     run("geometry.assign_representation", model, product=win, representation=rep)
-    run("geometry.edit_object_placement", model, product=win, matrix=_mat4(x, y, sill))
+    run("geometry.edit_object_placement", model, product=win, matrix=_mat4(_m(x), _m(y), _m(sill)))
     run("spatial.assign_container", model, relating_structure=storey, products=[win])
     run("material.assign_material", model, products=[win], material=mats[spec.window_material])
     return win
 
 
-def _mk_stair(model, body, storey, spec, name, x, y, sw, sd, height):
+def _mk_stair(model, body, storey, spec, name, x, y, sw, sd, height, z=0):
     stair = run("root.create_entity", model, ifc_class="IfcStair", name=name,
                 predefined_type="TWO_STRAIGHT_RUN_STAIR")
     profile = run("profile.add_parameterized_profile", model,
@@ -349,9 +351,9 @@ def _mk_stair(model, body, storey, spec, name, x, y, sw, sd, height):
     profile.XDim = sw
     profile.YDim = sd
     rep = run("geometry.add_profile_representation", model, context=body,
-              profile=profile, depth=height)
+              profile=profile, depth=_m(height))
     run("geometry.assign_representation", model, product=stair, representation=rep)
-    run("geometry.edit_object_placement", model, product=stair, matrix=_mat4(x, y, 0))
+    run("geometry.edit_object_placement", model, product=stair, matrix=_mat4(_m(x), _m(y), _m(z)))
     run("spatial.assign_container", model, relating_structure=storey, products=[stair])
     return stair
 
@@ -365,10 +367,10 @@ def _mk_footing(model, body, storey, mats, spec, name, cx, cy):
     profile.XDim = fs
     profile.YDim = fs
     rep = run("geometry.add_profile_representation", model, context=body,
-              profile=profile, depth=spec.footing_depth)
+              profile=profile, depth=_m(spec.footing_depth))
     run("geometry.assign_representation", model, product=footing, representation=rep)
     run("geometry.edit_object_placement", model, product=footing,
-        matrix=_mat4(cx, cy, -spec.footing_depth))
+        matrix=_mat4(_m(cx), _m(cy), _m(-spec.footing_depth)))
     run("spatial.assign_container", model, relating_structure=storey, products=[footing])
     run("material.assign_material", model, products=[footing], material=mats[spec.column_material])
     return footing
@@ -387,10 +389,19 @@ def _auto_column_grid(spec):
     return positions
 
 
+def _m(mm: float) -> float:
+    return mm / 1000.0
+
+
 def _mat4(x, y, z):
-    return np.array([[1,0,0,x],[0,1,0,y],[0,0,1,z],[0,0,0,1]], dtype=float)
+    return np.array([[1, 0, 0, x], [0, 1, 0, y], [0, 0, 1, z], [0, 0, 0, 1]], dtype=float)
 
 
 def _mat4_rz(x, y, z, angle):
     c, s = math.cos(angle), math.sin(angle)
-    return np.array([[c,-s,0,x],[s,c,0,y],[0,0,1,z],[0,0,0,1]], dtype=float)
+    return np.array([[c, -s, 0, x], [s, c, 0, y], [0, 0, 1, z], [0, 0, 0, 1]], dtype=float)
+
+
+def _mat4_beam(x, y, z, angle):
+    c, s = math.cos(angle), math.sin(angle)
+    return np.array([[-s, 0, c, x], [c, 0, s, y], [0, 1, 0, z], [0, 0, 0, 1]], dtype=float)

@@ -105,7 +105,8 @@ flowchart TD
     U2 --> V1
 ```
 
-Hàm xuất móng sang JSON cho PLAXIS 3D có trong `ifc_bridge_generator.py` nhưng chưa có endpoint riêng.
+- `POST /design`: bộ sinh truyền SI (m) vào `ifcopenshell.api`, model lưu theo mm.
+- Hàm xuất móng sang JSON cho PLAXIS 3D có trong `ifc_bridge_generator.py` nhưng chưa có endpoint riêng.
 
 ## 4. Pipeline dữ liệu quy chuẩn (script chạy tay)
 
