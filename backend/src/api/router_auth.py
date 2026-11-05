@@ -22,6 +22,7 @@ from src.core.security import (
 )
 from src.core import rate_limit
 from src.core.audit import log_action
+from src.core.client_ip import get_client_ip
 from src.database.models import User
 from src.database.session import get_db
 
@@ -36,7 +37,7 @@ _REGISTER_MAX = 5
 
 def _check_rate_limit(request: Request, action: str, max_attempts: int):
     """Limit `action` per client IP over a 15-minute window; raises HTTPException(429)."""
-    client_ip = request.client.host if request.client else "unknown"
+    client_ip = get_client_ip(request)
     rate_limit.hit(f"{action}:{client_ip}", max_attempts, _RATE_LIMIT_WINDOW)
 
 
@@ -117,7 +118,7 @@ def register(req: RegisterRequest, request: Request, db: Session = Depends(get_d
         "register",
         user_id=user.id,
         detail={"email": user.email, "role": user.role},
-        ip_address=request.client.host if request.client else None,
+        ip_address=get_client_ip(request),
     )
     return {
         "access_token": token,
@@ -147,7 +148,7 @@ def login(req: LoginRequest, request: Request, db: Session = Depends(get_db)):
         "login",
         user_id=user.id,
         detail={"email": user.email},
-        ip_address=request.client.host if request.client else None,
+        ip_address=get_client_ip(request),
     )
     return {
         "access_token": token,

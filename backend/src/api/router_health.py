@@ -28,6 +28,6 @@ def health_check():
         "services": {
             "neo4j": "connected" if neo4j_ok else "disconnected",
             "qdrant": qdrant_info.get("status", "unknown"),
-            "qdrant_vectors": qdrant_info.get("vectors_count", 0),
+            "qdrant_vectors": qdrant_info.get("points_count", 0),
         },
     }

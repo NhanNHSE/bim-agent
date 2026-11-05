@@ -89,6 +89,16 @@ const App = {
                 this._setMode(btn.dataset.mode);
             });
         });
+
+        // Delegated IFC download handler (register once)
+        if (!this._downloadListenerBound) {
+            this._downloadListenerBound = true;
+            document.addEventListener('click', (e) => {
+                const b = e.target.closest('[data-download-ifc]');
+                if (!b) return;
+                API.downloadIFC(b.dataset.downloadIfc).catch(err => Toast.error('Tải file thất bại', err.message));
+            });
+        }
     },
 
     _setMode(mode) {
@@ -448,8 +458,7 @@ const App = {
         // Download + 3D buttons
         let actionsHtml = '<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">';
         if (design.filename) {
-            const downloadUrl = API.getIFCDownloadUrl(design.filename);
-            actionsHtml += `<a href="${escapeHtml(downloadUrl)}" class="btn-download" download>📥 Tải file IFC</a>`;
+            actionsHtml += `<button class="btn-download" data-download-ifc="${escapeHtml(design.filename)}">📥 Tải file IFC</button>`;
             // Store spec+filename in global array for 3D viewer
             if (!window._designSpecs) window._designSpecs = [];
             const specIdx = window._designSpecs.length;
