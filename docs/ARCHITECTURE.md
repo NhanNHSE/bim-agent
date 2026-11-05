@@ -108,6 +108,7 @@ flowchart TD
 - `POST /design`: bộ sinh truyền SI (m) vào `ifcopenshell.api`, model lưu theo mm.
 - `GET /geometry/{filename}` → `extract_geometry` (`ifcopenshell.geom`, lưới tam giác theo mét, cache ở `data/cache/geometry`) → `IFCViewer._loadRealGeometry`. Nếu không có lưới thì viewer vẽ phác thảo từ spec và hiện cảnh báo.
 - Hàm xuất móng sang JSON cho PLAXIS 3D có trong `ifc_bridge_generator.py` nhưng chưa có endpoint riêng.
+- **Lõi sinh mới (ADR-0001), chưa nối vào API:** `design_core`. Luồng: `Program` (lô đất, tầng, phòng, quan hệ kề nhau; luật mặc định lấy từ gói `typologies/<kiểu>/rules.json`) → `solve_layout` (OR-Tools CP-SAT, lưới 100 mm, giải mọi tầng trong một model, 8 worker `interleave_search` cho kết quả tất định) → `Layout` (hình chữ nhật từng phòng theo tim tường, cùng đoạn tường chung giữa các phòng kề nhau). Bước dựng IFC từ `Layout` là task kế tiếp. Xem nhanh bằng `python scripts/layout_samples.py --out-dir <dir>`, lệnh này ghi JSON và PNG mặt bằng của mọi mẫu. `POST /design` hiện vẫn dùng bộ sinh cũ.
 
 ## 4. Pipeline dữ liệu quy chuẩn (script chạy tay)
 
@@ -176,6 +177,7 @@ Unit Tests chạy `scripts/check_models.py`, số lỗi model chỉ được gi�
 | `embeddings/` | FastEmbed + Qdrant | `embedding_service.py`, `vector_store.py` |
 | `data_pipeline/` | Parse QCVN (kho vbpl, PDF lẻ) và IFC, sinh IFC nhà/cầu, chunk | `qcvn_text_parser.py`, `vbpl_corpus.py`, `qcvn_parser.py`, `chunker.py`, `ifc_parser.py`, `ifc_generator_v2.py`, `ifc_bridge_generator.py` |
 | `model_checks/` | 8 kiểm tra model IFC tự động, `run_all` | `checks.py`, `__init__.py` |
+| `design_core/` | Lõi sinh mới: chương trình công năng, xếp mặt bằng CP-SAT, vẽ mặt bằng; gói kiểu nhà và font DejaVu (có chữ Việt) | `program.py`, `layout.py`, `draw.py`, `typologies/nha_pho/{rules,samples}.json` |
 | `core/` | Config, JWT/RBAC, lỗi, rate limit, audit, logging, client LLM | `config.py`, `security.py`, `client_ip.py`, `rate_limit.py`, `errors.py`, `llm.py` |
 | `database/` | SQLAlchemy models + session (bảng tạo bằng `create_all`, chưa dùng Alembic) | `models.py`, `session.py` |
 

@@ -38,6 +38,14 @@ Render trực tiếp file `.ifc` hoặc geometry `.json` ra ảnh PNG (gồm 2 h
 python scripts/render_model.py <input.ifc|input.json> tests/outputs/model.png [--cache-dir DIR]
 ```
 
+## Xếp mặt bằng mẫu
+
+Giải chương trình công năng cho các mẫu nhà phố bằng bộ giải CP-SAT và xuất kết quả `.json` kèm mặt bằng `.png`:
+
+```bash
+python scripts/layout_samples.py [--typology nha_pho] [--out-dir ../test-results/layouts]
+```
+
 ## Quy ước
 
 - Dịch vụ ngoài trong `unit/` luôn được mock; không gọi LLM thật, không cần API key.

@@ -1,0 +1,98 @@
+{
+  "typology": "nha_pho",
+  "samples": [
+    {
+      "typology": "nha_pho",
+      "name": "nha_pho_5x20_4t",
+      "lot": {"width_m": 5.0, "depth_m": 20.0},
+      "storey_height_m": 3.6,
+      "stair": {"width_m": 2.2, "length_m": 4.0},
+      "floors": [
+        {"name": "Tầng 1", "rooms": [
+          {"id": "san", "kind": "san", "entrance": true, "target_area_m2": 15, "adjacent_to": ["khach"]},
+          {"id": "khach", "kind": "khach", "target_area_m2": 30, "adjacent_to": ["stair", "hanh_lang"]},
+          {"id": "hanh_lang", "kind": "hanh_lang", "target_area_m2": 5.6, "adjacent_to": ["wc"]},
+          {"id": "wc", "kind": "wc", "target_area_m2": 5.6},
+          {"id": "bep_an", "kind": "bep_an", "target_area_m2": 35, "adjacent_to": ["stair"]}
+        ]},
+        {"name": "Tầng 2", "rooms": [
+          {"id": "ban_cong", "kind": "ban_cong", "target_area_m2": 6, "adjacent_to": ["ngu1"]},
+          {"id": "ngu1", "kind": "ngu", "target_area_m2": 21.5, "adjacent_to": ["sanh"]},
+          {"id": "wc", "kind": "wc", "target_area_m2": 7.7, "adjacent_to": ["sanh"]},
+          {"id": "sanh", "kind": "sanh", "target_area_m2": 21, "adjacent_to": ["stair"]},
+          {"id": "ngu2", "kind": "ngu", "target_area_m2": 35, "adjacent_to": ["sanh"]}
+        ]},
+        {"name": "Tầng 3", "rooms": [
+          {"id": "ban_cong", "kind": "ban_cong", "target_area_m2": 6, "adjacent_to": ["ngu1"]},
+          {"id": "ngu1", "kind": "ngu", "target_area_m2": 21.5, "adjacent_to": ["sanh"]},
+          {"id": "wc", "kind": "wc", "target_area_m2": 7.7, "adjacent_to": ["sanh"]},
+          {"id": "sanh", "kind": "sanh", "target_area_m2": 21, "adjacent_to": ["stair"]},
+          {"id": "ngu2", "kind": "ngu", "target_area_m2": 35, "adjacent_to": ["sanh"]}
+        ]},
+        {"name": "Tầng 4", "rooms": [
+          {"id": "ban_cong", "kind": "ban_cong", "target_area_m2": 6, "adjacent_to": ["tho"]},
+          {"id": "tho", "kind": "tho", "target_area_m2": 21.5, "adjacent_to": ["sanh"]},
+          {"id": "wc", "kind": "wc", "target_area_m2": 7.7, "adjacent_to": ["sanh"]},
+          {"id": "sanh", "kind": "sanh", "target_area_m2": 21, "adjacent_to": ["stair"]},
+          {"id": "giat_phoi", "kind": "giat_phoi", "target_area_m2": 35, "adjacent_to": ["sanh"]}
+        ]}
+      ]
+    },
+    {
+      "typology": "nha_pho",
+      "name": "nha_pho_4x16_3t",
+      "lot": {"width_m": 4.0, "depth_m": 16.0},
+      "storey_height_m": 3.6,
+      "stair": {"width_m": 2.2, "length_m": 4.0},
+      "floors": [
+        {"name": "Tầng 1", "rooms": [
+          {"id": "san", "kind": "san", "entrance": true, "target_area_m2": 10, "adjacent_to": ["khach"]},
+          {"id": "khach", "kind": "khach", "target_area_m2": 20, "adjacent_to": ["stair", "hanh_lang"]},
+          {"id": "hanh_lang", "kind": "hanh_lang", "target_area_m2": 3.6, "adjacent_to": ["stair", "wc"]},
+          {"id": "wc", "kind": "wc", "target_area_m2": 3.6},
+          {"id": "bep_an", "kind": "bep_an", "target_area_m2": 18, "adjacent_to": ["stair"]}
+        ]},
+        {"name": "Tầng 2", "rooms": [
+          {"id": "ban_cong", "kind": "ban_cong", "target_area_m2": 4.8, "adjacent_to": ["ngu1"]},
+          {"id": "ngu1", "kind": "ngu", "target_area_m2": 17.2, "adjacent_to": ["sanh"]},
+          {"id": "wc", "kind": "wc", "target_area_m2": 4.4, "adjacent_to": ["sanh"]},
+          {"id": "sanh", "kind": "sanh", "target_area_m2": 10.8, "adjacent_to": ["stair"]},
+          {"id": "ngu2", "kind": "ngu", "target_area_m2": 18, "adjacent_to": ["sanh"]}
+        ]},
+        {"name": "Tầng 3", "rooms": [
+          {"id": "ban_cong", "kind": "ban_cong", "target_area_m2": 4.8, "adjacent_to": ["ngu1"]},
+          {"id": "ngu1", "kind": "ngu", "target_area_m2": 17.2, "adjacent_to": ["sanh"]},
+          {"id": "wc", "kind": "wc", "target_area_m2": 4.4, "adjacent_to": ["sanh"]},
+          {"id": "sanh", "kind": "sanh", "target_area_m2": 10.8, "adjacent_to": ["stair"]},
+          {"id": "ngu2", "kind": "ngu", "target_area_m2": 18, "adjacent_to": ["sanh"]}
+        ]}
+      ]
+    },
+    {
+      "typology": "nha_pho",
+      "name": "nha_pho_6x18_2t",
+      "lot": {"width_m": 6.0, "depth_m": 18.0},
+      "storey_height_m": 3.6,
+      "stair": {"width_m": 2.2, "length_m": 4.0},
+      "floors": [
+        {"name": "Tầng 1", "rooms": [
+          {"id": "san", "kind": "san", "entrance": true, "target_area_m2": 18, "adjacent_to": ["khach"]},
+          {"id": "khach", "kind": "khach", "target_area_m2": 30, "adjacent_to": ["hanh_lang"]},
+          {"id": "hanh_lang", "kind": "hanh_lang", "target_area_m2": 6, "adjacent_to": ["stair", "wc", "kho", "bep_an"]},
+          {"id": "wc", "kind": "wc", "target_area_m2": 4.6},
+          {"id": "kho", "kind": "kho", "target_area_m2": 4.6},
+          {"id": "bep_an", "kind": "bep_an", "target_area_m2": 36, "adjacent_to": ["stair"]}
+        ]},
+        {"name": "Tầng 2", "rooms": [
+          {"id": "ban_cong", "kind": "ban_cong", "target_area_m2": 7.2, "adjacent_to": ["ngu1"]},
+          {"id": "ngu1", "kind": "ngu", "target_area_m2": 28.8, "adjacent_to": ["sanh"]},
+          {"id": "wc1", "kind": "wc", "target_area_m2": 4.4, "adjacent_to": ["sanh"]},
+          {"id": "sanh", "kind": "sanh", "target_area_m2": 9, "adjacent_to": ["stair"]},
+          {"id": "wc2", "kind": "wc", "target_area_m2": 5.75, "adjacent_to": ["sanh"]},
+          {"id": "kho", "kind": "kho", "target_area_m2": 8.05, "adjacent_to": ["sanh"]},
+          {"id": "ngu2", "kind": "ngu", "target_area_m2": 36, "adjacent_to": ["sanh"]}
+        ]}
+      ]
+    }
+  ]
+}
