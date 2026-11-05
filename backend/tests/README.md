@@ -30,6 +30,14 @@ bash backend/tests/smoke/smoke_bridge_api.sh
 
 Không chạy `unit/` và `integration/` trong cùng một lệnh pytest: `unit/conftest.py` ghi đè biến môi trường (mật khẩu DB, chế độ agent) cho cả tiến trình.
 
+## Render model ra ảnh
+
+Render trực tiếp file `.ifc` hoặc geometry `.json` ra ảnh PNG (gồm 2 hình trục đo và mặt bằng) để nghiệm thu bằng mắt:
+
+```bash
+python scripts/render_model.py <input.ifc|input.json> tests/outputs/model.png [--cache-dir DIR]
+```
+
 ## Quy ước
 
 - Dịch vụ ngoài trong `unit/` luôn được mock; không gọi LLM thật, không cần API key.
