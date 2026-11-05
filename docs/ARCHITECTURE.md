@@ -97,7 +97,7 @@ flowchart TD
         D4 --> D5
     end
     subgraph view["Xem / tải"]
-        V1["GET /geometry/{filename}"] --> V2["Three.js viewer"]
+        V1["GET /geometry/{filename}"] --> V1B["extract_geometry (ifcopenshell.geom,<br/>lưới tam giác theo mét, cache ở data/cache/geometry)"] --> V2["IFCViewer._loadRealGeometry"]
         V3["POST /download-token/{filename} → link GET /download/{filename}?dt= (60 s)"]
         V4["GET /stats · GET /elements"]
     end
@@ -106,6 +106,7 @@ flowchart TD
 ```
 
 - `POST /design`: bộ sinh truyền SI (m) vào `ifcopenshell.api`, model lưu theo mm.
+- `GET /geometry/{filename}` → `extract_geometry` (`ifcopenshell.geom`, lưới tam giác theo mét, cache ở `data/cache/geometry`) → `IFCViewer._loadRealGeometry`. Nếu không có lưới thì viewer vẽ phác thảo từ spec và hiện cảnh báo.
 - Hàm xuất móng sang JSON cho PLAXIS 3D có trong `ifc_bridge_generator.py` nhưng chưa có endpoint riêng.
 
 ## 4. Pipeline dữ liệu quy chuẩn (script chạy tay)

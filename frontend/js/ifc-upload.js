@@ -59,6 +59,11 @@ const IFCViewer = {
 
         // Generate sample
         sampleBtn.onclick = () => this._generateSample();
+
+        document.addEventListener('click', (e) => {
+            const b = e.target.closest('[data-view-ifc]');
+            if (b) IFCViewer.showIfcFile(b.dataset.viewIfc);
+        });
     },
 
     async _uploadFile(file) {
@@ -97,6 +102,7 @@ const IFCViewer = {
                             <div class="result-item"><span>🏠 Không gian</span><strong>${escapeHtml(result.spaces)}</strong></div>
                             <div class="result-item"><span>🕸️ Graph nodes</span><strong>${escapeHtml(result.graph_nodes)}</strong></div>
                         </div>
+                        <button class="btn-download" data-view-ifc="${escapeHtml(result.filename)}">🏗️ Xem 3D file này</button>
                         <button class="btn-primary" onclick="IFCViewer._showViewer('${escapeHtml(result.filename)}')" style="margin-top:12px;width:100%">
                             🏗️ Xem mô hình 3D
                         </button>
@@ -159,6 +165,7 @@ const IFCViewer = {
                                 <div class="result-item"><span>🧱 Cấu kiện</span><strong>${escapeHtml(result.elements)}</strong></div>
                                 <div class="result-item"><span>📦 Vật liệu</span><strong>${escapeHtml(result.materials)}</strong></div>
                             </div>
+                            <button class="btn-download" data-view-ifc="${escapeHtml(result.filename)}">🏗️ Xem 3D file này</button>
                             <button class="btn-primary" onclick="IFCViewer._showViewer('sample_building.ifc')" style="margin-top:12px;width:100%">
                                 🏗️ Xem mô hình 3D
                             </button>
@@ -385,8 +392,32 @@ const IFCViewer = {
         }
 
         // Fallback: use parametric model
+        if (typeof Toast !== 'undefined') {
+            Toast.warning('Đang hiển thị mô hình phác thảo', 'Không đọc được hình học từ file IFC — hình này được vẽ từ thông số, không phải từ file.');
+        }
         this._buildFromSpec(spec);
         this._bindToolbar();
+    },
+
+    /** Show 3D model directly from an uploaded IFC file. */
+    async showIfcFile(filename) {
+        document.getElementById('ifc-upload-modal')?.classList.add('hidden');
+        const panel = document.getElementById('ifc-viewer-panel');
+        panel?.classList.remove('hidden');
+        this._currentFilename = filename;
+        this._currentSpec = null;
+        this._init3D(null, true);
+        try {
+            const data = await API.getIFCGeometry(filename);
+            if (data && data.meshes && data.meshes.length > 0) {
+                this._loadRealGeometry(data);
+                this._bindToolbar();
+            } else {
+                Toast.error('Không hiển thị được file IFC', 'File không có hình học');
+            }
+        } catch (err) {
+            Toast.error('Không hiển thị được file IFC', err.message || 'File không có hình học');
+        }
     },
 
     /** Load real IFC geometry from backend-extracted mesh data. */

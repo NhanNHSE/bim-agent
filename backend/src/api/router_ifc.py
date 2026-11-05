@@ -1,7 +1,6 @@
 """IFC Upload and Query API endpoints."""
 
 import os
-import json
 from typing import Optional
 from urllib.parse import quote
 
@@ -20,6 +19,7 @@ from src.core.security import (
     require_roles,
     Role,
 )
+from src.data_pipeline.ifc_geometry import extract_geometry
 from src.data_pipeline.ifc_parser import parse_ifc, get_ifc_summary, ParsedIFC
 from src.knowledge_graph.ifc_to_graph import (
     build_ifc_graph,
@@ -197,18 +197,17 @@ def get_geometry(
     filename: str,
     current_user: dict = Depends(get_current_user),
 ):
-    """Get simplified 3D geometry data for frontend viewer."""
+    """Extract 3D triangle mesh geometry from an IFC file for the frontend viewer."""
     safe = _safe_filename(filename)
-    json_path = os.path.join(settings.ifc_upload_dir, safe[:-4] + "_parsed.json")
-    if not os.path.exists(json_path):
-        raise HTTPException(404, "File chưa được parse")
+    filepath = os.path.join(settings.ifc_upload_dir, safe)
+    if not os.path.exists(filepath):
+        raise HTTPException(404, "File không tồn tại")
 
-    with open(json_path, "r", encoding="utf-8") as f:
-        parsed = json.load(f)
-
-    # Create simplified geometry for 3D viewer
-    geometry_data = _create_viewer_geometry(parsed)
-    return geometry_data
+    try:
+        return extract_geometry(filepath, cache_dir=settings.ifc_geometry_cache_dir)
+    except Exception as e:
+        logger.error("geometry_extraction_failed", filename=safe, error=str(e), exc_info=True)
+        raise HTTPException(500, "Lỗi trích xuất hình học IFC.")
 
 
 @router.post("/generate-sample")
@@ -369,50 +368,3 @@ def _create_chunks(parsed: ParsedIFC) -> list:
         })
 
     return chunks
-
-
-def _create_viewer_geometry(parsed: dict) -> dict:
-    """Create simplified 3D geometry for the frontend viewer.
-
-    Returns boxes representing each element type with colors.
-    """
-    TYPE_COLORS = {
-        "IfcWall": "#90CAF9",
-        "IfcWallStandardCase": "#90CAF9",
-        "IfcColumn": "#EF5350",
-        "IfcBeam": "#FF9800",
-        "IfcSlab": "#78909C",
-        "IfcDoor": "#8D6E63",
-        "IfcWindow": "#4FC3F7",
-        "IfcSpace": "#E8F5E9",
-        "IfcStair": "#AB47BC",
-    }
-
-    storeys = {s["name"]: s.get("elevation", 0) for s in parsed.get("storeys", [])}
-    objects = []
-
-    for el in parsed.get("elements", []):
-        ifc_type = el.get("ifc_type", "")
-        color = TYPE_COLORS.get(ifc_type, "#BDBDBD")
-        storey = el.get("storey", "")
-        elevation = storeys.get(storey, 0) / 1000.0  # mm to meters
-
-        # Simple placeholder geometry based on element type
-        obj = {
-            "id": el.get("global_id", ""),
-            "name": el.get("name", ""),
-            "type": ifc_type,
-            "color": color,
-            "storey": storey,
-            "material": el.get("material", ""),
-            "elevation": elevation,
-        }
-        objects.append(obj)
-
-    return {
-        "building": parsed.get("building_name", ""),
-        "storeys": list(storeys.keys()),
-        "object_count": len(objects),
-        "objects": objects,
-        "type_colors": TYPE_COLORS,
-    }

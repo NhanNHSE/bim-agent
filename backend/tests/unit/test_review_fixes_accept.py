@@ -311,12 +311,16 @@ class TestGeometryRoute:
     def test_bad_filename_is_400(self, client, auth_headers, ifc_dir, name):
         assert client.get(f"/api/v1/ifc/geometry/{name}", headers=auth_headers).status_code == 400
 
-    def test_returns_viewer_geometry_from_parsed_json(self, client, auth_headers, ifc_dir):
-        (ifc_dir / "house_parsed.json").write_text('{"building_name": "Nhà A", "elements": []}', encoding="utf-8")
+    def test_returns_real_meshes_of_the_ifc_file(self, client, auth_headers, ifc_dir, monkeypatch):
+        # Contract changed in task 017: the viewer gets meshes of the IFC file itself, not a parsed summary
+        from src.api import router_ifc
+        from tests.unit.ifc_fixtures import build_house
+        monkeypatch.setattr(router_ifc.settings, "ifc_geometry_cache_dir", str(ifc_dir / "cache"))
+        build_house().write(str(ifc_dir / "house.ifc"))
         res = client.get("/api/v1/ifc/geometry/house.ifc", headers=auth_headers)
         assert res.status_code == 200
-        assert res.json()["building"] == "Nhà A"
-        assert res.json()["object_count"] == 0
+        assert res.json()["stats"]["building_name"] == "Nhà mẫu"
+        assert len(res.json()["meshes"]) == 15
 
     def test_not_parsed_is_404(self, client, auth_headers, ifc_dir):
         assert client.get("/api/v1/ifc/geometry/house.ifc", headers=auth_headers).status_code == 404
