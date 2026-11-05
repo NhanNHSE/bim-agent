@@ -4,6 +4,8 @@ import json
 import math
 from pathlib import Path
 
+import pytest
+
 import numpy as np
 
 from scripts.check_models import build_report
@@ -32,6 +34,7 @@ def test_horizontal_extrusion_matrices_are_orthonormal():
     assert np.isclose(np.linalg.det(rx), 1.0)
 
 
+@pytest.mark.skipif(not (BACKEND / "eval").exists(), reason="eval/ không có trong image backend; chạy ở job Unit Tests")
 def test_baseline_clashes_sync():
     cases = json.loads((BACKEND / "eval" / "model_cases.json").read_text(encoding="utf-8"))
     baseline = json.loads((BACKEND / "eval" / "model_baseline.json").read_text(encoding="utf-8"))

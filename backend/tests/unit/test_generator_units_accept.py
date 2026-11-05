@@ -110,6 +110,7 @@ def test_bridge_has_real_size(tmp_path):
     assert check_extent(ifcopenshell.open(path)) == []
 
 
+@pytest.mark.skipif(not (BACKEND / "eval").exists(), reason="eval/ không có trong image backend; chạy ở job Unit Tests")
 def test_baseline_ratcheted_down():
     baseline = json.loads((BACKEND / "eval" / "model_baseline.json").read_text(encoding="utf-8"))["cases"]
     assert list(baseline) == list(OLD_BASELINE)
