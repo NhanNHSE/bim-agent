@@ -14,6 +14,7 @@ def test_single_storey_without_upper_outdoor_adds_roof_railings_and_passes_check
         name="Tầng 1",
         index=0,
         elevation_mm=0,
+        height_mm=3600,
         rooms=[
             PlacedRoom(id="khach", kind="khach", x_mm=0, y_mm=0, w_mm=4000, d_mm=5000),
             PlacedRoom(id="wc", kind="wc", x_mm=0, y_mm=5000, w_mm=2000, d_mm=3000),
@@ -31,6 +32,7 @@ def test_single_storey_without_upper_outdoor_adds_roof_railings_and_passes_check
         name="Tầng 2",
         index=1,
         elevation_mm=3600,
+        height_mm=3600,
         rooms=[
             PlacedRoom(id="ngu1", kind="ngu", x_mm=0, y_mm=0, w_mm=4000, d_mm=5000),
             PlacedRoom(id="kho", kind="kho", x_mm=0, y_mm=5000, w_mm=2000, d_mm=3000),
@@ -47,7 +49,6 @@ def test_single_storey_without_upper_outdoor_adds_roof_railings_and_passes_check
         program_name="nha_test_no_balcony",
         typology="nha_pho",
         buildable_mm=(0, 0, 4000, 10000),
-        storey_height_mm=3600,
         floors=[floor, floor2],
         stats=SolveStats(status="OPTIMAL", objective=0.0, wall_time_s=0.01),
     )

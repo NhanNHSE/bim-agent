@@ -13,6 +13,7 @@ _KIND_COLORS: dict[str, tuple[int, int, int]] = {
     "san": (212, 238, 199),
     "ban_cong": (205, 235, 214),
     "giat_phoi": (222, 240, 226),
+    "san_thuong": (212, 238, 199),
     "khach": (253, 232, 195),
     "bep_an": (252, 213, 181),
     "ngu": (214, 228, 248),
@@ -21,6 +22,8 @@ _KIND_COLORS: dict[str, tuple[int, int, int]] = {
     "sanh": (245, 242, 216),
     "hanh_lang": (240, 238, 225),
     "kho": (226, 220, 210),
+    "gieng_troi": (224, 247, 250),
+    "de_xe": (228, 230, 235),
     "stair": (185, 190, 198),
 }
 _DEFAULT_ROOM_COLOR = (232, 235, 240)
@@ -39,8 +42,10 @@ def load_font(size: int) -> ImageFont.FreeTypeFont:
 def draw_layout(layout: Layout, out_path: str | Path, px_per_m: int = 40) -> None:
     """Render all floors of `layout` side-by-side into an RGB PNG image."""
     x0_mm, y0_mm, x1_mm, y1_mm = layout.buildable_mm
+    min_y_mm = min([y0_mm] + [r.y_mm for fl in layout.floors for r in fl.rooms])
+    max_y_mm = max([y1_mm] + [r.y_mm + r.d_mm for fl in layout.floors for r in fl.rooms])
     build_w_m = max((x1_mm - x0_mm) / 1000.0, 0.1)
-    build_d_m = max((y1_mm - y0_mm) / 1000.0, 0.1)
+    build_d_m = max((max_y_mm - min_y_mm) / 1000.0, 0.1)
 
     panel_w = round(build_w_m * px_per_m)
     panel_h = round(build_d_m * px_per_m)
@@ -64,9 +69,9 @@ def draw_layout(layout: Layout, out_path: str | Path, px_per_m: int = 40) -> Non
     draw.text((margin_x, 12), f"{layout.program_name} ({layout.typology})", fill=_TEXT_COLOR, font=title_font)
 
     def to_px(px0: int, py0: int, xm: int, ym: int) -> tuple[int, int]:
-        # Front (y0_mm) is at the bottom of the panel (py0 + panel_h).
+        # Front (y0_mm) is towards the bottom of the panel; max_y_mm is at py0.
         sx = px0 + round((xm - x0_mm) * px_per_m / 1000.0)
-        sy = py0 + round((y1_mm - ym) * px_per_m / 1000.0)
+        sy = py0 + round((max_y_mm - ym) * px_per_m / 1000.0)
         return sx, sy
 
     door_half_mm = 450  # 0.9 m door centered on shared segment
@@ -111,7 +116,9 @@ def draw_layout(layout: Layout, out_path: str | Path, px_per_m: int = 40) -> Non
                 p1 = to_px(px0, py0, dx1, my)
             draw.line([p0, p1], fill=_DOOR_COLOR, width=4)
 
-        draw.rectangle((px0, py0, px0 + panel_w, py0 + panel_h), outline=_BORDER_COLOR, width=2)
+        bx0, by1 = to_px(px0, py0, x0_mm, y0_mm)
+        bx1, by0 = to_px(px0, py0, x1_mm, y1_mm)
+        draw.rectangle((bx0, by0, bx1, by1), outline=_BORDER_COLOR, width=2)
 
     out_file = Path(out_path)
     if out_file.parent:

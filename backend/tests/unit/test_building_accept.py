@@ -190,8 +190,8 @@ def test_external_walls_are_flagged(built):
 def test_columns_only_in_party_walls_and_full_storey_height(built):
     _, lay, _, storeys, box, contained = built
     x0, y0, x1, y1 = _facades(lay)
-    h = lay.storey_height_mm
     for fl in lay.floors:
+        h = fl.height_mm
         cols = contained(storeys[fl.name], "IfcColumn")
         assert len(cols) >= 4, fl.name
         for c in cols:
@@ -223,8 +223,8 @@ def test_slabs_and_stair_voids(built):
 
 def test_stair_in_stair_room_between_each_pair_of_floors(built):
     _, lay, _, storeys, box, contained = built
-    h = lay.storey_height_mm
     for fl in lay.floors:
+        h = fl.height_mm
         stairs = contained(storeys[fl.name], "IfcStair")
         if fl.index == len(lay.floors) - 1:
             assert stairs == [], f"{fl.name}: tầng trên cùng không có thang đi lên"
@@ -243,7 +243,7 @@ def test_roof_on_top_floor(built):
     top = lay.floors[-1]
     roofs = model.by_type("IfcRoof")
     assert len(roofs) == 1 and ue.get_container(roofs[0]) == storeys[top.name]
-    assert box(roofs[0])[0][2] == pytest.approx(top.elevation_mm + lay.storey_height_mm, abs=2)
+    assert box(roofs[0])[0][2] == pytest.approx(top.elevation_mm + top.height_mm, abs=2)
 
 
 def test_railings_on_upper_balconies(built):

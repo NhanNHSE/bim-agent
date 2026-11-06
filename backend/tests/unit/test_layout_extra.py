@@ -153,3 +153,20 @@ def test_infeasible_unsatisfiable_constraints_raises():
     )
     with pytest.raises(LayoutInfeasible):
         solve_layout(prog, max_deterministic_time=2.0)
+
+
+def test_ortools_abs_equality_with_intermediate_diff_var():
+    from ortools.sat.python import cp_model
+
+    model = cp_model.CpModel()
+    x = model.new_int_var(3, 3, "x")
+    diff = model.new_int_var(-10, 10, "diff")
+    model.add(diff == x - 5)
+    t = model.new_int_var(0, 10, "t")
+    model.add_abs_equality(t, diff)
+
+    solver = cp_model.CpSolver()
+    status = solver.solve(model)
+    assert status == cp_model.OPTIMAL
+    assert solver.value(t) == 2
+

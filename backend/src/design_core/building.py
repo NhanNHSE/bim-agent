@@ -635,7 +635,13 @@ def build_ifc(layout: Layout) -> ifcopenshell.file:
     """Build a complete LOD 200 IFC4 model from a solved Layout."""
     rules = load_rules(layout.typology)
     x0, y0, x1, y1 = layout.buildable_mm
-    h = layout.storey_height_mm
+
+    for fl in layout.floors:
+        for r in fl.rooms:
+            if r.kind != "stair" and rules[r.kind].light_well:
+                raise NotImplementedError("Giếng trời (light_well) sẽ được dựng IFC ở task 023")
+            if r.x_mm < x0 or r.y_mm < y0 or r.x_mm + r.w_mm > x1 or r.y_mm + r.d_mm > y1:
+                raise NotImplementedError("Ban công đua (projecting) sẽ được dựng IFC ở task 023")
 
     model = ifcopenshell.file(schema="IFC4")
     project = run("root.create_entity", model, ifc_class="IfcProject", name=layout.program_name)
@@ -697,6 +703,7 @@ def build_ifc(layout: Layout) -> ifcopenshell.file:
         st = storeys[idx]
         t_prefix = f"T{idx + 1}"
         elev = fl.elevation_mm
+        h = fl.height_mm
 
         # Slab
         slab = _box_mm(
@@ -832,7 +839,7 @@ def build_ifc(layout: Layout) -> ifcopenshell.file:
     top_fl = layout.floors[-1]
     top_st = storeys[-1]
     top_prefix = f"T{len(layout.floors)}"
-    z_roof0 = top_fl.elevation_mm + h
+    z_roof0 = top_fl.elevation_mm + top_fl.height_mm
     z_roof1 = z_roof0 + SLAB_MM
     _box_mm(
         model,

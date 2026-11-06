@@ -10,7 +10,7 @@ from ortools.sat.python import cp_model
 from pydantic import BaseModel
 
 from src.design_core.program import Program
-from src.design_core.typologies import load_rules
+from src.design_core.typologies import balcony_projection_m, load_rules
 
 GRID_MM = 100
 
@@ -41,6 +41,7 @@ class FloorLayout(BaseModel):
     name: str
     index: int
     elevation_mm: int
+    height_mm: int
     rooms: list[PlacedRoom]
     connections: list[Connection]
 
@@ -55,7 +56,6 @@ class Layout(BaseModel):
     program_name: str
     typology: str
     buildable_mm: tuple[int, int, int, int]
-    storey_height_mm: int
     floors: list[FloorLayout]
     stats: SolveStats
 
@@ -100,11 +100,13 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
     stair_w_g = round(program.stair.width_m * 10) if program.stair else 0
     stair_d_g = round(program.stair.length_m * 10) if program.stair else 0
     stair_area_g = stair_w_g * stair_d_g
+    proj_g = round(balcony_projection_m(program.typology, lot.street_width_m) * 10)
 
     for floor in program.floors:
-        min_sum_m2 = sum(float(r.min_area_m2 or 0.0) for r in floor.rooms) + stair_area_m2
+        non_proj = [r for r in floor.rooms if not r.projecting]
+        min_sum_m2 = sum(float(r.min_area_m2 or 0.0) for r in non_proj) + stair_area_m2
         min_sum_g = (
-            sum(math.ceil(float(r.min_area_m2 or 0.0) * 100 - 1e-9) for r in floor.rooms)
+            sum(math.ceil(float(r.min_area_m2 or 0.0) * 100 - 1e-9) for r in non_proj)
             + stair_area_g
         )
         if min_sum_m2 > build_area_m2 + 1e-9 or min_sum_g > build_area_g:
@@ -142,6 +144,7 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
             "y_iv": sy_iv,
         }
 
+    light_well_vars: dict[str, dict[str, Any]] = {}
     floor_room_vars: list[dict[str, dict[str, Any]]] = []
     floor_pairs: list[list[tuple[str, str]]] = []
     abs_diffs: list[cp_model.IntVar] = []
@@ -166,7 +169,11 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
         kind_of = {req.id: req.kind for req in floor.rooms}
 
         min_sum_g = (
-            sum(math.ceil(float(r.min_area_m2 or 0.0) * 100 - 1e-9) for r in floor.rooms)
+            sum(
+                math.ceil(float(r.min_area_m2 or 0.0) * 100 - 1e-9)
+                for r in floor.rooms
+                if not r.projecting
+            )
             + stair_area_g
         )
 
@@ -175,6 +182,58 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
             prefix = f"f{f_idx}_{rid}"
             min_w_g = math.ceil(float(req.min_width_m or 0.0) * 10 - 1e-9)
             min_area_g = math.ceil(float(req.min_area_m2 or 0.0) * 100 - 1e-9)
+            aspect_scaled = round(100 * float(req.max_aspect or 1.0))
+
+            if req.projecting:
+                if proj_g <= 0 or min_w_g <= 0 or min_w_g > w_build_g or min_w_g > proj_g:
+                    raise LayoutInfeasible(
+                        f"{floor.name}/{rid}: kích thước tối thiểu của ban công đua vượt quá phạm vi cho phép"
+                    )
+                w_lb = max(min_w_g, (min_area_g + proj_g - 1) // proj_g)
+                w_ub = w_build_g
+                max_area_g = w_ub * proj_g
+                if w_lb > w_ub or min_area_g > max_area_g:
+                    raise LayoutInfeasible(
+                        f"{floor.name}/{rid}: miền kích thước ban công đua rỗng"
+                    )
+
+                x = model.new_int_var(x0_g, x1_g - w_lb, f"{prefix}_x")
+                y = model.new_constant(y0_g - proj_g)
+                w = model.new_int_var(w_lb, w_ub, f"{prefix}_w")
+                d = model.new_constant(proj_g)
+                x_end = model.new_int_var(x0_g + w_lb, x1_g, f"{prefix}_x_end")
+                y_end = model.new_constant(y0_g)
+                model.add(x_end == x + w)
+
+                x_iv = model.new_interval_var(x, w, x_end, f"{prefix}_x_iv")
+                y_iv = model.new_fixed_size_interval_var(y, proj_g, f"{prefix}_y_iv")
+
+                area = model.new_int_var(min_area_g, max_area_g, f"{prefix}_area")
+                model.add_multiplication_equality(area, [w, d])
+
+                model.add(100 * w <= aspect_scaled * d)
+                model.add(100 * d <= aspect_scaled * w)
+
+                target_g = round(float(req.target_area_m2 or req.min_area_m2 or 0.0) * 100)
+                bound_g = max(build_area_g, max_area_g, target_g)
+                diff = model.new_int_var(-bound_g, bound_g, f"{prefix}_diff")
+                model.add(diff == area - target_g)
+                abs_diff = model.new_int_var(0, bound_g, f"{prefix}_abs_diff")
+                model.add_abs_equality(abs_diff, diff)
+                abs_diffs.append(abs_diff)
+
+                r_vars[rid] = {
+                    "x": x,
+                    "y": y,
+                    "w": w,
+                    "d": d,
+                    "x_end": x_end,
+                    "y_end": y_end,
+                }
+                x_ivs.append(x_iv)
+                y_ivs.append(y_iv)
+                continue
+
             max_area_g = build_area_g - (min_sum_g - min_area_g)
 
             if min_w_g <= 0 or min_w_g > w_build_g or min_w_g > d_build_g or min_area_g > max_area_g:
@@ -192,22 +251,53 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                     f"{floor.name}/{rid}: miền kích thước rỗng trong phạm vi xây dựng"
                 )
 
-            x = model.new_int_var(x0_g, x1_g - w_lb, f"{prefix}_x")
-            y = model.new_int_var(y0_g, y1_g - d_lb, f"{prefix}_y")
-            w = model.new_int_var(w_lb, w_ub, f"{prefix}_w")
-            d = model.new_int_var(d_lb, d_ub, f"{prefix}_d")
-            x_end = model.new_int_var(x0_g + w_lb, x1_g, f"{prefix}_x_end")
-            y_end = model.new_int_var(y0_g + d_lb, y1_g, f"{prefix}_y_end")
-            model.add(x_end == x + w)
-            model.add(y_end == y + d)
+            is_light_well = rules[req.kind].light_well
+            if is_light_well and rid in light_well_vars:
+                lw = light_well_vars[rid]
+                x = lw["x"]
+                y = lw["y"]
+                w = lw["w"]
+                d = lw["d"]
+                x_end = lw["x_end"]
+                y_end = lw["y_end"]
+                x_iv = lw["x_iv"]
+                y_iv = lw["y_iv"]
+                area = lw["area"]
+                model.add(w >= w_lb)
+                model.add(w <= w_ub)
+                model.add(d >= d_lb)
+                model.add(d <= d_ub)
+                model.add(area >= min_area_g)
+                model.add(area <= max_area_g)
+            else:
+                x = model.new_int_var(x0_g, x1_g - w_lb, f"{prefix}_x")
+                y = model.new_int_var(y0_g, y1_g - d_lb, f"{prefix}_y")
+                w = model.new_int_var(w_lb, w_ub, f"{prefix}_w")
+                d = model.new_int_var(d_lb, d_ub, f"{prefix}_d")
+                x_end = model.new_int_var(x0_g + w_lb, x1_g, f"{prefix}_x_end")
+                y_end = model.new_int_var(y0_g + d_lb, y1_g, f"{prefix}_y_end")
+                model.add(x_end == x + w)
+                model.add(y_end == y + d)
 
-            x_iv = model.new_interval_var(x, w, x_end, f"{prefix}_x_iv")
-            y_iv = model.new_interval_var(y, d, y_end, f"{prefix}_y_iv")
+                x_iv = model.new_interval_var(x, w, x_end, f"{prefix}_x_iv")
+                y_iv = model.new_interval_var(y, d, y_end, f"{prefix}_y_iv")
 
-            area = model.new_int_var(min_area_g, max_area_g, f"{prefix}_area")
-            model.add_multiplication_equality(area, [w, d])
+                area = model.new_int_var(min_area_g, max_area_g, f"{prefix}_area")
+                model.add_multiplication_equality(area, [w, d])
 
-            aspect_scaled = round(100 * float(req.max_aspect or 1.0))
+                if is_light_well:
+                    light_well_vars[rid] = {
+                        "x": x,
+                        "y": y,
+                        "w": w,
+                        "d": d,
+                        "x_end": x_end,
+                        "y_end": y_end,
+                        "x_iv": x_iv,
+                        "y_iv": y_iv,
+                        "area": area,
+                    }
+
             model.add(100 * w <= aspect_scaled * d)
             model.add(100 * d <= aspect_scaled * w)
 
@@ -222,7 +312,8 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                 model.add_bool_or([tf, tb])
             elif req.needs_daylight:
                 lit_by_outdoor = any(
-                    n != "stair" and rules[kind_of[n]].outdoor for n in neigh[rid]
+                    n != "stair" and (rules[kind_of[n]].outdoor or rules[kind_of[n]].light_well)
+                    for n in neigh[rid]
                 )
                 if not lit_by_outdoor:
                     tf = model.new_bool_var(f"{prefix}_daylight_front")
@@ -232,8 +323,11 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                     model.add_bool_or([tf, tb])
 
             target_g = round(float(req.target_area_m2 or req.min_area_m2 or 0.0) * 100)
-            abs_diff = model.new_int_var(0, build_area_g, f"{prefix}_abs_diff")
-            model.add_abs_equality(abs_diff, area - target_g)
+            bound_g = max(build_area_g, max_area_g, target_g)
+            diff = model.new_int_var(-bound_g, bound_g, f"{prefix}_diff")
+            model.add(diff == area - target_g)
+            abs_diff = model.new_int_var(0, bound_g, f"{prefix}_abs_diff")
+            model.add_abs_equality(abs_diff, diff)
             abs_diffs.append(abs_diff)
 
             r_vars[rid] = {
@@ -307,10 +401,11 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
             f"Hết thời gian giải mà chưa tìm được mặt bằng cho '{program.name}' (status={status_name})"
         )
 
-    storey_height_mm = round(program.storey_height_m * 1000)
     floors_out: list[FloorLayout] = []
+    elev_mm = 0
 
     for f_idx, floor in enumerate(program.floors):
+        h_mm = round(float(floor.height_m or 3.6) * 1000)
         r_vars = floor_room_vars[f_idx]
         placed_rooms: list[PlacedRoom] = []
         placed_by_id: dict[str, PlacedRoom] = {}
@@ -360,17 +455,18 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
             FloorLayout(
                 name=floor.name,
                 index=f_idx,
-                elevation_mm=f_idx * storey_height_mm,
+                elevation_mm=elev_mm,
+                height_mm=h_mm,
                 rooms=placed_rooms,
                 connections=connections_out,
             )
         )
+        elev_mm += h_mm
 
     return Layout(
         program_name=program.name,
         typology=program.typology,
         buildable_mm=buildable_mm,
-        storey_height_mm=storey_height_mm,
         floors=floors_out,
         stats=SolveStats(
             status=status_name,
