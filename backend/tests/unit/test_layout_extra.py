@@ -170,3 +170,28 @@ def test_ortools_abs_equality_with_intermediate_diff_var():
     assert status == cp_model.OPTIMAL
     assert solver.value(t) == 2
 
+
+def test_non_consecutive_identical_typical_floors_share_layout():
+    from src.design_core.typologies import load_samples
+
+    base = next(p for p in load_samples("nha_pho") if p.name.startswith("nha_pho_4x16"))
+    d = base.model_dump(exclude_none=True)
+    d["name"] = "non_consecutive_typical"
+    d["floors"][1]["height_m"] = 3.6
+    d["floors"].append(
+        {
+            "name": "Tầng 4",
+            "height_m": 3.3,
+            "rooms": [r.model_dump(exclude_none=True) for r in base.floors[1].rooms],
+        }
+    )
+    prog = Program.model_validate(d)
+    lay = solve_layout(prog)
+    rects_f2 = [(r.id, r.x_mm, r.y_mm, r.w_mm, r.d_mm) for r in lay.floors[1].rooms]
+    rects_f4 = [(r.id, r.x_mm, r.y_mm, r.w_mm, r.d_mm) for r in lay.floors[3].rooms]
+    assert rects_f2 == rects_f4
+    assert lay.floors[1].height_mm == 3600
+    assert lay.floors[3].height_mm == 3300
+
+
+

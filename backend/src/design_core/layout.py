@@ -143,18 +143,45 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
             "y_end": sy_end,
             "x_iv": sx_iv,
             "y_iv": sy_iv,
+            "x_lb": x0_g,
+            "x_ub": x1_g - stair_w_g,
+            "y_lb": y0_g,
+            "y_ub": y1_g - stair_d_g,
+            "x_end_lb": x0_g + stair_w_g,
+            "x_end_ub": x1_g,
+            "y_end_lb": y0_g + stair_d_g,
+            "y_end_ub": y1_g,
         }
 
     light_well_vars: dict[str, dict[str, Any]] = {}
+    floor_signatures: list[list[dict[str, Any]]] = []
     floor_room_vars: list[dict[str, dict[str, Any]]] = []
     floor_pairs: list[list[tuple[str, str]]] = []
+    floor_abs_diffs: list[list[cp_model.IntVar]] = []
     abs_diffs: list[cp_model.IntVar] = []
 
     for f_idx, floor in enumerate(program.floors):
+        room_sig = [r.model_dump() for r in floor.rooms]
+        canon_idx = next(
+            (idx for idx, prev_sig in enumerate(floor_signatures) if prev_sig == room_sig),
+            None,
+        )
+        floor_signatures.append(room_sig)
+        if canon_idx is not None:
+            floor_room_vars.append(floor_room_vars[canon_idx])
+            floor_pairs.append(floor_pairs[canon_idx])
+            floor_abs_diffs.append(floor_abs_diffs[canon_idx])
+            abs_diffs.extend(floor_abs_diffs[canon_idx])
+            continue
+
         r_vars: dict[str, dict[str, Any]] = {}
         x_ivs: list[cp_model.IntervalVar] = []
         y_ivs: list[cp_model.IntervalVar] = []
+        w_demands: list[cp_model.IntVar] = []
+        d_demands: list[cp_model.IntVar] = []
+        proj_x_ivs: list[cp_model.IntervalVar] = []
         area_vars: list[cp_model.IntVar] = []
+        this_floor_abs_diffs: list[cp_model.IntVar] = []
 
         ids = [r.id for r in floor.rooms] + (["stair"] if program.stair else [])
         neigh: dict[str, set[str]] = {rid: set() for rid in ids}
@@ -168,6 +195,7 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
         sorted_pairs = sorted(pairs_set)
         floor_pairs.append(sorted_pairs)
         kind_of = {req.id: req.kind for req in floor.rooms}
+        proj_ids = {req.id for req in floor.rooms if req.projecting}
 
         min_sum_g = (
             sum(
@@ -207,10 +235,9 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                 model.add(x_end == x + w)
 
                 x_iv = model.new_interval_var(x, w, x_end, f"{prefix}_x_iv")
-                y_iv = model.new_fixed_size_interval_var(y, proj_g, f"{prefix}_y_iv")
 
                 area = model.new_int_var(min_area_g, max_area_g, f"{prefix}_area")
-                model.add_multiplication_equality(area, [w, d])
+                model.add(area == w * proj_g)
 
                 model.add(100 * w <= aspect_scaled * d)
                 model.add(100 * d <= aspect_scaled * w)
@@ -221,7 +248,9 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                 model.add(diff == area - target_g)
                 abs_diff = model.new_int_var(0, bound_g, f"{prefix}_abs_diff")
                 model.add_abs_equality(abs_diff, diff)
-                abs_diffs.append(abs_diff)
+                model.add(abs_diff >= diff)
+                model.add(abs_diff >= -diff)
+                this_floor_abs_diffs.append(abs_diff)
 
                 r_vars[rid] = {
                     "x": x,
@@ -230,9 +259,16 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                     "d": d,
                     "x_end": x_end,
                     "y_end": y_end,
+                    "x_lb": x0_g,
+                    "x_ub": x1_g - w_lb,
+                    "y_lb": y0_g - proj_g,
+                    "y_ub": y0_g - proj_g,
+                    "x_end_lb": x0_g + w_lb,
+                    "x_end_ub": x1_g,
+                    "y_end_lb": y0_g,
+                    "y_end_ub": y0_g,
                 }
-                x_ivs.append(x_iv)
-                y_ivs.append(y_iv)
+                proj_x_ivs.append(x_iv)
                 continue
 
             max_area_g = build_area_g - (min_sum_g - min_area_g)
@@ -246,11 +282,32 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
             d_lb = max(min_w_g, (min_area_g + w_build_g - 1) // w_build_g)
             w_ub = min(w_build_g, max_area_g // min_w_g)
             d_ub = min(d_build_g, max_area_g // min_w_g)
+            for _ in range(2):
+                if w_lb > w_ub or d_lb > d_ub:
+                    raise LayoutInfeasible(
+                        f"{floor.name}/{rid}: miền kích thước rỗng trong phạm vi xây dựng"
+                    )
+                w_lb = max(
+                    w_lb,
+                    (min_area_g + d_ub - 1) // d_ub,
+                    (100 * d_lb + aspect_scaled - 1) // aspect_scaled,
+                )
+                d_lb = max(
+                    d_lb,
+                    (min_area_g + w_ub - 1) // w_ub,
+                    (100 * w_lb + aspect_scaled - 1) // aspect_scaled,
+                )
+                w_ub = min(w_ub, max_area_g // d_lb, (aspect_scaled * d_ub) // 100)
+                d_ub = min(d_ub, max_area_g // w_lb, (aspect_scaled * w_ub) // 100)
 
             if w_lb > w_ub or d_lb > d_ub:
                 raise LayoutInfeasible(
                     f"{floor.name}/{rid}: miền kích thước rỗng trong phạm vi xây dựng"
                 )
+
+            pinned_front = bool(req.entrance) or any(n in proj_ids for n in neigh[rid])
+            y_var_ub = y0_g if pinned_front else (y1_g - d_lb)
+            y_end_var_ub = (y0_g + d_ub) if pinned_front else y1_g
 
             is_light_well = rules[req.kind].light_well
             if is_light_well and rid in light_well_vars:
@@ -270,13 +327,28 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                 model.add(d <= d_ub)
                 model.add(area >= min_area_g)
                 model.add(area <= max_area_g)
+                lw["x_ub"] = min(lw["x_ub"], x1_g - w_lb)
+                lw["y_ub"] = min(lw["y_ub"], y_var_ub)
+                lw["x_end_lb"] = max(lw["x_end_lb"], x0_g + w_lb)
+                lw["y_end_lb"] = max(lw["y_end_lb"], y0_g + d_lb)
+                lw["y_end_ub"] = min(lw["y_end_ub"], y_end_var_ub)
+                r_bounds = {
+                    "x_lb": lw["x_lb"],
+                    "x_ub": lw["x_ub"],
+                    "y_lb": lw["y_lb"],
+                    "y_ub": lw["y_ub"],
+                    "x_end_lb": lw["x_end_lb"],
+                    "x_end_ub": lw["x_end_ub"],
+                    "y_end_lb": lw["y_end_lb"],
+                    "y_end_ub": lw["y_end_ub"],
+                }
             else:
                 x = model.new_int_var(x0_g, x1_g - w_lb, f"{prefix}_x")
-                y = model.new_int_var(y0_g, y1_g - d_lb, f"{prefix}_y")
+                y = model.new_int_var(y0_g, y_var_ub, f"{prefix}_y")
                 w = model.new_int_var(w_lb, w_ub, f"{prefix}_w")
                 d = model.new_int_var(d_lb, d_ub, f"{prefix}_d")
                 x_end = model.new_int_var(x0_g + w_lb, x1_g, f"{prefix}_x_end")
-                y_end = model.new_int_var(y0_g + d_lb, y1_g, f"{prefix}_y_end")
+                y_end = model.new_int_var(y0_g + d_lb, y_end_var_ub, f"{prefix}_y_end")
                 model.add(x_end == x + w)
                 model.add(y_end == y + d)
 
@@ -286,6 +358,16 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                 area = model.new_int_var(min_area_g, max_area_g, f"{prefix}_area")
                 model.add_multiplication_equality(area, [w, d])
 
+                r_bounds = {
+                    "x_lb": x0_g,
+                    "x_ub": x1_g - w_lb,
+                    "y_lb": y0_g,
+                    "y_ub": y_var_ub,
+                    "x_end_lb": x0_g + w_lb,
+                    "x_end_ub": x1_g,
+                    "y_end_lb": y0_g + d_lb,
+                    "y_end_ub": y_end_var_ub,
+                }
                 if is_light_well:
                     light_well_vars[rid] = {
                         "x": x,
@@ -297,13 +379,14 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                         "x_iv": x_iv,
                         "y_iv": y_iv,
                         "area": area,
+                        **r_bounds,
                     }
 
             model.add(100 * w <= aspect_scaled * d)
             model.add(100 * d <= aspect_scaled * w)
 
             outdoor = rules[req.kind].outdoor
-            if req.entrance:
+            if pinned_front:
                 model.add(y == y0_g)
             elif outdoor:
                 tf = model.new_bool_var(f"{prefix}_front")
@@ -329,7 +412,9 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
             model.add(diff == area - target_g)
             abs_diff = model.new_int_var(0, bound_g, f"{prefix}_abs_diff")
             model.add_abs_equality(abs_diff, diff)
-            abs_diffs.append(abs_diff)
+            model.add(abs_diff >= diff)
+            model.add(abs_diff >= -diff)
+            this_floor_abs_diffs.append(abs_diff)
 
             r_vars[rid] = {
                 "x": x,
@@ -338,17 +423,28 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                 "d": d,
                 "x_end": x_end,
                 "y_end": y_end,
+                **r_bounds,
             }
             x_ivs.append(x_iv)
             y_ivs.append(y_iv)
+            w_demands.append(w)
+            d_demands.append(d)
             area_vars.append(area)
 
         if stair_vars is not None:
             r_vars["stair"] = stair_vars
             x_ivs.append(stair_vars["x_iv"])
             y_ivs.append(stair_vars["y_iv"])
+            w_demands.append(stair_vars["w"])
+            d_demands.append(stair_vars["d"])
+
+        if len(proj_x_ivs) > 1:
+            model.add_no_overlap(proj_x_ivs)
 
         model.add_no_overlap_2d(x_ivs, y_ivs)
+        if len(x_ivs) > 1:
+            model.add_cumulative(x_ivs, d_demands, d_build_g)
+            model.add_cumulative(y_ivs, w_demands, w_build_g)
         model.add(sum(area_vars) + stair_area_g == build_area_g)
 
         for a_id, b_id in sorted_pairs:
@@ -356,29 +452,92 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
             vb = r_vars[b_id]
             p_prefix = f"f{f_idx}_adj_{a_id}_{b_id}"
 
-            c_right = model.new_bool_var(f"{p_prefix}_right")
-            model.add(va["x_end"] == vb["x"]).only_enforce_if(c_right)
-            model.add(vb["y"] <= va["y_end"] - min_shared_g).only_enforce_if(c_right)
-            model.add(va["y"] <= vb["y_end"] - min_shared_g).only_enforce_if(c_right)
+            can_right = (
+                va["x_end_lb"] <= vb["x_ub"]
+                and vb["y_lb"] <= va["y_end_ub"] - min_shared_g
+                and va["y_lb"] <= vb["y_end_ub"] - min_shared_g
+            )
+            can_left = (
+                vb["x_end_lb"] <= va["x_ub"]
+                and vb["y_lb"] <= va["y_end_ub"] - min_shared_g
+                and va["y_lb"] <= vb["y_end_ub"] - min_shared_g
+            )
+            can_back = (
+                va["y_end_lb"] <= vb["y_ub"]
+                and vb["x_lb"] <= va["x_end_ub"] - min_shared_g
+                and va["x_lb"] <= vb["x_end_ub"] - min_shared_g
+            )
+            can_front = (
+                vb["y_end_lb"] <= va["y_ub"]
+                and vb["x_lb"] <= va["x_end_ub"] - min_shared_g
+                and va["x_lb"] <= vb["x_end_ub"] - min_shared_g
+            )
 
-            c_left = model.new_bool_var(f"{p_prefix}_left")
-            model.add(vb["x_end"] == va["x"]).only_enforce_if(c_left)
-            model.add(vb["y"] <= va["y_end"] - min_shared_g).only_enforce_if(c_left)
-            model.add(va["y"] <= vb["y_end"] - min_shared_g).only_enforce_if(c_left)
+            dir_specs: list[tuple[str, list[Any]]] = []
+            if can_right:
+                dir_specs.append(
+                    (
+                        "right",
+                        [
+                            va["x_end"] == vb["x"],
+                            vb["y"] <= va["y_end"] - min_shared_g,
+                            va["y"] <= vb["y_end"] - min_shared_g,
+                        ],
+                    )
+                )
+            if can_left:
+                dir_specs.append(
+                    (
+                        "left",
+                        [
+                            vb["x_end"] == va["x"],
+                            vb["y"] <= va["y_end"] - min_shared_g,
+                            va["y"] <= vb["y_end"] - min_shared_g,
+                        ],
+                    )
+                )
+            if can_back:
+                dir_specs.append(
+                    (
+                        "back",
+                        [
+                            va["y_end"] == vb["y"],
+                            vb["x"] <= va["x_end"] - min_shared_g,
+                            va["x"] <= vb["x_end"] - min_shared_g,
+                        ],
+                    )
+                )
+            if can_front:
+                dir_specs.append(
+                    (
+                        "front",
+                        [
+                            vb["y_end"] == va["y"],
+                            vb["x"] <= va["x_end"] - min_shared_g,
+                            va["x"] <= vb["x_end"] - min_shared_g,
+                        ],
+                    )
+                )
 
-            c_back = model.new_bool_var(f"{p_prefix}_back")
-            model.add(va["y_end"] == vb["y"]).only_enforce_if(c_back)
-            model.add(vb["x"] <= va["x_end"] - min_shared_g).only_enforce_if(c_back)
-            model.add(va["x"] <= vb["x_end"] - min_shared_g).only_enforce_if(c_back)
-
-            c_front = model.new_bool_var(f"{p_prefix}_front")
-            model.add(vb["y_end"] == va["y"]).only_enforce_if(c_front)
-            model.add(vb["x"] <= va["x_end"] - min_shared_g).only_enforce_if(c_front)
-            model.add(va["x"] <= vb["x_end"] - min_shared_g).only_enforce_if(c_front)
-
-            model.add_bool_or([c_right, c_left, c_back, c_front])
+            if not dir_specs:
+                raise LayoutInfeasible(
+                    f"{floor.name}: hai phòng {a_id} và {b_id} không thể kề nhau"
+                )
+            if len(dir_specs) == 1:
+                for ct in dir_specs[0][1]:
+                    model.add(ct)
+            else:
+                dir_bools: list[cp_model.IntVar] = []
+                for d_name, cts in dir_specs:
+                    b_var = model.new_bool_var(f"{p_prefix}_{d_name}")
+                    for ct in cts:
+                        model.add(ct).only_enforce_if(b_var)
+                    dir_bools.append(b_var)
+                model.add_exactly_one(dir_bools)
 
         floor_room_vars.append(r_vars)
+        floor_abs_diffs.append(this_floor_abs_diffs)
+        abs_diffs.extend(this_floor_abs_diffs)
 
     model.minimize(sum(abs_diffs))
 
