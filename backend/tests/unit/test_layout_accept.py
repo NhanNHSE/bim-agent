@@ -13,7 +13,7 @@ from pydantic import ValidationError
 
 from src.design_core.layout import Layout, LayoutInfeasible, solve_layout
 from src.design_core.program import Program
-from src.design_core.typologies import load_rules, load_samples
+from src.design_core.typologies import balcony_projection_m, load_rules, load_samples
 
 GRID = 100  # mm
 
@@ -45,28 +45,35 @@ def layout_violations(program, lay: dict, rules) -> list[str]:
         v.append(f"buildable_mm {lay['buildable_mm']} != {exp_build}")
     x0, y0, x1, y1 = exp_build
     build_area = (x1 - x0) * (y1 - y0)
-    sh = round(program.storey_height_m * 1000)
-    if lay["storey_height_mm"] != sh:
-        v.append("storey_height_mm sai")
+    street = program.lot.street_width_m
+    proj = round(balcony_projection_m(program.typology, street) * 1000) if street is not None else 0
     if len(lay["floors"]) != len(program.floors):
         return v + ["số tầng sai"]
     stair_rects = set()
+    wells: dict[str, list[tuple[int, tuple]]] = {}
+    elev = 0
     for i, (fp, fl) in enumerate(zip(program.floors, lay["floors"])):
         t = fp.name
-        if (fl["name"], fl["index"], fl["elevation_mm"]) != (fp.name, i, i * sh):
-            v.append(f"{t}: name/index/elevation sai")
+        h = round(fp.height_m * 1000)
+        if (fl["name"], fl["index"], fl["elevation_mm"], fl["height_mm"]) != (fp.name, i, elev, h):
+            v.append(f"{t}: name/index/elevation/height sai")
+        elev += h
         ids = [r.id for r in fp.rooms] + (["stair"] if program.stair else [])
         if [r["id"] for r in fl["rooms"]] != ids:
             v.append(f"{t}: danh sách phòng {[r['id'] for r in fl['rooms']]} != {ids}")
             continue
         rooms = {r["id"]: r for r in fl["rooms"]}
+        projecting = {req.id for req in fp.rooms if req.projecting}
         for r in fl["rooms"]:
             x, y, w, d = r["x_mm"], r["y_mm"], r["w_mm"], r["d_mm"]
             if any(val % GRID for val in (x, y, w, d)):
                 v.append(f"{t}/{r['id']}: không nằm trên lưới 100 mm")
-            if w <= 0 or d <= 0 or x < x0 or y < y0 or x + w > x1 or y + d > y1:
+            if r["id"] in projecting:
+                if w <= 0 or x < x0 or x + w > x1 or (y, d) != (y0 - proj, proj):
+                    v.append(f"{t}/{r['id']}: ban công đua phải nằm trong dải {proj} mm trước mặt tiền")
+            elif w <= 0 or d <= 0 or x < x0 or y < y0 or x + w > x1 or y + d > y1:
                 v.append(f"{t}/{r['id']}: ra ngoài phạm vi xây dựng")
-        if sum(r["w_mm"] * r["d_mm"] for r in fl["rooms"]) != build_area:
+        if sum(r["w_mm"] * r["d_mm"] for r in fl["rooms"] if r["id"] not in projecting) != build_area:
             v.append(f"{t}: tổng diện tích phòng != diện tích xây dựng (không phủ kín)")
         lst = fl["rooms"]
         for a_i in range(len(lst)):
@@ -97,13 +104,16 @@ def layout_violations(program, lay: dict, rules) -> list[str]:
                 v.append(f"{t}/{req.id}: tỉ lệ cạnh > {req.max_aspect}")
             front, back = r["y_mm"] == y0, r["y_mm"] + d == y1
             outdoor = rules[req.kind].outdoor
-            if outdoor and not (front or back):
+            if outdoor and not (front or back or req.projecting):
                 v.append(f"{t}/{req.id}: không gian ngoài trời không chạm mặt tiền/mặt sau")
             if req.entrance and not front:
                 v.append(f"{t}/{req.id}: lối vào không chạm mặt tiền")
+            if rules[req.kind].light_well:
+                wells.setdefault(req.id, []).append((i, (r["x_mm"], r["y_mm"], w, d)))
             if req.needs_daylight and not outdoor:
-                lit_by_outdoor = any(n != "stair" and rules[kind_of[n]].outdoor for n in neigh[req.id])
-                if not (lit_by_outdoor or front or back):
+                lit = any(n != "stair" and (rules[kind_of[n]].outdoor or rules[kind_of[n]].light_well)
+                          for n in neigh[req.id])
+                if not (lit or front or back):
                     v.append(f"{t}/{req.id}: cần chiếu sáng tự nhiên nhưng không chạm mặt ngoài")
         if program.stair:
             s = rooms["stair"]
@@ -124,6 +134,12 @@ def layout_violations(program, lay: dict, rules) -> list[str]:
                 v.append(f"{t}: đoạn chung {c['a']}–{c['b']} sai: {seg}")
     if len(stair_rects) > 1:
         v.append(f"cầu thang không thẳng hàng giữa các tầng: {sorted(stair_rects)}")
+    for wid, seen in wells.items():
+        floors_seen = [i for i, _ in seen]
+        if floors_seen != list(range(floors_seen[0], len(program.floors))):
+            v.append(f"giếng trời {wid} phải thông liên tục tới tầng trên cùng: {floors_seen}")
+        if len({rect for _, rect in seen}) > 1:
+            v.append(f"giếng trời {wid} không thẳng hàng giữa các tầng")
     return v
 
 
@@ -168,7 +184,7 @@ def test_samples_load_as_programs():
 def test_room_defaults_come_from_rules():
     p = Program.model_validate(_base())
     assert p.min_shared_m == 1.2
-    assert p.storey_height_m == 3.6
+    assert [f.height_m for f in p.floors] == [3.9, 3.6]  # rules: tầng 1 3,9 m, tầng 2 3,6 m
     assert (p.lot.front_setback_m, p.lot.back_setback_m) == (0, 0)
     khach = p.floors[0].rooms[1]
     k = RULES["khach"]
