@@ -101,39 +101,63 @@ def test_one_space_per_room(built):
 
 
 # --------------------------------------------------------------------------- openings
+def _well_window(fl, c):
+    """On floors above the ground, an opening onto a light well is a window, not a door (task 023)."""
+    kinds = {r.id: r.kind for r in fl.rooms}
+    return fl.index > 0 and any(kinds[i] != "stair" and RULES[kinds[i]].light_well for i in (c.a, c.b))
+
+
+def _indoor_entrance(fl):
+    return next((r for r in fl.rooms if r.entrance and r.kind != "stair" and not RULES[r.kind].outdoor), None)
+
+
 def test_one_door_on_each_shared_wall(built):
     _, lay, _, storeys, box, contained = built
     for fl in lay.floors:
         st = storeys[fl.name]
         doors = contained(st, "IfcDoor")
-        assert len(doors) == len(fl.connections), fl.name
-        for c in fl.connections:
+        door_conns = [c for c in fl.connections if not _well_window(fl, c)]
+        extra = 1 if fl.index == 0 and _indoor_entrance(fl) else 0  # street door of an indoor entrance room
+        assert len(doors) == len(door_conns) + extra, fl.name
+        for c in door_conns:
             mid = np.array([(c.x0_mm + c.x1_mm) / 2, (c.y0_mm + c.y1_mm) / 2])
             hits = [d for d in doors if np.hypot(*(_center(box(d))[:2] - mid)) <= 20]
             assert len(hits) == 1, f"{fl.name}: cửa {c.a}–{c.b}"
             lo, hi = box(hits[0])
             assert lo[2] == pytest.approx(fl.elevation_mm + SLAB_MM, abs=2)
             assert 2000 <= hi[2] - lo[2] <= 2400
+        wins = contained(st, "IfcWindow")
+        for c in fl.connections:
+            if _well_window(fl, c):
+                mid = np.array([(c.x0_mm + c.x1_mm) / 2, (c.y0_mm + c.y1_mm) / 2])
+                assert any(np.hypot(*(_center(box(w))[:2] - mid)) <= 20 for w in wins), (
+                    f"{fl.name}: thiếu cửa sổ ra giếng trời {c.a}–{c.b}")
 
 
 def test_windows_on_every_indoor_facade_and_nowhere_else(built):
     _, lay, _, storeys, box, contained = built
     x0, y0, x1, y1 = _facades(lay)
     for fl in lay.floors:
-        wins = [box(w) for w in contained(storeys[fl.name], "IfcWindow")]
+        st = storeys[fl.name]
+        wins = [box(w) for w in contained(st, "IfcWindow")]
+        doors = [box(d) for d in contained(st, "IfcDoor")]
+        well_mids = [np.array([(c.x0_mm + c.x1_mm) / 2, (c.y0_mm + c.y1_mm) / 2])
+                     for c in fl.connections if _well_window(fl, c)]
         for lo, hi in wins:
             cy = (lo[1] + hi[1]) / 2
-            assert min(abs(cy - y0), abs(cy - y1)) <= 150, f"{fl.name}: cửa sổ không nằm trên mặt tiền/mặt sau"
+            on_well = any(np.hypot(*(((lo + hi) / 2)[:2] - m)) <= 20 for m in well_mids)
+            assert on_well or min(abs(cy - y0), abs(cy - y1)) <= 150, (
+                f"{fl.name}: cửa sổ không nằm trên mặt tiền/mặt sau hay giếng trời")
             assert lo[2] >= fl.elevation_mm + SLAB_MM + 500
         for r in fl.rooms:
-            if r.kind == "stair" or RULES[r.kind].outdoor:
+            if r.kind == "stair" or RULES[r.kind].outdoor or RULES[r.kind].light_well:
                 continue
             for fy in (y0, y1):
                 if fy not in (r.y_mm, r.y_mm + r.d_mm):
                     continue
                 ok = any(r.x_mm < (lo[0] + hi[0]) / 2 < r.x_mm + r.w_mm and abs((lo[1] + hi[1]) / 2 - fy) <= 150
-                         for lo, hi in wins)
-                assert ok, f"{fl.name}/{r.id}: thiếu cửa sổ ở mặt ngoài y={fy}"
+                         for lo, hi in wins + doors)
+                assert ok, f"{fl.name}/{r.id}: mặt ngoài y={fy} không có cửa sổ hay cửa đi"
 
 
 # --------------------------------------------------------------------------- walls
@@ -152,10 +176,13 @@ def test_walls_enclose_rooms_but_yards_and_balconies_stay_open(built):
         z = fl.elevation_mm + 1000
         for r in fl.rooms:
             open_room = r.kind != "stair" and RULES[r.kind].outdoor
+            projecting = r.y_mm < y0  # balcony cantilevered past the facade: open on front, left and right
             for side, (px, py) in _edge_midpoints(r).items():
                 p = (px, py, z)
                 on_facade = (side == "front" and py == y0) or (side == "back" and py == y1)
-                if open_room and on_facade:
+                if projecting and side != "back":
+                    assert not any(_inside(p, b) for b in walls), f"{fl.name}/{r.id}: ban công đua mặt {side} phải hở"
+                elif open_room and on_facade:
                     assert not any(_inside(p, b) for b in walls), f"{fl.name}/{r.id}: mặt {side} phải để trống"
                 else:
                     assert any(_inside(p, b) for b in walls + cols), f"{fl.name}/{r.id}: thiếu tường cạnh {side}"
@@ -180,6 +207,8 @@ def test_external_walls_are_flagged(built):
                     assert host and all(ue.get_pset(w, "Pset_WallCommon")["IsExternal"] for w in host), (
                         f"{fl.name}/{r.id}: tường mặt ngoài phải IsExternal=True")
         for c in fl.connections:
+            if c.y0_mm == c.y1_mm and c.y0_mm in (y0, y1):
+                continue  # door to a projecting balcony sits in the (external) facade wall
             mid = ((c.x0_mm + c.x1_mm) / 2, (c.y0_mm + c.y1_mm) / 2, z)
             host = [w for w in walls if _inside(mid, box(w))]
             assert host and not any(ue.get_pset(w, "Pset_WallCommon")["IsExternal"] for w in host), (
@@ -258,7 +287,7 @@ def test_railings_on_upper_balconies(built):
         for r in fl.rooms:
             if r.kind == "stair" or not RULES[r.kind].outdoor:
                 continue
-            fy = y0 if r.y_mm == y0 else y1
+            fy = r.y_mm if r.y_mm < y0 else (y0 if r.y_mm == y0 else y1)  # projecting: its own front edge
             ok = any(r.x_mm < (lo[0] + hi[0]) / 2 < r.x_mm + r.w_mm and abs((lo[1] + hi[1]) / 2 - fy) <= 150
                      and hi[2] - lo[2] >= 900 for lo, hi in rails)
             assert ok, f"{fl.name}/{r.id}: thiếu lan can ở mặt ngoài"

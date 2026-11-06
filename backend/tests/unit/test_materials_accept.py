@@ -33,7 +33,8 @@ GLASS = ("Kính", (0.55, 0.75, 0.88), 0.5)
 STEEL = ("Thép sơn", (0.22, 0.24, 0.27), 0.0)
 
 BY_CLASS = {"IfcColumn": CONCRETE, "IfcBeam": CONCRETE, "IfcFooting": CONCRETE, "IfcStair": CONCRETE,
-            "IfcSlab": FLOOR, "IfcRoof": ROOF, "IfcDoor": WOOD, "IfcWindow": GLASS, "IfcRailing": STEEL}
+            "IfcSlab": FLOOR, "IfcRoof": ROOF, "IfcDoor": WOOD, "IfcWindow": GLASS, "IfcRailing": STEEL,
+            "IfcPlate": GLASS}  # task 023: glass roof over the light well
 BY_MESH_TYPE = {k.removeprefix("Ifc"): v for k, v in BY_CLASS.items()}
 
 

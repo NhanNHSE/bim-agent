@@ -52,6 +52,7 @@ BY_CLASS: dict[str, MaterialSpec] = {
     "IfcDoor": WOOD,
     "IfcWindow": GLASS,
     "IfcRailing": STEEL,
+    "IfcPlate": GLASS,
 }
 
 

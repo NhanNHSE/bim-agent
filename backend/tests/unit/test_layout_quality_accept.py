@@ -29,7 +29,10 @@ def test_samples_reach_optimum_quickly(prog):
     x0, y0, x1, y1 = lay.buildable_mm
     cells = (x1 - x0) * (y1 - y0) / 10_000 * len(prog.floors)  # objective unit: 0.01 m² cells
     assert lay.stats.objective <= 0.05 * cells, f"{prog.name}: lệch diện tích {lay.stats.objective / 100} m²"
-    assert elapsed < 10, f"{prog.name} giải mất {elapsed:.1f} s"
+    # Wall clock is only a hang guard: the same solve took 4.0 s on the dev box, 8-9 s on the GitHub
+    # runner and 10.2 s inside the CI Docker job. The machine-independent speed bar is the deterministic
+    # budget in test_typical_floors_accept.py (OPTIMAL within max_deterministic_time=3.0).
+    assert elapsed < 30, f"{prog.name} giải mất {elapsed:.1f} s"
 
 
 def test_font_is_a_bundled_truetype_font():
