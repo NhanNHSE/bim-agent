@@ -9,6 +9,7 @@ import ifcopenshell.api
 import numpy as np
 
 from src.design_core.layout import Connection, FloorLayout, Layout, PlacedRoom
+from src.design_core.materials import assign_building_materials
 from src.design_core.typologies import load_rules
 
 run = ifcopenshell.api.run
@@ -865,4 +866,5 @@ def build_ifc(layout: Layout) -> ifcopenshell.file:
                 predefined_type="GUARDRAIL",
             )
 
+    assign_building_materials(model, body)
     return model

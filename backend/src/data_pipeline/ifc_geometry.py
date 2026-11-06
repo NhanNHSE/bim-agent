@@ -9,6 +9,7 @@ what's in the IFC file.
 import os
 import hashlib
 import json
+import math
 from typing import Optional
 
 import ifcopenshell
@@ -20,7 +21,7 @@ import structlog
 logger = structlog.get_logger()
 
 # Bump when mesh output format changes to invalidate caches
-CACHE_VERSION = 2
+CACHE_VERSION = 3
 
 # IFC type → color (RGB 0-1)
 TYPE_COLORS = {
@@ -116,16 +117,18 @@ def extract_geometry(filepath: str, cache_dir: Optional[str] = None) -> dict:
         color = list(TYPE_COLORS.get(ifc_type, DEFAULT_COLOR))
         opacity = TYPE_OPACITY.get(ifc_type, 1.0)
 
-        # Try to get material color from IFC
-        try:
-            if geo.materials and len(geo.materials) > 0:
-                mat = geo.materials[0]
-                if hasattr(mat, 'diffuse') and mat.diffuse:
-                    color = [mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]]
-                if hasattr(mat, 'transparency') and mat.transparency:
-                    opacity = 1.0 - mat.transparency
-        except Exception:
-            pass
+        # Use IFC surface style color/transparency only when backed by a real style instance
+        mat = next(
+            (m for m in (geo.materials or ()) if getattr(m, "instance", None) is not None),
+            None,
+        )
+        if mat is not None:
+            d = getattr(mat, "diffuse", None)
+            if d is not None:
+                color = [float(d.r()), float(d.g()), float(d.b())]
+            transp = getattr(mat, "transparency", None)
+            if transp is not None and math.isfinite(transp):
+                opacity = 1.0 - float(transp)
 
         # Extract metadata
         meta = {
