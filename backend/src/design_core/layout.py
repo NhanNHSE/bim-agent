@@ -215,10 +215,11 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                 model.add(100 * d <= aspect_scaled * w)
 
                 target_g = round(float(req.target_area_m2 or req.min_area_m2 or 0.0) * 100)
-                abs_diff = model.new_int_var(
-                    0, max(build_area_g, max_area_g, target_g), f"{prefix}_abs_diff"
-                )
-                model.add_abs_equality(abs_diff, area - target_g)
+                bound_g = max(build_area_g, max_area_g, target_g)
+                diff = model.new_int_var(-bound_g, bound_g, f"{prefix}_diff")
+                model.add(diff == area - target_g)
+                abs_diff = model.new_int_var(0, bound_g, f"{prefix}_abs_diff")
+                model.add_abs_equality(abs_diff, diff)
                 abs_diffs.append(abs_diff)
 
                 r_vars[rid] = {
@@ -322,8 +323,11 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                     model.add_bool_or([tf, tb])
 
             target_g = round(float(req.target_area_m2 or req.min_area_m2 or 0.0) * 100)
-            abs_diff = model.new_int_var(0, build_area_g, f"{prefix}_abs_diff")
-            model.add_abs_equality(abs_diff, area - target_g)
+            bound_g = max(build_area_g, max_area_g, target_g)
+            diff = model.new_int_var(-bound_g, bound_g, f"{prefix}_diff")
+            model.add(diff == area - target_g)
+            abs_diff = model.new_int_var(0, bound_g, f"{prefix}_abs_diff")
+            model.add_abs_equality(abs_diff, diff)
             abs_diffs.append(abs_diff)
 
             r_vars[rid] = {
