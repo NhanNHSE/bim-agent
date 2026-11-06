@@ -26,6 +26,7 @@ class PlacedRoom(BaseModel):
     y_mm: int
     w_mm: int
     d_mm: int
+    entrance: bool = False
 
 
 class Connection(BaseModel):
@@ -419,6 +420,7 @@ def solve_layout(program: Program, max_deterministic_time: float = 10.0) -> Layo
                 y_mm=int(solver.value(v["y"])) * GRID_MM,
                 w_mm=int(solver.value(v["w"])) * GRID_MM,
                 d_mm=int(solver.value(v["d"])) * GRID_MM,
+                entrance=bool(req.entrance),
             )
             placed_rooms.append(pr)
             placed_by_id[req.id] = pr

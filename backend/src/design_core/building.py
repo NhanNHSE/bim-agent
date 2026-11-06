@@ -79,6 +79,74 @@ def _box_mm(
     return el
 
 
+def _multi_box_mm(
+    model: ifcopenshell.file,
+    body: ifcopenshell.entity_instance,
+    storey: ifcopenshell.entity_instance,
+    ifc_class: str,
+    name: str,
+    boxes: list[tuple[float, float, float, float, float, float]],
+    *,
+    contain: bool = True,
+    **kw,
+) -> ifcopenshell.entity_instance:
+    """Create an element whose Body SweptSolid representation consists of one or more axis-aligned boxes."""
+    if len(boxes) == 1:
+        bx0, bx1, by0, by1, bz0, bz1 = boxes[0]
+        return _box_mm(
+            model,
+            body,
+            storey,
+            ifc_class,
+            name,
+            bx0,
+            bx1,
+            by0,
+            by1,
+            bz0,
+            bz1,
+            contain=contain,
+            **kw,
+        )
+    el = run("root.create_entity", model, ifc_class=ifc_class, name=name, **kw)
+    dir_z = model.createIfcDirection((0.0, 0.0, 1.0))
+    dir_x = model.createIfcDirection((1.0, 0.0, 0.0))
+    items: list[ifcopenshell.entity_instance] = []
+    for bx0, bx1, by0, by1, bz0, bz1 in boxes:
+        prof = model.create_entity(
+            "IfcRectangleProfileDef",
+            ProfileType="AREA",
+            XDim=float(bx1 - bx0),
+            YDim=float(by1 - by0),
+        )
+        loc = model.createIfcCartesianPoint(
+            (float((bx0 + bx1) / 2.0), float((by0 + by1) / 2.0), float(bz0))
+        )
+        pos = model.create_entity(
+            "IfcAxis2Placement3D", Location=loc, Axis=dir_z, RefDirection=dir_x
+        )
+        solid = model.create_entity(
+            "IfcExtrudedAreaSolid",
+            SweptArea=prof,
+            Position=pos,
+            ExtrudedDirection=dir_z,
+            Depth=float(bz1 - bz0),
+        )
+        items.append(solid)
+    shape_rep = model.create_entity(
+        "IfcShapeRepresentation",
+        ContextOfItems=body,
+        RepresentationIdentifier="Body",
+        RepresentationType="SweptSolid",
+        Items=items,
+    )
+    run("geometry.assign_representation", model, product=el, representation=shape_rep)
+    run("geometry.edit_object_placement", model, product=el, matrix=_mat_mm(0.0, 0.0, 0.0))
+    if contain and not el.is_a("IfcOpeningElement"):
+        run("spatial.assign_container", model, relating_structure=storey, products=[el])
+    return el
+
+
 def _compute_v_axes_mm(y0: int, y1: int) -> list[int]:
     span = y1 - y0
     n = max(1, math.ceil(span / 5000.0))
@@ -156,6 +224,9 @@ def _build_floor_walls_and_openings(
     for r in fl.rooms:
         rx0, ry0 = r.x_mm, r.y_mm
         rx1, ry1 = rx0 + r.w_mm, ry0 + r.d_mm
+        if ry0 < y0:
+            h_raw.setdefault(ry1, []).append((rx0, rx1))
+            continue
         is_outdoor = r.kind != "stair" and rules[r.kind].outdoor
 
         if not (is_outdoor and ry0 == y0):
@@ -353,21 +424,59 @@ def _build_floor_walls_and_openings(
                 )
 
     room_by_id = {r.id: r for r in fl.rooms}
+    facade_doors: list[tuple[int, float, float]] = []
 
-    # Doors on connections
+    # Doors or light-well windows on connections
     for conn in fl.connections:
-        _place_door(model, body, storey, fl, conn, room_by_id, segments, t_prefix)
+        if _is_well_window(fl, conn, room_by_id, rules):
+            _place_well_window(model, body, storey, fl, conn, room_by_id, segments, t_prefix)
+        else:
+            d_span = _place_door(model, body, storey, fl, conn, room_by_id, segments, t_prefix)
+            if d_span is not None and conn.y0_mm == conn.y1_mm and conn.y0_mm in (y0, y1):
+                facade_doors.append((conn.y0_mm, d_span[0], d_span[1]))
+
+    # Wide street door and canopy for ground-floor indoor entrance room
+    if fl.index == 0:
+        ent = next(
+            (
+                r
+                for r in fl.rooms
+                if r.entrance and r.kind != "stair" and not rules[r.kind].outdoor
+            ),
+            None,
+        )
+        if ent is not None:
+            d_x0, d_x1 = _place_street_door_and_canopy(
+                model, body, storey, fl, ent, y0, segments, t_prefix
+            )
+            facade_doors.append((y0, d_x0, d_x1))
 
     # Windows on y0 / y1 indoor rooms
     win_idx = 0
     for r in fl.rooms:
-        if r.kind == "stair" or rules[r.kind].outdoor:
+        if r.kind == "stair" or rules[r.kind].outdoor or rules[r.kind].light_well:
             continue
         for fy in (y0, y1):
             if fy not in (r.y_mm, r.y_mm + r.d_mm):
                 continue
-            win_idx += 1
-            _place_window(model, body, storey, fl, r, fy, segments, t_prefix, win_idx)
+            win_idx = _place_window(
+                model, body, storey, fl, r, fy, segments, facade_doors, t_prefix, win_idx
+            )
+
+
+def _is_well_window(
+    fl: FloorLayout,
+    conn: Connection,
+    room_by_id: dict[str, PlacedRoom],
+    rules: dict,
+) -> bool:
+    if fl.index == 0:
+        return False
+    for rid in (conn.a, conn.b):
+        r = room_by_id[rid]
+        if r.kind != "stair" and rules[r.kind].light_well:
+            return True
+    return False
 
 
 def _find_host_segment(segments: list[dict], orient: str, c_coord: int, mid_pos: float) -> dict:
@@ -386,7 +495,7 @@ def _place_door(
     room_by_id: dict[str, PlacedRoom],
     segments: list[dict],
     t_prefix: str,
-) -> None:
+) -> tuple[float, float] | None:
     ra, rb = room_by_id[conn.a], room_by_id[conn.b]
     kinds = {ra.kind, rb.kind}
     if "san" in kinds:
@@ -399,6 +508,7 @@ def _place_door(
     elev = fl.elevation_mm
     z0_d = elev + SLAB_MM
     z1_d = z0_d + DOOR_H_MM
+    x_span: tuple[float, float] | None = None
 
     if conn.y0_mm == conn.y1_mm:
         y_c = conn.y0_mm
@@ -409,6 +519,7 @@ def _place_door(
         w_thick = host["thick"]
         open_half = (w_thick + OPENING_EXTRA_MM) / 2.0
         leaf_half = LEAF_THICK_MM / 2.0
+        x_span = (mx - door_w / 2.0, mx + door_w / 2.0)
 
         opening = _box_mm(
             model,
@@ -479,6 +590,179 @@ def _place_door(
 
     run("feature.add_feature", model, feature=opening, element=host["el"])
     run("feature.add_filling", model, opening=opening, element=door)
+    return x_span
+
+
+def _place_well_window(
+    model: ifcopenshell.file,
+    body: ifcopenshell.entity_instance,
+    storey: ifcopenshell.entity_instance,
+    fl: FloorLayout,
+    conn: Connection,
+    room_by_id: dict[str, PlacedRoom],
+    segments: list[dict],
+    t_prefix: str,
+) -> None:
+    ra, rb = room_by_id[conn.a], room_by_id[conn.b]
+    kinds = {ra.kind, rb.kind}
+    if "wc" in kinds or "kho" in kinds:
+        base_w, win_h, sill = 600, 600, 1500
+    else:
+        base_w, win_h, sill = 1200, 1400, 800
+
+    z0_w = fl.elevation_mm + SLAB_MM + sill
+    z1_w = z0_w + win_h
+
+    if conn.y0_mm == conn.y1_mm:
+        y_c = conn.y0_mm
+        seg_len = abs(conn.x1_mm - conn.x0_mm)
+        win_w = min(base_w, seg_len - 300)
+        mx = (conn.x0_mm + conn.x1_mm) / 2.0
+        host = _find_host_segment(segments, "H", y_c, mx)
+        w_thick = host["thick"]
+        open_half = (w_thick + OPENING_EXTRA_MM) / 2.0
+        leaf_half = LEAF_THICK_MM / 2.0
+
+        opening = _box_mm(
+            model,
+            body,
+            storey,
+            "IfcOpeningElement",
+            f"{t_prefix} OWW {conn.a}-{conn.b}",
+            mx - win_w / 2.0,
+            mx + win_w / 2.0,
+            y_c - open_half,
+            y_c + open_half,
+            z0_w,
+            z1_w,
+            contain=False,
+        )
+        window = _box_mm(
+            model,
+            body,
+            storey,
+            "IfcWindow",
+            f"WW {conn.a}-{conn.b}",
+            mx - win_w / 2.0,
+            mx + win_w / 2.0,
+            y_c - leaf_half,
+            y_c + leaf_half,
+            z0_w,
+            z1_w,
+            predefined_type="WINDOW",
+        )
+    else:
+        x_c = conn.x0_mm
+        seg_len = abs(conn.y1_mm - conn.y0_mm)
+        win_w = min(base_w, seg_len - 300)
+        my = (conn.y0_mm + conn.y1_mm) / 2.0
+        host = _find_host_segment(segments, "V", x_c, my)
+        w_thick = host["thick"]
+        open_half = (w_thick + OPENING_EXTRA_MM) / 2.0
+        leaf_half = LEAF_THICK_MM / 2.0
+
+        opening = _box_mm(
+            model,
+            body,
+            storey,
+            "IfcOpeningElement",
+            f"{t_prefix} OWW {conn.a}-{conn.b}",
+            x_c - open_half,
+            x_c + open_half,
+            my - win_w / 2.0,
+            my + win_w / 2.0,
+            z0_w,
+            z1_w,
+            contain=False,
+        )
+        window = _box_mm(
+            model,
+            body,
+            storey,
+            "IfcWindow",
+            f"WW {conn.a}-{conn.b}",
+            x_c - leaf_half,
+            x_c + leaf_half,
+            my - win_w / 2.0,
+            my + win_w / 2.0,
+            z0_w,
+            z1_w,
+            predefined_type="WINDOW",
+        )
+
+    run("feature.add_feature", model, feature=opening, element=host["el"])
+    run("feature.add_filling", model, opening=opening, element=window)
+
+
+def _place_street_door_and_canopy(
+    model: ifcopenshell.file,
+    body: ifcopenshell.entity_instance,
+    storey: ifcopenshell.entity_instance,
+    fl: FloorLayout,
+    ent: PlacedRoom,
+    y0: int,
+    segments: list[dict],
+    t_prefix: str,
+) -> tuple[float, float]:
+    door_w = max(2400.0, float(min(ent.w_mm - 600, 3600)))
+    door_h = 2700.0
+    mx = ent.x_mm + ent.w_mm / 2.0
+    z0_d = fl.elevation_mm + SLAB_MM
+    z1_d = z0_d + door_h
+
+    host = _find_host_segment(segments, "H", y0, mx)
+    w_thick = host["thick"]
+    open_half = (w_thick + OPENING_EXTRA_MM) / 2.0
+    leaf_half = LEAF_THICK_MM / 2.0
+
+    opening = _box_mm(
+        model,
+        body,
+        storey,
+        "IfcOpeningElement",
+        f"{t_prefix} OD_ENT {ent.id}",
+        mx - door_w / 2.0,
+        mx + door_w / 2.0,
+        y0 - open_half,
+        y0 + open_half,
+        z0_d,
+        z1_d,
+        contain=False,
+    )
+    door = _box_mm(
+        model,
+        body,
+        storey,
+        "IfcDoor",
+        f"D_ENT {ent.id}",
+        mx - door_w / 2.0,
+        mx + door_w / 2.0,
+        y0 - leaf_half,
+        y0 + leaf_half,
+        z0_d,
+        z1_d,
+        predefined_type="DOOR",
+    )
+    run("feature.add_feature", model, feature=opening, element=host["el"])
+    run("feature.add_filling", model, opening=opening, element=door)
+
+    z0_c = min(fl.elevation_mm + 2950, fl.elevation_mm + fl.height_mm - 200)
+    z1_c = z0_c + 100
+    _box_mm(
+        model,
+        body,
+        storey,
+        "IfcSlab",
+        "Mái đón",
+        ent.x_mm + 100,
+        ent.x_mm + ent.w_mm - 100,
+        y0 - 900,
+        y0 - 100,
+        z0_c,
+        z1_c,
+        predefined_type="ROOF",
+    )
+    return (mx - door_w / 2.0, mx + door_w / 2.0)
 
 
 def _place_window(
@@ -489,16 +773,40 @@ def _place_window(
     room: PlacedRoom,
     fy: int,
     segments: list[dict],
+    facade_doors: list[tuple[int, float, float]],
     t_prefix: str,
     win_idx: int,
-) -> None:
+) -> int:
     if room.kind in ("wc", "kho"):
         base_w, win_h, sill = 600, 600, 1500
     else:
-        base_w, win_h, sill = 1400, 1400, 900
+        base_w, win_h, sill = 2400, 1600, 800
 
-    win_w = min(base_w, room.w_mm - 600)
-    mx = room.x_mm + room.w_mm / 2.0
+    win_w = float(min(base_w, room.w_mm - 600))
+    rx0 = float(room.x_mm)
+    rx1 = float(room.x_mm + room.w_mm)
+
+    overlapping_doors = [
+        (dx0, dx1)
+        for d_fy, dx0, dx1 in facade_doors
+        if d_fy == fy and max(rx0, dx0) < min(rx1, dx1)
+    ]
+    if not overlapping_doors:
+        mx = (rx0 + rx1) / 2.0
+    else:
+        dx0 = min(d[0] for d in overlapping_doors)
+        dx1 = max(d[1] for d in overlapping_doors)
+        left_span = dx0 - rx0
+        right_span = rx1 - dx1
+        min_needed = max(1200.0, win_w + 400.0)
+        if left_span >= right_span and left_span >= min_needed:
+            mx = (rx0 + dx0) / 2.0
+        elif right_span >= min_needed:
+            mx = (dx1 + rx1) / 2.0
+        else:
+            return win_idx
+
+    win_idx += 1
     host = _find_host_segment(segments, "H", fy, mx)
     w_thick = host["thick"]
     open_half = (w_thick + OPENING_EXTRA_MM) / 2.0
@@ -537,6 +845,7 @@ def _place_window(
     )
     run("feature.add_feature", model, feature=opening, element=host["el"])
     run("feature.add_filling", model, opening=opening, element=window)
+    return win_idx
 
 
 def _build_stair(
@@ -636,12 +945,11 @@ def build_ifc(layout: Layout) -> ifcopenshell.file:
     rules = load_rules(layout.typology)
     x0, y0, x1, y1 = layout.buildable_mm
 
+    first_well_floor: dict[str, int] = {}
     for fl in layout.floors:
         for r in fl.rooms:
-            if r.kind != "stair" and rules[r.kind].light_well:
-                raise NotImplementedError("Giếng trời (light_well) sẽ được dựng IFC ở task 023")
-            if r.x_mm < x0 or r.y_mm < y0 or r.x_mm + r.w_mm > x1 or r.y_mm + r.d_mm > y1:
-                raise NotImplementedError("Ban công đua (projecting) sẽ được dựng IFC ở task 023")
+            if r.kind != "stair" and rules[r.kind].light_well and r.id not in first_well_floor:
+                first_well_floor[r.id] = fl.index
 
     model = ifcopenshell.file(schema="IFC4")
     project = run("root.create_entity", model, ifc_class="IfcProject", name=layout.program_name)
@@ -706,18 +1014,35 @@ def build_ifc(layout: Layout) -> ifcopenshell.file:
         h = fl.height_mm
 
         # Slab
-        slab = _box_mm(
+        slab_boxes: list[tuple[float, float, float, float, float, float]] = [
+            (
+                float(x0 - 100),
+                float(x1 + 100),
+                float(y0 - 100),
+                float(y1 + 100),
+                float(elev),
+                float(elev + SLAB_MM),
+            )
+        ]
+        for r in fl.rooms:
+            if r.y_mm < y0:
+                slab_boxes.append(
+                    (
+                        float(r.x_mm),
+                        float(r.x_mm + r.w_mm),
+                        float(r.y_mm),
+                        float(y0 - 100),
+                        float(elev),
+                        float(elev + SLAB_MM),
+                    )
+                )
+        slab = _multi_box_mm(
             model,
             body,
             st,
             "IfcSlab",
             f"{t_prefix} S01",
-            x0 - 100,
-            x1 + 100,
-            y0 - 100,
-            y1 + 100,
-            elev,
-            elev + SLAB_MM,
+            slab_boxes,
             predefined_type="FLOOR",
         )
         stair_room = next((r for r in fl.rooms if r.id == "stair"), None)
@@ -737,6 +1062,24 @@ def build_ifc(layout: Layout) -> ifcopenshell.file:
                 contain=False,
             )
             run("feature.add_feature", model, feature=void, element=slab)
+
+        for r in fl.rooms:
+            if r.kind != "stair" and rules[r.kind].light_well and fl.index > first_well_floor[r.id]:
+                well_void = _box_mm(
+                    model,
+                    body,
+                    st,
+                    "IfcOpeningElement",
+                    f"{t_prefix} OS_{r.id}",
+                    r.x_mm + 100,
+                    r.x_mm + r.w_mm - 100,
+                    r.y_mm + 100,
+                    r.y_mm + r.d_mm - 100,
+                    elev - 50,
+                    elev + SLAB_MM + 50,
+                    contain=False,
+                )
+                run("feature.add_feature", model, feature=well_void, element=slab)
 
         # Columns at grid intersections
         for u_i, ux in enumerate(u_axes_mm):
@@ -788,26 +1131,65 @@ def build_ifc(layout: Layout) -> ifcopenshell.file:
             for r in fl.rooms:
                 if r.kind == "stair" or not rules[r.kind].outdoor:
                     continue
-                if r.y_mm == y0:
-                    ry0, ry1 = y0, y0 + RAILING_THICK_MM
+                if r.y_mm < y0:
+                    rail_boxes = [
+                        (
+                            r.x_mm + 100,
+                            r.x_mm + r.w_mm - 100,
+                            r.y_mm,
+                            r.y_mm + RAILING_THICK_MM,
+                        ),
+                        (
+                            r.x_mm,
+                            r.x_mm + RAILING_THICK_MM,
+                            r.y_mm + 100,
+                            y0 - 200,
+                        ),
+                        (
+                            r.x_mm + r.w_mm - RAILING_THICK_MM,
+                            r.x_mm + r.w_mm,
+                            r.y_mm + 100,
+                            y0 - 200,
+                        ),
+                    ]
+                    for rx0_b, rx1_b, ry0_b, ry1_b in rail_boxes:
+                        r_idx += 1
+                        total_railings += 1
+                        _box_mm(
+                            model,
+                            body,
+                            st,
+                            "IfcRailing",
+                            f"{t_prefix} R{r_idx:02d}",
+                            rx0_b,
+                            rx1_b,
+                            ry0_b,
+                            ry1_b,
+                            elev + SLAB_MM,
+                            elev + SLAB_MM + RAILING_H_MM,
+                            predefined_type="GUARDRAIL",
+                        )
                 else:
-                    ry0, ry1 = y1 - RAILING_THICK_MM, y1
-                r_idx += 1
-                total_railings += 1
-                _box_mm(
-                    model,
-                    body,
-                    st,
-                    "IfcRailing",
-                    f"{t_prefix} R{r_idx:02d}",
-                    r.x_mm + 100,
-                    r.x_mm + r.w_mm - 100,
-                    ry0,
-                    ry1,
-                    elev + SLAB_MM,
-                    elev + SLAB_MM + RAILING_H_MM,
-                    predefined_type="GUARDRAIL",
-                )
+                    if r.y_mm == y0:
+                        ry0, ry1 = y0, y0 + RAILING_THICK_MM
+                    else:
+                        ry0, ry1 = y1 - RAILING_THICK_MM, y1
+                    r_idx += 1
+                    total_railings += 1
+                    _box_mm(
+                        model,
+                        body,
+                        st,
+                        "IfcRailing",
+                        f"{t_prefix} R{r_idx:02d}",
+                        r.x_mm + 100,
+                        r.x_mm + r.w_mm - 100,
+                        ry0,
+                        ry1,
+                        elev + SLAB_MM,
+                        elev + SLAB_MM + RAILING_H_MM,
+                        predefined_type="GUARDRAIL",
+                    )
 
         # Spaces
         spaces: list[ifcopenshell.entity_instance] = []
@@ -835,37 +1217,140 @@ def build_ifc(layout: Layout) -> ifcopenshell.file:
         if idx < len(layout.floors) - 1 and stair_room is not None:
             _build_stair(model, body, st, fl, stair_room, h, t_prefix)
 
-    # Top floor roof
+    # Top floor roof (covers indoor rooms only)
     top_fl = layout.floors[-1]
     top_st = storeys[-1]
     top_prefix = f"T{len(layout.floors)}"
     z_roof0 = top_fl.elevation_mm + top_fl.height_mm
     z_roof1 = z_roof0 + SLAB_MM
-    _box_mm(
+    indoor_top = [
+        r
+        for r in top_fl.rooms
+        if r.kind == "stair" or not (rules[r.kind].outdoor or rules[r.kind].light_well)
+    ]
+    if indoor_top:
+        roof_boxes = [
+            (
+                float(r.x_mm),
+                float(r.x_mm + r.w_mm),
+                float(r.y_mm),
+                float(r.y_mm + r.d_mm),
+                float(z_roof0),
+                float(z_roof1),
+            )
+            for r in indoor_top
+        ]
+    else:
+        roof_boxes = [
+            (
+                float(x0 - 100),
+                float(x1 + 100),
+                float(y0 - 100),
+                float(y1 + 100),
+                float(z_roof0),
+                float(z_roof1),
+            )
+        ]
+    _multi_box_mm(
         model,
         body,
         top_st,
         "IfcRoof",
         f"{top_prefix} RF01",
-        x0 - 100,
-        x1 + 100,
-        y0 - 100,
-        y1 + 100,
-        z_roof0,
-        z_roof1,
+        roof_boxes,
         predefined_type="FLAT_ROOF",
     )
 
+    # Glass roof plates over light wells
+    wells = {
+        r.id: r
+        for fl in layout.floors
+        for r in fl.rooms
+        if r.kind != "stair" and rules[r.kind].light_well
+    }
+    for w_i, (wid, wr) in enumerate(wells.items(), 1):
+        _box_mm(
+            model,
+            body,
+            top_st,
+            "IfcPlate",
+            f"{top_prefix} PL{w_i:02d}_{wid}",
+            wr.x_mm + 200,
+            wr.x_mm + wr.w_mm - 200,
+            wr.y_mm + 200,
+            wr.y_mm + wr.d_mm - 200,
+            z_roof0,
+            z_roof0 + 20,
+            predefined_type="SHEET",
+        )
+
+    # Parapet walls on top of the roof
+    if indoor_top:
+        px0 = min(r.x_mm for r in indoor_top)
+        px1 = max(r.x_mm + r.w_mm for r in indoor_top)
+        py0 = min(r.y_mm for r in indoor_top)
+        py1 = max(r.y_mm + r.d_mm for r in indoor_top)
+    else:
+        px0, py0, px1, py1 = x0, y0, x1, y1
+
+    parapet_specs = [
+        (f"{top_prefix} PW01", px0, px1, py0, py0 + EXT_WALL_MM),
+        (f"{top_prefix} PW02", px0, px1, py1 - EXT_WALL_MM, py1),
+        (f"{top_prefix} PW03", px0, px0 + EXT_WALL_MM, py0 + EXT_WALL_MM, py1 - EXT_WALL_MM),
+        (f"{top_prefix} PW04", px1 - EXT_WALL_MM, px1, py0 + EXT_WALL_MM, py1 - EXT_WALL_MM),
+    ]
+    parapets: list[ifcopenshell.entity_instance] = []
+    for p_name, bx0, bx1, by0, by1 in parapet_specs:
+        if bx1 <= bx0 or by1 <= by0:
+            continue
+        pw = _box_mm(
+            model,
+            body,
+            top_st,
+            "IfcWall",
+            p_name,
+            bx0,
+            bx1,
+            by0,
+            by1,
+            z_roof1,
+            z_roof1 + RAILING_H_MM,
+            predefined_type="PARAPET",
+        )
+        pset = run("pset.add_pset", model, product=pw, name="Pset_WallCommon")
+        run("pset.edit_pset", model, pset=pset, properties={"IsExternal": True})
+        parapets.append(pw)
+
+    for i in range(len(parapets)):
+        other = parapets[(i + 1) % len(parapets)]
+        if other != parapets[i]:
+            model.create_entity(
+                "IfcRelConnectsPathElements",
+                GlobalId=ifcopenshell.guid.new(),
+                RelatingElement=parapets[i],
+                RelatedElement=other,
+                RelatingConnectionType="ATEND",
+                RelatedConnectionType="ATSTART",
+                RelatingPriorities=[],
+                RelatedPriorities=[],
+            )
+
     if total_railings == 0:
-        for r_i, (ry0, ry1) in enumerate(((y0, y0 + RAILING_THICK_MM), (y1 - RAILING_THICK_MM, y1)), 1):
+        for r_i, (ry0, ry1) in enumerate(
+            (
+                (py0 + EXT_WALL_MM + 50, py0 + EXT_WALL_MM + 50 + RAILING_THICK_MM),
+                (py1 - EXT_WALL_MM - 50 - RAILING_THICK_MM, py1 - EXT_WALL_MM - 50),
+            ),
+            1,
+        ):
             _box_mm(
                 model,
                 body,
                 top_st,
                 "IfcRailing",
                 f"{top_prefix} R{r_i:02d}",
-                x0 + 100,
-                x1 - 100,
+                px0 + EXT_WALL_MM + 50,
+                px1 - EXT_WALL_MM - 50,
                 ry0,
                 ry1,
                 z_roof1,

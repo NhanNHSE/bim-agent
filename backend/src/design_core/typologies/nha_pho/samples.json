@@ -3,24 +3,25 @@
   "samples": [
     {
       "typology": "nha_pho",
-      "name": "nha_pho_5x20_4t",
+      "name": "nha_pho_5x20_3t_tum",
       "lot": {
         "width_m": 5.0,
-        "depth_m": 20.0
+        "depth_m": 20.0,
+        "street_width_m": 12.0
       },
       "stair": {
         "width_m": 2.2,
-        "length_m": 4.0
+        "length_m": 4.4
       },
       "floors": [
         {
           "name": "Tầng 1",
           "rooms": [
             {
-              "id": "san",
-              "kind": "san",
+              "id": "de_xe",
+              "kind": "de_xe",
               "entrance": true,
-              "target_area_m2": 15,
+              "target_area_m2": 27.5,
               "adjacent_to": [
                 "khach"
               ]
@@ -28,29 +29,29 @@
             {
               "id": "khach",
               "kind": "khach",
-              "target_area_m2": 30,
+              "target_area_m2": 20,
               "adjacent_to": [
                 "stair",
-                "hanh_lang"
+                "gieng"
               ]
             },
             {
-              "id": "hanh_lang",
-              "kind": "hanh_lang",
-              "target_area_m2": 5.6,
-              "adjacent_to": [
-                "wc"
-              ]
+              "id": "gieng",
+              "kind": "gieng_troi",
+              "target_area_m2": 5.6
             },
             {
               "id": "wc",
               "kind": "wc",
-              "target_area_m2": 5.6
+              "target_area_m2": 6.7,
+              "adjacent_to": [
+                "bep_an"
+              ]
             },
             {
               "id": "bep_an",
               "kind": "bep_an",
-              "target_area_m2": 35,
+              "target_area_m2": 30.52,
               "adjacent_to": [
                 "stair"
               ]
@@ -63,41 +64,66 @@
             {
               "id": "ban_cong",
               "kind": "ban_cong",
-              "target_area_m2": 6,
+              "projecting": true,
+              "adjacent_to": [
+                "ngu1"
+              ],
+              "target_area_m2": 6.0
+            },
+            {
+              "id": "ngu1",
+              "kind": "ngu",
+              "target_area_m2": 21,
+              "adjacent_to": [
+                "sanh"
+              ]
+            },
+            {
+              "id": "wc1",
+              "kind": "wc",
+              "target_area_m2": 7.22,
               "adjacent_to": [
                 "ngu1"
               ]
             },
             {
-              "id": "ngu1",
-              "kind": "ngu",
-              "target_area_m2": 21.5,
-              "adjacent_to": [
-                "sanh"
-              ]
-            },
-            {
-              "id": "wc",
-              "kind": "wc",
-              "target_area_m2": 7.7,
-              "adjacent_to": [
-                "sanh"
-              ]
-            },
-            {
               "id": "sanh",
               "kind": "sanh",
-              "target_area_m2": 21,
+              "target_area_m2": 11.7,
               "adjacent_to": [
                 "stair"
               ]
             },
             {
-              "id": "ngu2",
-              "kind": "ngu",
-              "target_area_m2": 35,
+              "id": "kho",
+              "kind": "kho",
+              "target_area_m2": 7.6,
               "adjacent_to": [
                 "sanh"
+              ]
+            },
+            {
+              "id": "gieng",
+              "kind": "gieng_troi",
+              "target_area_m2": 5.6,
+              "adjacent_to": [
+                "wc2"
+              ]
+            },
+            {
+              "id": "wc2",
+              "kind": "wc",
+              "target_area_m2": 6.7,
+              "adjacent_to": [
+                "ngu2"
+              ]
+            },
+            {
+              "id": "ngu2",
+              "kind": "ngu",
+              "target_area_m2": 30.5,
+              "adjacent_to": [
+                "stair"
               ]
             }
           ]
@@ -108,52 +134,77 @@
             {
               "id": "ban_cong",
               "kind": "ban_cong",
-              "target_area_m2": 6,
+              "projecting": true,
+              "adjacent_to": [
+                "ngu1"
+              ],
+              "target_area_m2": 6.0
+            },
+            {
+              "id": "ngu1",
+              "kind": "ngu",
+              "target_area_m2": 21,
+              "adjacent_to": [
+                "sanh"
+              ]
+            },
+            {
+              "id": "wc1",
+              "kind": "wc",
+              "target_area_m2": 7.22,
               "adjacent_to": [
                 "ngu1"
               ]
             },
             {
-              "id": "ngu1",
-              "kind": "ngu",
-              "target_area_m2": 21.5,
-              "adjacent_to": [
-                "sanh"
-              ]
-            },
-            {
-              "id": "wc",
-              "kind": "wc",
-              "target_area_m2": 7.7,
-              "adjacent_to": [
-                "sanh"
-              ]
-            },
-            {
               "id": "sanh",
               "kind": "sanh",
-              "target_area_m2": 21,
+              "target_area_m2": 11.7,
               "adjacent_to": [
                 "stair"
               ]
             },
             {
-              "id": "ngu2",
-              "kind": "ngu",
-              "target_area_m2": 35,
+              "id": "kho",
+              "kind": "kho",
+              "target_area_m2": 7.6,
               "adjacent_to": [
                 "sanh"
+              ]
+            },
+            {
+              "id": "gieng",
+              "kind": "gieng_troi",
+              "target_area_m2": 5.6,
+              "adjacent_to": [
+                "wc2"
+              ]
+            },
+            {
+              "id": "wc2",
+              "kind": "wc",
+              "target_area_m2": 6.7,
+              "adjacent_to": [
+                "ngu2"
+              ]
+            },
+            {
+              "id": "ngu2",
+              "kind": "ngu",
+              "target_area_m2": 30.5,
+              "adjacent_to": [
+                "stair"
               ]
             }
           ]
         },
         {
-          "name": "Tầng 4",
+          "name": "Tum",
           "rooms": [
             {
-              "id": "ban_cong",
-              "kind": "ban_cong",
-              "target_area_m2": 6,
+              "id": "san_thuong",
+              "kind": "san_thuong",
+              "target_area_m2": 27.5,
               "adjacent_to": [
                 "tho"
               ]
@@ -161,33 +212,33 @@
             {
               "id": "tho",
               "kind": "tho",
-              "target_area_m2": 21.5,
-              "adjacent_to": [
-                "sanh"
-              ]
-            },
-            {
-              "id": "wc",
-              "kind": "wc",
-              "target_area_m2": 7.7,
-              "adjacent_to": [
-                "sanh"
-              ]
-            },
-            {
-              "id": "sanh",
-              "kind": "sanh",
-              "target_area_m2": 21,
+              "target_area_m2": 20,
               "adjacent_to": [
                 "stair"
               ]
             },
             {
+              "id": "gieng",
+              "kind": "gieng_troi",
+              "target_area_m2": 5.6,
+              "adjacent_to": [
+                "tho"
+              ]
+            },
+            {
+              "id": "wc",
+              "kind": "wc",
+              "target_area_m2": 6.7,
+              "adjacent_to": [
+                "giat_phoi"
+              ]
+            },
+            {
               "id": "giat_phoi",
               "kind": "giat_phoi",
-              "target_area_m2": 35,
+              "target_area_m2": 30.52,
               "adjacent_to": [
-                "sanh"
+                "stair"
               ]
             }
           ]
@@ -196,10 +247,11 @@
     },
     {
       "typology": "nha_pho",
-      "name": "nha_pho_4x16_3t",
+      "name": "nha_pho_4x16_3t_hem",
       "lot": {
         "width_m": 4.0,
-        "depth_m": 16.0
+        "depth_m": 16.0,
+        "street_width_m": 6.0
       },
       "stair": {
         "width_m": 2.2,
@@ -300,19 +352,19 @@
           "name": "Tầng 3",
           "rooms": [
             {
-              "id": "ban_cong",
-              "kind": "ban_cong",
-              "target_area_m2": 4.8,
+              "id": "san_thuong",
+              "kind": "san_thuong",
+              "target_area_m2": 22,
               "adjacent_to": [
-                "ngu1"
+                "tho"
               ]
             },
             {
-              "id": "ngu1",
-              "kind": "ngu",
-              "target_area_m2": 17.2,
+              "id": "tho",
+              "kind": "tho",
+              "target_area_m2": 10.8,
               "adjacent_to": [
-                "sanh"
+                "stair"
               ]
             },
             {
@@ -320,23 +372,15 @@
               "kind": "wc",
               "target_area_m2": 4.4,
               "adjacent_to": [
-                "sanh"
+                "tho"
               ]
             },
             {
-              "id": "sanh",
-              "kind": "sanh",
-              "target_area_m2": 10.8,
-              "adjacent_to": [
-                "stair"
-              ]
-            },
-            {
-              "id": "ngu2",
-              "kind": "ngu",
+              "id": "giat_phoi",
+              "kind": "giat_phoi",
               "target_area_m2": 18,
               "adjacent_to": [
-                "sanh"
+                "stair"
               ]
             }
           ]
@@ -348,7 +392,8 @@
       "name": "nha_pho_6x18_2t",
       "lot": {
         "width_m": 6.0,
-        "depth_m": 18.0
+        "depth_m": 18.0,
+        "street_width_m": 13.0
       },
       "stair": {
         "width_m": 2.2,
@@ -412,15 +457,16 @@
             {
               "id": "ban_cong",
               "kind": "ban_cong",
-              "target_area_m2": 7.2,
+              "projecting": true,
               "adjacent_to": [
                 "ngu1"
-              ]
+              ],
+              "target_area_m2": 7.2
             },
             {
               "id": "ngu1",
               "kind": "ngu",
-              "target_area_m2": 28.8,
+              "target_area_m2": 36,
               "adjacent_to": [
                 "sanh"
               ]

@@ -38,6 +38,7 @@ def test_material_constants_match_table():
     assert len(ALL_MATERIALS) == 8
     assert BY_CLASS["IfcWindow"] == GLASS
     assert BY_CLASS["IfcDoor"] == WOOD
+    assert BY_CLASS["IfcPlate"] == GLASS
 
 
 def test_create_palette_and_assign_materials_once_per_model():

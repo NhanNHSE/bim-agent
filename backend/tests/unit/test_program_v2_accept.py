@@ -141,8 +141,11 @@ def test_light_well_is_aligned_through_every_floor(solved):
     assert len(rects) == 1
 
 
-# --------------------------------------------------------------------------- building (until task 023)
-def test_build_ifc_refuses_features_it_cannot_build_yet(solved):
+# --------------------------------------------------------------------------- building (task 023 builds these)
+def test_build_ifc_builds_balconies_and_light_wells_cleanly(solved):
+    from src.model_checks import run_all
+
     _, lay = solved
-    with pytest.raises(NotImplementedError):
-        build_ifc(lay)
+    model = build_ifc(lay)
+    bad = {k: [i.message for i in v][:3] for k, v in run_all(model).items() if v}
+    assert bad == {}

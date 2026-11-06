@@ -18,7 +18,7 @@ from tests.unit.test_layout_accept import layout_violations
 from src.design_core.typologies import load_rules
 
 RULES = load_rules("nha_pho")
-BASE = next(p for p in load_samples("nha_pho") if p.name == "nha_pho_4x16_3t")
+BASE = next(p for p in load_samples("nha_pho") if p.name.startswith("nha_pho_4x16"))  # small, quick to solve
 
 
 def _scaled(factor: float) -> Program:
